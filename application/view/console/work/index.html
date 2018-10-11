@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>微课堂 - 管理后台</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/css/public/page_style.css">
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body class="layui-layout-body" style="overflow: auto;">
+
+    <div class="layui-fluid" style="padding-top: 15px;">
+
+        <!-- 标题 -->
+        <div class="layui-col-md12 layui-col-lg12" style="border-bottom: 3px solid #393D49!important;margin-bottom: 15px;">
+                <span class="main_title" style="width: 75px;">
+                    作业管理
+                </span>
+        </div>
+
+        <!-- 按钮/筛选 -->
+        <div class="layui-col-md12 layui-col-lg12">
+            <blockquote class="layui-elem-quote" style="border-left:none;">
+                <form class="layui-form float_right" action="" lay-filter="search_form">
+                    <div class="layui-inline">
+                        <input class="layui-input" name="chapter_id" autocomplete="off" placeholder="章节编号查询">
+                    </div>
+                    <div class="layui-inline">
+                        <input class="layui-input" name="user_id" autocomplete="off" placeholder="学员编号查询">
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn search_but" data-type="reload">搜索</button>
+                    </div>
+                </form>
+                <div style="clear: both"></div>
+            </blockquote>
+        </div>
+
+
+        <!-- 表格主体 -->
+        <div class="layui-col-md12 layui-col-lg12">
+            <table id="table_box" lay-filter="test"></table>
+        </div>
+
+    </div>
+
+
+
+    <!-- 表格工具条 -->
+    <script type="text/html" id="barDemo">
+
+        <a class="layui-btn layui-btn-xs" lay-event="view">查看</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="review">点评</a>
+
+    </script>
+
+
+    <script src="/static/jquery-3.3.1.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+
+    <script>
+        layui.use(['table', 'form', 'jquery'], function(){
+            var table = layui.table;
+            var form = layui.form;
+            var $ = layui.jquery;
+
+            //第一个实例
+            var tableOjb = table.render({
+                elem: '#table_box'
+                ,id: 'tableList'
+                ,url: '/console/Work/getWorkList/' //数据接口
+                ,page: true //开启分页
+                ,limit: 10 // 每页显示数量
+                ,cols: [[ //表头
+                    {field: 'id', title: 'ID', width:'5%', sort: true, fixed: 'left'}
+                    ,{field: 'chapter_str', title: '[编号] 章节名称', width:'20%'}
+                    ,{field: 'user_name', title: '[编号] 用户名称', width:'15%'}
+                    ,{field: 'sub_time', title: '提交时间', width: '10%', align: 'center'}
+                    ,{field: 'test_type', title: '测验类型', width: '8%'}
+                    ,{field: 'state_str', title: '状态', width: '6%'}
+                    ,{field: 'name', title: '点评老师', width: '10%'}
+                    ,{fixed: 'right', title: '操作',  align:'center', toolbar: '#barDemo'}
+                ]],
+                text: {
+                    none: '暂无相关数据' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
+                },
+                response: {
+                    statusCode: 200 // 异步成功状态码200
+                },
+            });
+
+
+                // 监听工具条
+            table.on('tool(test)',function(obj){
+
+                // 获取点击记录数据ID
+                var id = obj.data.id;
+                // 获取点击表格tr行对象
+                var tr = obj.tr;
+
+                // 查看
+                if(obj.event == 'view'){
+
+                    var index = layer.open({
+                        title : '作业查看',
+                        type : 2,
+                        area: ['40%',"450px"],
+                        content : "/console/Work/get_view?id=" +id,
+                        success : function(layero, index){
+
+                        },
+                        cancel : function () {  // 层关闭触发
+                            // 弹框关闭，重载表单
+                            tableOjb.reload();
+                        },
+                        end : function () {  // 层销毁触发
+                            // 弹框关闭，重载表单
+                            tableOjb.reload();
+                        },
+                    });
+
+                }
+
+                // 点评
+                if(obj.event == 'review'){
+
+                    var index = layer.open({
+                        title : '作业点评',
+                        type : 2,
+                        area: ['40%',"450px"],
+                        content : "/console/Work/review?id=" +id,
+                        success : function(layero, index){
+
+                        },
+                        cancel : function () {  // 层关闭触发
+                            // 弹框关闭，重载表单
+                            tableOjb.reload();
+                        },
+                        end : function () {  // 层销毁触发
+                            // 弹框关闭，重载表单
+                            tableOjb.reload();
+                        },
+                    });
+
+                }
+
+            });
+
+
+            // 搜索 表格重载
+            $(".search_but").on('click',function(){
+
+                var chapter_id = $("input[name='chapter_id']").val();
+                var user_id = $("input[name='user_id']").val();
+
+
+                if(isNaN(chapter_id)){
+                    layer.msg('编号请输入数字！', {icon: 5});
+                    return false;
+                }
+                if(isNaN(user_id)){
+                    layer.msg('编号请输入数字！', {icon: 5});
+                    return false;
+                }
+
+                // console.log(tableOjb.config.url);return false; // url
+                // console.log(tableOjb.config.page.curr);return false; // 当前页数
+
+                table.reload('tableList',{
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    },
+                    where: {
+                        chapter_id: chapter_id,
+                        user_id: user_id
+                    }
+                });
+
+
+                return false;
+
+            });
+
+
+        });
+    </script>
+
+
+</body>
+</html>

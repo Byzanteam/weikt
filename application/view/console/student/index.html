@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>微课堂 - 管理后台</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <link rel="stylesheet" href="/static/css/public/page_style.css">
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body class="layui-layout-body" style="overflow: auto;">
+
+    <div class="layui-fluid" style="padding-top: 15px;">
+
+        <!-- 标题 -->
+        <div class="layui-col-md12 layui-col-lg12" style="border-bottom: 3px solid #393D49!important;margin-bottom: 15px;">
+                <span class="main_title" style="width: 75px;">
+                    学员管理
+                </span>
+        </div>
+
+        <!-- 按钮/筛选 -->
+        <div class="layui-col-md12 layui-col-lg12">
+            <blockquote class="layui-elem-quote" style="border-left:none;">
+                <form class="layui-form float_right" action="" lay-filter="search_form">
+                    <div class="layui-inline">
+                        <input class="layui-input" name="name" autocomplete="off" placeholder="用户名称查询">
+                    </div>
+                    <div class="layui-inline">
+                        <input class="layui-input" name="nickname" autocomplete="off" placeholder="用户昵称查询">
+                    </div>
+                    <div class="layui-inline">
+                        <input class="layui-input" name="phone" autocomplete="off" placeholder="用户手机号查询">
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn search_but" data-type="reload">搜索</button>
+                    </div>
+                </form>
+                <div style="clear: both"></div>
+            </blockquote>
+        </div>
+
+
+        <!-- 表格主体 -->
+        <div class="layui-col-md12 layui-col-lg12">
+            <table id="table_box" lay-filter="test"></table>
+        </div>
+
+    </div>
+
+
+    <!-- 表格工具条 -->
+    <script type="text/html" id="barDemo">
+
+        <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+
+    </script>
+
+
+    <script src="/static/jquery-3.3.1.min.js"></script>
+    <script src="/static/layui/layui.js"></script>
+
+    <script>
+        layui.use(['table', 'form', 'jquery'], function(){
+            var table = layui.table;
+            var form = layui.form;
+            var $ = layui.jquery;
+
+            //第一个实例
+            var tableOjb = table.render({
+                elem: '#table_box'
+                ,id: 'tableList'
+                ,url: '/console/Student/getStudentList/' //数据接口
+                ,page: true //开启分页
+                ,limit: 10 // 每页显示数量
+                ,cols: [[ //表头
+                    {field: 'id', title: 'ID', width:'5%', sort: true, fixed: 'left'}
+                    ,{field: 'name', title: '用户名称', width:'10%'}
+                    ,{field: 'nickname', title: '用户昵称', width:'15%'}
+                    ,{field: 'phone', title: '用户手机', width: '10%', align: "center"}
+                    ,{field: 'studytime', title: '累加学习天数', width: '10%', align: 'center'}
+                    ,{field: 'curriculum', title: '累加学习章节数', width: '10%', align: 'center'}
+                    ,{field: 'registrationtime', title: '注册时间', width: '15%', sort: true, align: 'center'}
+                    ,{field: 'last_time', title: '上次登录时间', align: 'center'}
+                ]],
+                text: {
+                    none: '暂无相关数据' //默认：无数据。注：该属性为 layui 2.2.5 开始新增
+                },
+                response: {
+                    statusCode: 200 // 异步成功状态码200
+                },
+            });
+
+
+            // 监听工具条
+            table.on('tool(test)',function(obj) {
+
+                // 获取点击记录数据ID
+                var id = obj.data.id;
+                // 获取点击表格tr行对象
+                var tr = obj.tr;
+            });
+
+
+            // 搜索 表格重载
+            $(".search_but").on('click',function(){
+
+                var name = $("input[name='name']").val();
+                var nickname = $("input[name='nickname']").val();
+                var phone = $("input[name='phone']").val();
+
+
+                // console.log(tableOjb.config.url);return false; // url
+                // console.log(tableOjb.config.page.curr);return false; // 当前页数
+
+                table.reload('tableList',{
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    },
+                    where: {
+                        name: name,
+                        nickname: nickname,
+                        phone: phone
+                    }
+                });
+
+
+                return false;
+
+            });
+
+
+        });
+    </script>
+
+
+</body>
+</html>

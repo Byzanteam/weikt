@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>微课堂 - 后台管理</title>
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">微课堂</div>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    admin
+                </a>
+                <!--<dl class="layui-nav-child">-->
+                    <!--<dd><a href="">基本资料</a></dd>-->
+                    <!--<dd><a href="">安全设置</a></dd>-->
+                <!--</dl>-->
+            </li>
+            <li class="layui-nav-item"><a href="">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item">
+                    <a class="move_link" href="javascript:;" data-href="/console/Index/main">首页</a>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">课程管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a class="move_link" href="javascript:;" data-href="/console/CourseClassify/index">课程分类</a></dd>
+                        <dd><a class="move_link" href="javascript:;" data-href="/console/Curriculum/index">课程管理</a></dd>
+                        <dd><a class="move_link" href="javascript:;" data-href="/console/CurriculumChapter/index">章节管理</a></dd>
+                        <dd><a class="move_link" href="javascript:;" data-href="/console/Exercise/index">练习题库</a></dd>
+                        <dd><a class="move_link" href="javascript:;" data-href="/console/CurriculumTest/index">测验题库</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;">学员管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a class="move_link" href="javascript:;" data-href="/console/Student/index">学员列表</a></dd>
+                        <dd><a class="move_link" href="javascript:;" data-href="/console/Work/index">作业管理</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="main" class="layui-body" style="overflow: hidden;">
+        <iframe id="iframe" src="/console/Index/main/" frameborder="0" style="width: 100%;height: 100%;"></iframe>
+
+        <div id="loading" style="z-index: 1000;width: 100%;height: 100%;position: absolute; top: 0;background-color: rgb(255, 255, 255);display: none;">
+            <div style="display: block;position: absolute;top: 40%;left: 46%;">
+                <span style="color: #a09b9b;">正在加载...</span><br/>
+                <img  src="/static/images/loading_2.gif" width="45px;" alt="">
+            </div>
+        </div>
+
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © layui.com - 底部固定区域
+    </div>
+</div>
+<script src="/static/layui/layui.js"></script>
+<script>
+    //JavaScript代码区域
+    layui.use(['element', 'layer', 'jquery'], function(){
+        var element = layui.element;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+
+        $(".move_link").on("click",function(){
+
+            var url = $(this).attr('data-href');
+            if(url != '' && url != undefined){
+
+                // 获取跳转地址
+                var url = $(this).attr('data-href');
+                $("#iframe").attr('src',url);
+
+                $("#loading").show();
+
+                return false;
+            }
+            layer.alert('正在装修...',{title: '提示框', icon: 2});
+        })
+
+        document.getElementById("iframe").onload = function(){
+            $("#loading").hide();
+        };
+
+
+    });
+</script>
+</body>
+</html>
