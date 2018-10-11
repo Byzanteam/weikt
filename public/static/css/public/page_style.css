@@ -1,0 +1,72 @@
+@charset "UTF-8";
+
+.float_left{
+    float: left;
+}
+.float_right{
+    float: right;
+}
+
+
+.main_title {
+    font-size: 18px;
+    display: block;
+    width: 90px;
+    padding: 5px;
+    color: #fff;
+    background-color: #393D49!important;
+}
+
+
+/* input 框样式修改 */
+.layui-input,.layui-btn{
+    border-radius: 20px;
+}
+
+.tips_box{
+    height: 20px;
+    background: #FFB800;
+    margin: 0 -15px;
+    padding: 10px;
+    margin-bottom: 15px;
+    color: #fff;
+    font-size: 16px;
+}
+
+.form_important{
+    color: red;
+    font-size: 25px;
+    line-height: 0px;
+}
+
+/* 分页样式修改 */
+/*#page #layui-laypage-1{*/
+    /*margin: 0;*/
+/*}*/
+/*#page #layui-laypage-1 a{*/
+    /*margin: 0 -1px 0 0;*/
+/*}*/
+/*#page #layui-laypage-1 span{*/
+    /*margin: 0 -1px 0 0;*/
+/*}*/
+
+/*#page #layui-laypage-1 .layui-laypage-skip{*/
+    /*margin-left: 5px;*/
+    /*border: 1px solid #e2e2e2;*/
+    /*padding-left: 10px;*/
+/*}*/
+
+/*#page #layui-laypage-1 .layui-laypage-skip input{*/
+    /*border-top: none;*/
+    /*border-bottom: none;*/
+/*}*/
+
+/*#page #layui-laypage-1 .layui-laypage-skip button{*/
+    /*border-top: none;*/
+    /*border-bottom: none;*/
+/*}*/
+
+/*.layui-elem-quote{*/
+    /*padding: 10px;*/
+    /*margin: 0;*/
+/*}*/
