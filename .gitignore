@@ -1,0 +1,15 @@
+composer.lock
+
+runtime/*
+
+public/docs
+
+public/uploads
+
+gitc
+
+.idea/
+.env
+
+config/dbs.php
+config/sys.php
