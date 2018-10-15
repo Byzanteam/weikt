@@ -12,9 +12,9 @@ class Index extends Base
      */
     public function index()
     {
+        $this->assign('userinfo', $this->userinfo);
         return $this->fetch('/console/index/index');
     }
-
 
     /**
      * 首页页面

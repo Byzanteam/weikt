@@ -33,7 +33,7 @@ class Index extends Base
 
         // 获取用户排名
         $rank_no = 10;
-        if($list = (new User)->get_user_rank_no(2,$this->userinfo['id'],0)) {
+        if ($list = get_user_rank_no(2, $this->userinfo['id'], 0)) {
             $rank_no = $list[0]['rank_no'];
         }
 
@@ -63,10 +63,10 @@ class Index extends Base
         $curModel = new Curriculum();
 
         // 获取热门课程
-        $result['popular_course'] = $curModel->getList($this->userinfo['id'], [], 'study_num desc');
+        $result['popular_course'] = $curModel->getList($this->userinfo['id'], [], 'study_num desc', 3);
 
         // 获取推荐课程
-        $result['recommend_course'] = $curModel->getList($this->userinfo['id'], ' c.state = 1 ');
+        $result['recommend_course'] = $curModel->getList($this->userinfo['id'], 'c.state = 1');
 
         return json(['code'=>200,'msg'=>'获取成功！','data'=>$result]);
     }

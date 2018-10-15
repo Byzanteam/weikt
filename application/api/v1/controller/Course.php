@@ -19,17 +19,18 @@ class Course extends Base
 
     /**
      * 获取课程列表
-     * @param p 页码
-     * @param l 每页显示数量
-     * @param t 分类ID
+     * @return \think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
      */
     public function get_course_list()
     {
         if($this->request->isPost()) {
             // 获取列表分页参数
-            $p = intval(input('p',1));
-            $l = intval(input('l',10));
-            $type_id = intval(input('t',0));
+            $p = intval(input('p',1)); // 页码
+            $l = intval(input('l',10)); // 每页显示数量
+            $type_id = intval(input('t',0));  // 分类ID
 
             // 查询条件
             $where = [];
@@ -54,8 +55,6 @@ class Course extends Base
 
     /**
      * 获取课程详情
-     * @param id    课程ID
-     * @param uid  用户ID
      */
     public function get_course_info()
     {
@@ -63,8 +62,8 @@ class Course extends Base
         if($this->request->isPost()) {
 
             // 参数整理
-            $id   = intval(input('id',0));
-            $uid  = $this->userinfo['id'];
+            $id   = intval(input('id',0)); // 课程ID
+            $uid  = $this->userinfo['id']; //用户ID
             if(!empty($id) && !empty($uid)) {
 
                 $curModel = new Curriculum();
@@ -95,41 +94,36 @@ class Course extends Base
 
     /**
      * 课程收藏
-     * @param u_id 用户ID
-     * @param c_id 课程ID
      */
-    public function collect_course()
-    {
-        if($this->request->isPost()) {
+    public function collect_course () {
+        if ($this->request->isPost()) {
             // 整理参数
-            $u_id = $this->userinfo['id'];
-            $c_id = intval(input('c_id',0));
+            $u_id = $this->userinfo['id']; // 用户ID
+            $c_id = intval(input('c_id',0)); // 课程ID
 
-            if(!empty($u_id) && !empty($c_id)) {
+            if (!empty($u_id) && !empty($c_id)) {
                 $model = new UserCollection();
                 // 整数添加数据
                 $data['curriculum_id'] = $c_id;
                 $data['user_id'] = $u_id;
-                $detail = $model->detail($data);
+                $detail = $model->getDetail($data);
 
                 $data['collection_time'] = time();
-                if (!$detail) {
-                    $res   = $model->insert($data);
-                    $msg   = '课程收藏成功';
-                    $error = '课程收藏失败';
-                } elseif ($detail['state'] == 1) {
-                    $data['id']    = $detail['id'];
-                    $data['state'] = 0;
-                    $res   = $model->data($data)->save();
-                    $msg   = '课程取消收藏成功';
-                    $error = '课程取消收藏失败';
-                } else {
-                    $data['id']    = $detail['id'];
-                    $data['state'] = 1;
-                    $res   = $model->data($data)->save();
-                    $msg   = '课程收藏成功';
-                    $error = '课程收藏失败';
+                $data['status'] = 1;
+
+                $where = [];
+                $msg   = '课程收藏成功';
+                $error = '课程收藏失败';
+                if ($detail) {
+                    $where = ['id' => $detail['id']];
+                    if ($detail['status'] == 1) {
+                        $data['status'] = 0;
+                        $msg   = '课程取消收藏成功';
+                        $error = '课程取消收藏失败';
+                    }
                 }
+
+                $res = $model->save($data, $where);
 
                 if($res){
                     return json(['code' => 200, 'msg' => $msg, 'data' => []]);

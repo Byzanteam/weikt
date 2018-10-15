@@ -244,7 +244,7 @@ return [
         # 服务器URL
         'formal_url' => 'https://skylarkly.com', // 测试服 https://beta.skylarkly.com 正式服 https://skylarkly.com
         # 微课堂公众号 appid
-        'appid' => 'e33b2892827b2892b0d1ca1dc851361e7d67e37b2e7f4924a26b38539399ef60',
+        'appid' => 'wx2e3b67da97589455', //   e33b2892827b2892b0d1ca1dc851361e7d67e37b2e7f4924a26b38539399ef60
         # 微课堂公众号 appsecret
         'appsecret' => '6f82f9c31a1490e5a9001e00bd09a2f510d8af9da55552bbd3bf3e4c954d0e8f',
         # 微课堂 了了登录 client_id

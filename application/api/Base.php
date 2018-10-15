@@ -10,7 +10,7 @@ class Base extends Controller
     // 豁免访问权限验证的数组（全小写）
     public $excuse_arr = [
         'v1/index/index',
-        'v1/login/get_auth_url',
+        'v1/common/generate_config',
         'v1/login/user_login',
     ];
 

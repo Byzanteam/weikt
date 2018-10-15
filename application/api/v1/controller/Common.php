@@ -5,33 +5,6 @@ use app\api\Base;
 
 class Common extends Base
 {
-
-    public function upload()
-    {
-        $media_id = $_POST['media_id'];
-        $access_token = getAccessToken();
-
-        $path = './weixinrecord/';   //保存路径，相对当前文件的路径
-        $outPath = './php/weixinrecord/';  //输出路径，给show.php 文件用，上一级
-
-        if(!is_dir($path)){
-            mkdir($path);
-        }
-
-        //微 信上传下载媒体文件
-        $url = 'http://file.api.weixin.qq.com/cgi-bin/media/get?access_token={$access_token}&media_id={$media_id}';
-
-        $filename = 'wxupload_'.time().rand(1111,9999).'.amr';
-        downAndSaveFile($url,$path.'/'.$filename);
-
-        $data['path'] = $outPath.$filename;
-        $data['msg'] = 'download record audio success!';
-        // $data['url'] = $url;
-
-        return json(['code' => 200, 'msg' => '获取成功', 'data' => $data]);
-        echo json_encode($data);
-    }
-
     /**
      * 获取了了 js_ticket
      */
@@ -76,7 +49,7 @@ class Common extends Base
             // 请求成功，将结存储到session中
             session('weikt_jssdk',$data);
 
-            return json(['code' => 200, 'msg' => '获取成功', 'data' => $data]);
+            return $data['ticket'];
         }
         return false;
     }
@@ -91,11 +64,14 @@ class Common extends Base
             if($js_ticket = $this->get_ticket()){
 
                 $timestamp = time();
-                $url = SITE_URL . $_SERVER['REQUEST_URI'];
+                $url = input('curUrl');//SITE_URL . $_SERVER['REQUEST_URI'];//$_SERVER['REQUEST_URI']
                 $nonceStr = $this->createNonceStr();
 
                 // 这里参数的顺序要按照 key 值 ASCII 码升序排序
-                $string = 'jsapi_ticket=$js_ticket&noncestr=$nonceStr&timestamp=$timestamp&url=$url';
+                $string  = 'jsapi_ticket=' . $js_ticket;
+                $string .= '&noncestr=' . $nonceStr;
+                $string .= '&timestamp=' . $timestamp;
+                $string .= '&url=' . $url;
 
                 // 加密
                 $signature = sha1($string);
@@ -106,6 +82,7 @@ class Common extends Base
                     'timestamp' => $timestamp,
                     'url' => $url,
                     'signature' => $signature,
+                    'js_ticket' => $js_ticket,
                     'rawString' => $string
                 ];
 
@@ -131,8 +108,6 @@ class Common extends Base
 
         return $str;
     }
-
-
 
 }
 

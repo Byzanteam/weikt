@@ -13,15 +13,11 @@
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    admin
+                    <img src="{if condition="$userinfo['headimgurl']"}{$userinfo['headimgurl']}{else}http://t.cn/RCzsdCq{/if}" class="layui-nav-img">
+                    {$userinfo['name']}
                 </a>
-                <!--<dl class="layui-nav-child">-->
-                    <!--<dd><a href="">基本资料</a></dd>-->
-                    <!--<dd><a href="">安全设置</a></dd>-->
-                <!--</dl>-->
+
             </li>
-            <li class="layui-nav-item"><a href="">退出</a></li>
         </ul>
     </div>
 
@@ -72,34 +68,34 @@
 </div>
 <script src="/static/layui/layui.js"></script>
 <script>
-    //JavaScript代码区域
-    layui.use(['element', 'layer', 'jquery'], function(){
-        var element = layui.element;
-        var layer = layui.layer;
-        var $ = layui.jquery;
+  //JavaScript代码区域
+  layui.use(['element', 'layer', 'jquery'], function(){
+    var element = layui.element;
+    var layer = layui.layer;
+    var $ = layui.jquery;
 
-        $(".move_link").on("click",function(){
+    $(".move_link").on("click",function(){
 
-            var url = $(this).attr('data-href');
-            if(url != '' && url != undefined){
+      var url = $(this).attr('data-href');
+      if(url != '' && url != undefined){
 
-                // 获取跳转地址
-                var url = $(this).attr('data-href');
-                $("#iframe").attr('src',url);
+        // 获取跳转地址
+        var url = $(this).attr('data-href');
+        $("#iframe").attr('src',url);
 
-                $("#loading").show();
+        $("#loading").show();
 
-                return false;
-            }
-            layer.alert('正在装修...',{title: '提示框', icon: 2});
-        })
+        return false;
+      }
+      layer.alert('正在装修...',{title: '提示框', icon: 2});
+    })
 
-        document.getElementById("iframe").onload = function(){
-            $("#loading").hide();
-        };
+    document.getElementById("iframe").onload = function(){
+      $("#loading").hide();
+    };
 
 
-    });
+  });
 </script>
 </body>
 </html>

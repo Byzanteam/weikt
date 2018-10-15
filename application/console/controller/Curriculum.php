@@ -100,6 +100,7 @@ class Curriculum extends Base
             $data['cl_id'] = intval(input('cl_id',0));
             $data['desc'] = input('desc','','strip_tags,trim');
             $data['sort'] = intval(input('sort',0));
+            $data['back_img'] = input('media_path','');
 
             if(!empty($data['title']) && !empty($data['cl_id']) && !empty($data['desc'])){
 
@@ -170,6 +171,7 @@ class Curriculum extends Base
             $data['cl_id'] = intval(input('cl_id',0));
             $data['desc'] = input('desc','','strip_tags,trim');
             $data['sort'] = intval(input('sort',0));
+            $data['back_img'] = input('media_path','');
 
             if(!empty($id) && !empty($data['title']) && !empty($data['cl_id']) && !empty($data['desc'])){
 
