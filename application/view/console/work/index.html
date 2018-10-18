@@ -26,8 +26,16 @@
 
         <!-- 按钮/筛选 -->
         <div class="layui-col-md12 layui-col-lg12">
+
             <blockquote class="layui-elem-quote" style="border-left:none;">
                 <form class="layui-form float_right" action="" lay-filter="search_form">
+                    <div class="layui-inline">
+                        <select class="layui-input" name="state">
+                            <option value="0" selected="">所有</option>
+                            <option value="2">待点评</option>
+                            <option value="1">已点评</option>
+                        </select>
+                    </div>
                     <div class="layui-inline">
                         <input class="layui-input" name="chapter_id" autocomplete="off" placeholder="章节编号查询">
                     </div>
@@ -154,40 +162,33 @@
 
 
             // 搜索 表格重载
-            $(".search_but").on('click',function(){
+            $(".search_but").on('click',function () {
 
-                var chapter_id = $("input[name='chapter_id']").val();
-                var user_id = $("input[name='user_id']").val();
+              var chapter_id = $("input[name='chapter_id']").val();
+              var user_id = $("input[name='user_id']").val();
+              var state = $("select[name='state']").val();
 
-
-                if(isNaN(chapter_id)){
-                    layer.msg('编号请输入数字！', {icon: 5});
-                    return false;
-                }
-                if(isNaN(user_id)){
-                    layer.msg('编号请输入数字！', {icon: 5});
-                    return false;
-                }
-
-                // console.log(tableOjb.config.url);return false; // url
-                // console.log(tableOjb.config.page.curr);return false; // 当前页数
-
-                table.reload('tableList',{
-                    page: {
-                        curr: 1 //重新从第 1 页开始
-                    },
-                    where: {
-                        chapter_id: chapter_id,
-                        user_id: user_id
-                    }
-                });
-
-
+              if(isNaN(chapter_id)){
+                layer.msg('编号请输入数字！', {icon: 5});
                 return false;
+              }
+              if(isNaN(user_id)){
+                layer.msg('编号请输入数字！', {icon: 5});
+                return false;
+              }
 
+              table.reload('tableList',{
+                page: {
+                  curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                  chapter_id: chapter_id,
+                  user_id: user_id,
+                  state: state
+                }
+              });
+              return false;
             });
-
-
         });
     </script>
 

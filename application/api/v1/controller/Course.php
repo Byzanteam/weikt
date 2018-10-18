@@ -159,6 +159,7 @@ class Course extends Base
                 if(!empty($data)) {
                     // 平均
                     $data['media_path'] = SITE_URL . $data['media_path'];
+                    $data['content'] = html_entity_decode($data['content']);
 
                     return json(['code' => 200, 'msg' => '章节信息获取成功', 'data' => $data]);
                 }
@@ -227,13 +228,18 @@ class Course extends Base
                     if(!empty($data)) {
 
                         // 测验题获取成功，判断日过是选择题，则获取对应题目下的选项
-                        if($data['test_type'] == 2) {
+                        if ($data['test_type'] == 2) {
                             foreach ($data['list'] as $k => $v) {
                                 $data['list'][$k]['option'] = db('curriculum_test_option')
                                     ->where(['ct_id'=>$v['id']])
                                     ->field('id,ct_id,option_str')
                                     ->order(['sort','id'])
                                     ->select();
+                            }
+                        } else {
+                            foreach ($data['list'] as $k => $v) {
+                                $v['topic'] = html_entity_decode($v['topic']);
+                                $data['list'][$k] = $v;
                             }
                         }
 

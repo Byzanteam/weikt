@@ -12,4 +12,18 @@ class CurriculumClassification extends Model {
                     ->order('sort')
                     ->select();
     }
+
+    public function getOne ($where, $fields = '*') {
+        return $this->field($fields)
+                    ->where($where)
+                    ->find();
+    }
+
+    public function getChildList ($pid) {
+        $sql = 'SELECT a.id,a.name,a.back_img,a.parent_id,b.num FROM vcr_curriculum_classification a';
+        $sql .= ' LEFT JOIN (SELECT cl_id, count(*) AS num FROM vcr_curriculum GROUP BY cl_id ) AS b ON b.cl_id = a.id';
+        $sql .= ' WHERE a.parent_id = ' . $pid . ' AND a.level = 1 AND a.state = 1';
+
+        return $this->query($sql);
+    }
 }

@@ -1,18 +1,16 @@
 <?php
-/**
- * 作业处理控制器
- */
 namespace app\console\controller;
 
 use app\console\Base;
 use app\console\model\UserTask as userTask_model;
 
-class Work extends Base
-{
+/**
+ * 作业处理控制器
+ */
+class Work extends Base {
     private $model;
 
-    public function __construct()
-    {
+    public function __construct () {
         parent::__construct();
 
         $this->model = new userTask_model();
@@ -22,8 +20,7 @@ class Work extends Base
     /**
      * 作业管理页面加载
      */
-    public function index()
-    {
+    public function index () {
 
         return $this->fetch('console/work/index');
 
@@ -32,28 +29,33 @@ class Work extends Base
     /**
      * 异步获取列表数据
      */
-    public function getWorkList()
-    {
+    public function getWorkList () {
 
-        if(\think\Request::instance()->isGet()){
+        if (\think\Request::instance()->isGet()) {
 
             $page = intval(input('page',1));
             $limit = intval(input('limit',10));
             // 筛选参数接受
             $chapter_id = intval(input('chapter_id',0));
-            $user_id = intval(input('user_id',0));
+            $user_id    = intval(input('user_id',0));
+            $state      = intval(input('state',0));
 
             $where = [];
 
             if($chapter_id > 0){
-                $where['chapter_id'] = ['eq',$chapter_id];
+                $where['chapter_id'] = $chapter_id;
             }
 
             if($user_id > 0){
-                $where['user_id'] = ['eq',$user_id];
+                $where['user_id'] = $user_id;
             }
 
-            $data = $this->model->getTablePageList($where,$page,$limit);
+            if($state > 0){
+                $where['state'] = $state;
+            }
+
+            $data = $this->model->getTablePageList($where, $page, $limit);
+
             if(!empty($data['data'])){
                 return json(['code' => 200, 'msg' => '列表获取成功', 'count' => $data['total'], 'data' => $data['data']]);
             }
@@ -66,10 +68,9 @@ class Work extends Base
     /**
      * 记录查看页面
      */
-    public function get_view()
-    {
+    public function get_view () {
 
-        if(\think\Request::instance()->isGet()){
+        if (\think\Request::instance()->isGet()) {
 
             $id = intval(input('id'));
 
@@ -78,10 +79,10 @@ class Work extends Base
                 // 获取作业记录
                 $data = db('user_task')->where(['id' => $id])->find();
 
-                if(!empty($data)){
+                if (!empty($data)) {
 
                     // 获取作业内容
-                    if($data['test_type'] == 1){
+                    if ($data['test_type'] == 1) {
                         // 阅读题
                         $work['topic'] = db('curriculum_test')->where(['cc_id' => $data['chapter_id']])->find();
                         $work['topic']['topic'] = htmlspecialchars_decode($work['topic']['topic']);
@@ -89,7 +90,7 @@ class Work extends Base
                         $work['work'] = '/'.$arr['url'];
 
                         $temp_path = 'console/work/read_view';
-                    }else{
+                    } else {
 
                         // 选择题
                         $arr = json_decode($data['content'], true);
@@ -122,18 +123,17 @@ class Work extends Base
     /**
      * 点评页面
      */
-    public function review()
-    {
+    public function review () {
 
-        if(\think\Request::instance()->isGet()){
+        if (\think\Request::instance()->isGet()) {
 
             $id = intval(input('id'));
 
-            if(!empty($id)){
+            if (!empty($id)) {
 
-                if($data = db('user_task')->where(['id' => $id])->find()){
+                if ($data = db('user_task')->where(['id' => $id])->find()) {
 
-                    if($data['state'] != 1){
+                    if ($data['state'] != 1) {
 
                         $this->assign('id',$id);
                         return $this->fetch('console/work/review');
@@ -155,20 +155,19 @@ class Work extends Base
     /**
      * 记录点评提交
      */
-    public function editReview()
-    {
-        if(\think\Request::instance()->isPost()){
+    public function editReview () {
+        if (\think\Request::instance()->isPost()) {
             $id = intval(input('id'));
             $data['comment'] = input('comment','','strip_tags,trim');
 
-            if(!empty($id) && !empty($data['comment']) ){
+            if (!empty($id) && !empty($data['comment'])) {
 
                 $data['name'] = $this->userinfo['name'];
                 $data['img'] = $this->userinfo['headimgurl'];
                 $data['state'] = 1;
 
                 $res = db('user_task')->where(['id'=>$id])->update($data);
-                if($res){
+                if ($res) {
                     return json(['code' => 200, 'msg' => '分类编辑成功']);
                 }
                 return json(['code' => 0, 'msg' => '分类编辑失败，请重新操作']);
