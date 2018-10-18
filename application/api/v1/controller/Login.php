@@ -19,21 +19,18 @@ class Login extends Base
         parent::__construct();
     }
 
-    /**
-     * 用户登录
-     * @param code 用户授权码
-     */
-    public function user_login()
-    {
-        $code = input('code','','strip_tags,trim');
+    /*  用户登录   */
+    public function user_login () {
+        $code = input('code','','strip_tags,trim'); // 用户授权码
         if(!empty($code)) {
 
             // 获取用户token
             if($token = $this->get_user_token($code)) {
                 // 获取用户信息
                 if($login_token = $this->get_user_info($token)){
+                    $url = SITE_URL . '/view/index.html#/?login_token=' . $login_token;
                     // 用户登录成功
-                    $this->redirect(SITE_URL . '/view/index.html?login_token=' . $login_token);
+                    $this->redirect($url);
                 }
                 return json(['code' => 404, 'msg' => '用户登录失败', 'data' => []]);
             }
