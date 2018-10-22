@@ -54,6 +54,8 @@ class Work extends Base {
                 $where['state'] = $state;
             }
 
+            $where['test_type'] = 1;
+
             $data = $this->model->getTablePageList($where, $page, $limit);
 
             if(!empty($data['data'])){
@@ -159,6 +161,7 @@ class Work extends Base {
         if (\think\Request::instance()->isPost()) {
             $id = intval(input('id'));
             $data['comment'] = input('comment','','strip_tags,trim');
+            $data['fraction'] = input('fraction',0,'strip_tags,trim');
 
             if (!empty($id) && !empty($data['comment'])) {
 

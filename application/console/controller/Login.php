@@ -85,6 +85,7 @@ class Login extends Base
 
         if($output == false || $data == false || !is_array($data) || array_key_exists('error',$data)){
             // 获取token失败
+            echo $data['error_description'];exit;
         }
 
         // 获取token成功

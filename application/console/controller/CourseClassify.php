@@ -80,11 +80,12 @@ class CourseClassify extends Base
     {
         if(\think\Request::instance()->isPost()){
 
-            $data['name'] = input('name','','strip_tags,trim');
+            $data['name']      = input('name','','strip_tags,trim');
+            $data['label']     = input('label','');
             $data['parent_id'] = intval(input('parent_id'));
-            $data['sort']  = intval(input('sort',0));
-            $data['state'] = intval(input('state',0));
-            $data['back_img'] = input('media_path','');
+            $data['sort']      = intval(input('sort',0));
+            $data['state']     = intval(input('state',0));
+            $data['back_img']  = input('media_path','');
 
             if(!empty($data['name'])){
 
@@ -217,11 +218,12 @@ class CourseClassify extends Base
     {
         if(\think\Request::instance()->isPost()){
             $id = intval(input('id'));
-            $data['name'] = input('name','','strip_tags,trim');
+            $data['name']      = input('name','','strip_tags,trim');
+            $data['label']     = input('label','');
             $data['parent_id'] = intval(input('parent_id'));
-            $data['sort'] = intval(input('sort',0));
-            $data['state'] = intval(input('state',0));
-            $data['back_img'] = input('media_path','');
+            $data['sort']      = intval(input('sort',0));
+            $data['state']     = intval(input('state',0));
+            $data['back_img']  = input('media_path','');
             if(!empty($id) && !empty($data['name'])){
 
                 $data['level'] = empty($data['parent_id']) ? 0 : 1;

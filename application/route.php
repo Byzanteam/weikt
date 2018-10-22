@@ -66,7 +66,7 @@ Route::group('api',function(){
 
         $version = strtolower($request->param('version'));
         $controller = strtolower($request->param('controller'));
-        $method     = strtolower($request->param('method'));
+        $method     = $request->param('method');
 
         if(empty($version) || empty($controller) || empty($method)){
             return json(['code' => -1, 'msg' => '缺少必要参数']);
@@ -74,6 +74,7 @@ Route::group('api',function(){
 
         // 验证请求控制器、方法是否存在
         $namespace_path = check_file($version,$controller,$method);
+
         if(!$namespace_path){
             return json(['code' => -1, 'msg' => '请求错误，该请求无效！']);
         }
@@ -142,7 +143,6 @@ function check_file($version, $controller, $method)
 
         // 文件存在，拼接类命名空间
         $namespace_path = 'app\\api\\'.$version.'\\controller\\'.ucfirst($controller);
-
         // 获取类方法数组
         $fun_arr = get_class_methods($namespace_path);
 
@@ -152,10 +152,9 @@ function check_file($version, $controller, $method)
             if(in_array($method,$fun_arr)){
                 return $namespace_path;
             }
-            return false;
         }
-        return false;
     }
+
     return false;
 }
 

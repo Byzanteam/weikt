@@ -36,7 +36,7 @@
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label">分类图片</label>
+            <label class="layui-form-label">banner</label>
             <div class="layui-input-block" style="width: 80%;">
                 <button type="button" class="layui-btn" id="updata"><i class="layui-icon"></i>上传图片</button>
             </div>
@@ -46,6 +46,20 @@
             <label class="layui-form-label">上传结果</label>
             <div class="layui-input-block">
                 <a id="updateResult" href="javascript:;" style="display: block;height: 36px;line-height: 36px;" target="_blank">等待上传</a>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">首页小图</label>
+            <div class="layui-input-block" style="width: 80%;">
+                <button type="button" class="layui-btn" id="updata1"><i class="layui-icon"></i>上传图片</button>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">上传结果</label>
+            <div class="layui-input-block">
+                <a id="updateResult1" href="javascript:;" style="display: block;height: 36px;line-height: 36px;" target="_blank">等待上传</a>
             </div>
         </div>
 
@@ -83,6 +97,7 @@
         </div>
 
         <input id="media_path" type="hidden" name="media_path" value="">
+        <input id="media_path1" type="hidden" name="media_path1" value="">
 
         <div class="layui-form-item">
             <div class="layui-input-block">
@@ -145,6 +160,42 @@
                 layer.msg('网络错误！', {icon: 5});
             }
         });
+
+      upload.render({
+        elem: '#updata1', //绑定元素
+        url: '/console/Common/file_update/', //上传接口
+        accept: 'image',
+        field: 'file',
+        data: {type:'exerciser'},
+        headers: {ContentType: 'text/html'},
+        choose: function(obj){
+          obj.preview(function(index, file, result){
+            fileName = file.name;
+          });
+        },
+        before: function(obj){
+          $("#cover").show();
+        },
+        done: function(res){
+          $("#cover").hide();
+          if(res.code == 200){
+            // 上传成功
+            $("#media_path1").val(res.data['url']);
+
+            // 设置上传结果
+            $("#updateResult1").attr('href',res.data['url']);
+            $("#updateResult1").html(fileName + " <span style='color: green'>上传成功</span>");
+
+            layer.msg(res.msg, {icon: 6});
+          }else{
+            $("#updateResult1").html(fileName + " <span style='color: red'>上传失败</span>");
+            layer.msg(res.msg, {icon: 5});
+          }
+        },
+        error: function(){
+          layer.msg('网络错误！', {icon: 5});
+        }
+      });
 
 
         // 表单提交

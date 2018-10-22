@@ -16,7 +16,7 @@ class Curriculum extends Model {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getList($uid, $where = [], $order = 'c.chapter_num desc', $limit = 0, $fields = 'cl.id as classify_id,cl.name as classify_name,c.id,c.title,IF(SUM(study_num),SUM(study_num),0) AS study_num,IF(st.state,st.state,0) as is_study'){
+    public function getList($uid, $where = [], $order = 'c.chapter_num desc', $limit = 0, $fields = 'cl.id as classify_id,cl.name as classify_name,c.id,c.title,IF(SUM(study_num),SUM(study_num),0) AS study_num,IF(st.state,st.state,0) as is_study,index_img'){
         $this->alias('c')
                     ->join('vcr_curriculum_classification cl', 'c.cl_id = cl.id','LEFT')
                     ->join('vcr_curriculum_chapter cc', 'c.id = cc.cp_id', 'LEFT')
@@ -43,7 +43,7 @@ class Curriculum extends Model {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getCourseList($where = [], $p = 1, $l = 10, $order = ['c.sort', 'id' => 'desc'], $fields = 'c.id, c.title, c.chapter_num, cc.name as classify_name') {
+    public function getCourseList($where = [], $p = 1, $l = 10, $order = ['c.sort', 'id' => 'desc'], $fields = 'c.id, c.title, c.chapter_num, cc.name as classify_name,c.back_img') {
         return $this->alias('c')
                     ->join('vcr_curriculum_classification cc','c.cl_id = cc.id', 'LEFT')
                     ->field($fields)

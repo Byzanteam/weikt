@@ -32,6 +32,13 @@
         </div>
 
         <div class="layui-form-item">
+            <label class="layui-form-label"><span class="form_important">*</span> 分类标签</label>
+            <div class="layui-input-block"  style="width: 50%;">
+                <input type="text" id="label" name="label" required value="{$data.label}"  lay-verify="required" placeholder="请输入分类标签" {if condition="$data.parent_id neq 0"}readonly="disabled"{/if} autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
             <label class="layui-form-label">分类图片</label>
             <div class="layui-input-block" style="width: 80%;">
                 <button type="button" class="layui-btn" id="updata"><i class="layui-icon"></i>上传图片</button>
@@ -48,11 +55,11 @@
         <div class="layui-form-item">
             <label class="layui-form-label">上级分类</label>
             <div class="layui-input-block" style="width: 70%;">
-                <select name="parent_id" lay-verify="required">
+                <select lay-filter="parent_id" name="parent_id" lay-verify="required">
                     <option value="0">顶级分类</option>
                     {notempty name='list'}
                         {volist name='list' id='vo'}
-                        <option value="{$vo.id}" {if condition="$vo.id eq $data.parent_id"}selected{/if} >{$vo.name}</option>
+                        <option label="{$vo.label}" value="{$vo.id}" {if condition="$vo.id eq $data.parent_id"}selected{/if} >{$vo.name}</option>
                         {/volist}
                     {/notempty}
                 </select>
@@ -175,9 +182,12 @@
             return false;
         });
 
+      form.on('select(parent_id)', function(data){
+        var label = data.elem[data.elem.selectedIndex].label;
 
+        $('#label').val(label).attr('readonly', 'disabled');
+      });
     });
-
 </script>
 
 </body>

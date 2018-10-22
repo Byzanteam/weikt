@@ -20,9 +20,10 @@ class CurriculumClassification extends Model {
     }
 
     public function getChildList ($pid) {
-        $sql = 'SELECT a.id,a.name,a.back_img,a.parent_id,b.num FROM vcr_curriculum_classification a';
+        $sql = 'SELECT a.id,a.name,a.back_img,a.parent_id,if(b.num, b.num,0) as num FROM vcr_curriculum_classification a';
         $sql .= ' LEFT JOIN (SELECT cl_id, count(*) AS num FROM vcr_curriculum GROUP BY cl_id ) AS b ON b.cl_id = a.id';
         $sql .= ' WHERE a.parent_id = ' . $pid . ' AND a.level = 1 AND a.state = 1';
+        $sql .= ' ORDER BY sort';
 
         return $this->query($sql);
     }

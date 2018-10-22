@@ -39,6 +39,13 @@
         </div>
 
         <div class="layui-form-item">
+            <label class="layui-form-label"><span class="form_important">*</span> 获得分数</label>
+            <div class="layui-input-block" style="width: 70%;">
+                <input type="number" name="fraction" max="100" required  lay-verify="required" placeholder="请输入获得分数" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
             <div class="layui-input-block">
                 <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
                 <button type="reset" class="layui-btn layui-btn-primary">重置</button>

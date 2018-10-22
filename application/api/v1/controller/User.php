@@ -2,6 +2,7 @@
 namespace app\api\v1\controller;
 
 use app\api\Base;
+use app\api\v1\model\UserCollection;
 use app\api\v1\model\UserTask;
 use think\Db;
 
@@ -70,14 +71,9 @@ class User extends Base
             $id = $this->userinfo['id'];
             if(!empty($id)) {
 
+                $uc_model = new UserCollection();
                 // 获取收藏数据
-                $data = db('user_collection')->alias('uc')
-                    ->join('vcr_curriculum c', 'uc.curriculum_id = c.id')
-                    ->where(['uc.user_id'=>$id])
-                    ->field('uc.id,uc.curriculum_id,c.title')
-                    ->page($page,$limit)
-                    ->order(['uc.id'=>'desc'])
-                    ->select();
+                $data = $uc_model->getList($id, $page, $limit);
 
                 if(!empty($data)) {
                     return json(['code' => 200, 'msg' => '收藏列表获取成功', 'data' => $data]);
@@ -177,7 +173,7 @@ class User extends Base
                     'ut.id' => $id,
                     'ut.user_id' => $uid
                 ];
-                $fields = 'ut.id,ut.chapter_id,from_unixtime(ut.sub_time, \'%Y-%m-%d\') as sub_time,ut.state,ut.comment,ut.name,ut.img,cc.title';
+                $fields = 'ut.fraction,ut.id,ut.chapter_id,from_unixtime(ut.sub_time, \'%Y-%m-%d\') as sub_time,ut.state,ut.comment,ut.name,ut.img,cc.title';
                 $data = $utModel->getDetail($where, $fields);
                 // 检查作业是否点评
                 if (!empty($data)) {

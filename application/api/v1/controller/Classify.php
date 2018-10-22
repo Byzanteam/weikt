@@ -17,15 +17,13 @@ class Classify extends Base
      * @return \think\response\Json
      */
     public function getClassList () {
+
         if ($this->request->isPost()) {
-            $page = intval(input('p',1));
-            $limit = intval(input('l',10));
             $c_id = (int)input('pi', 0); // 分类ID
 
             $ccModel = new CurriculumClassification();
-            $where = ['parent_id' => $c_id];
-            $fields = 'id,name,back_img';
-            $data = $ccModel->getList($where, $page, $limit, $fields);
+
+            $data = $ccModel->getChildList($c_id);
 
             if (!empty($data)) {
                 // 查询成功，返回课程列表

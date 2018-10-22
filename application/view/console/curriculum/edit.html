@@ -38,7 +38,7 @@
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label">分类图片</label>
+            <label class="layui-form-label">banner</label>
             <div class="layui-input-block" style="width: 80%;">
                 <button type="button" class="layui-btn" id="updata"><i class="layui-icon"></i>上传图片</button>
             </div>
@@ -48,6 +48,20 @@
             <label class="layui-form-label">上传结果</label>
             <div class="layui-input-block">
                 <a id="updateResult" href="{$data.back_img}" style="display: block;height: 36px;line-height: 36px;" target="_blank">{if condition="$data['back_img']"}查看{else}等待上传{/if}</a>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">首页小图</label>
+            <div class="layui-input-block" style="width: 80%;">
+                <button type="button" class="layui-btn" id="updata1"><i class="layui-icon"></i>上传图片</button>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">上传结果</label>
+            <div class="layui-input-block">
+                <a id="updateResult1" href="{$data.index_img}" style="display: block;height: 36px;line-height: 36px;" target="_blank">{if condition="$data['index_img']"}查看{else}等待上传{/if}</a>
             </div>
         </div>
 
@@ -85,6 +99,7 @@
         </div>
 
         <input id="media_path" type="hidden" name="media_path" value="{$data.back_img}">
+        <input id="media_path1" type="hidden" name="media_path1" value="{$data.index_img}">
 
         <div class="layui-form-item">
             <div class="layui-input-block">

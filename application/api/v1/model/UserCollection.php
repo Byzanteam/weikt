@@ -20,4 +20,17 @@ class UserCollection extends Model {
                     ->find();
     }
 
+    public function getList ($id, $page = 1, $limit = 10) {
+        return $this->alias('uc')
+                    ->join('vcr_curriculum c', 'uc.curriculum_id = c.id')
+                    ->where([
+                            'uc.user_id' => $id,
+                            'uc.status'  => 1
+                        ])
+                    ->field('uc.id,uc.curriculum_id,c.title')
+                    ->page($page,$limit)
+                    ->order(['uc.id'=>'desc'])
+                    ->select();
+    }
+
 }
