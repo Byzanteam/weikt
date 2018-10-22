@@ -3,8 +3,7 @@ namespace app\api\v1\model;
 
 use think\Model;
 
-class UserTask extends Model
-{
+class UserTask extends Model {
     /**
      * 获取我的作业详情
      * @param array $where

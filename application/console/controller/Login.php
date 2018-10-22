@@ -9,6 +9,7 @@
 namespace app\console\controller;
 
 use app\console\Base;
+use app\console\model\UserBasic;
 
 class Login extends Base
 {
@@ -49,37 +50,12 @@ class Login extends Base
     /**
      * 接受授权码，获取 access_token 并 获取用户信息
      */
-    public function get_user_info()
-    {
+    public function get_user_info () {
 
         // 获取用户授权码
         $code = input('code','','strip_tags,trim');
 
-        // 拼接 获取 token api 的地址
-        $url = config('llapi.formal_url').'/oauth/token';
-
-        $param['client_id'] = config('llapi.client_id');
-        $param['client_secret'] = config('llapi.client_secret');
-        $param['code'] = $code;
-        $param['grant_type'] = 'authorization_code';
-        $param['redirect_uri'] = config('llapi.console_redirect_uri');
-
-        // 初始化 curl
-        $ch = curl_init();
-
-        // curl 设置
-        curl_setopt($ch, CURLOPT_URL, $url);    # 需要获取的URL地址
-        curl_setopt($ch, CURLOPT_TIMEOUT, 40);  # 设置 请求超时时间 单位秒
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);    # 设置获取到的内容不直接输出，而是返回存储到一个变量中
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); # 禁止 cURL 验证对等证书
-
-        curl_setopt($ch, CURLOPT_POST, true);   # 设置是否启用POST方式请求
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($param));    # POST 请求的参数 如果传递的是数组话的 Content-Type头会被设置为 multipart/form-data
-
-        $output = curl_exec($ch);
-
-        // 结束curl请求
-        curl_close($ch);
+        $output = get_user_token($code, config('llapi.console_redirect_uri'));
 
         $data = json_decode($output,true);
 
@@ -93,34 +69,14 @@ class Login extends Base
         // 请求成功，将请求结果 存储到 session
         session('weikt_token',$data);
 
-        // =============================================================================================================
-        // 使用得到的 token 获取用户信息
+        $result = get_user_info($data['access_token']);
 
-        // 拼接api地址
-        $url = config('llapi.formal_url').'/api/v1/user';
-        // 拼接token
-        $url .= '/?access_token='.$data['access_token'];
+        $info = json_decode($result, true);
 
-        // 初始化 curl
-        $ch = curl_init();
+        // 获取用户信息失败
+        if($result == false || $info == false || !is_array($info) || array_key_exists('error', $info)){
 
-        // curl 设置
-        curl_setopt($ch, CURLOPT_URL, $url);    # 需要获取的URL地址
-        curl_setopt($ch, CURLOPT_TIMEOUT, 40);  # 设置 请求超时时间 单位秒
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);    # 设置获取到的内容不直接输出，而是返回存储到一个变量中
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); # 禁止 cURL 验证对等证书
-
-        $result = curl_exec($ch);
-
-        // 结束curl请求
-        curl_close($ch);
-
-        // 结果 json 字符串转数组
-        $info = json_decode($result,true);
-
-        // 判断请求结果
-        if($result == false || $info == false || !is_array($info) || array_key_exists('error',$info)){
-            // 获取用户信息失败
+            echo $info['error_description'];exit;
         }
 
         // 请求成功
@@ -131,13 +87,16 @@ class Login extends Base
 
         // 获取允许登录组织
         $teacher_organ = config('llapi.teacher_organ');
-        // 获取用户所在组织
-        $user_organ = $info['root_organization_ids'];
+
         // 是否允许登录 默认false
         $is_log_in = false;
 
-        foreach ($user_organ as $k => $v){
+        foreach ($info['root_organization_ids'] as $k => $v){
             if(in_array($v,$teacher_organ)){
+                $model = new UserBasic();
+
+                $model->update_user_info($info);
+
                 $is_log_in = true;
             }
         }

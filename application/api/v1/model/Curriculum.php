@@ -43,7 +43,7 @@ class Curriculum extends Model {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getCourseList($where = [], $p = 1, $l = 10, $order = ['c.sort', 'id' => 'desc'], $fields = 'c.id, c.title, c.chapter_num, cc.name as classify_name,c.back_img') {
+    public function getCourseList($where = [], $p = 1, $l = 10, $order = ['c.sort', 'id' => 'desc'], $fields = '*') {
         return $this->alias('c')
                     ->join('vcr_curriculum_classification cc','c.cl_id = cc.id', 'LEFT')
                     ->field($fields)
@@ -64,7 +64,7 @@ class Curriculum extends Model {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getDetail($uid, $where = [], $fields = 'c.id, c.title, c.back_img as banner_img, c.desc, c.chapter_num, cc.name as classify_name,IF(uc.id, "1", 0) AS is_collection'){
+    public function getDetail($uid, $where = [], $fields = '*'){
         return $this->alias('c')
                     ->join('vcr_curriculum_classification cc','c.cl_id = cc.id', 'LEFT')
                     ->join('vcr_user_collection uc','uc.curriculum_id = c.id AND uc.user_id = ' . $uid . ' AND uc.status = 1', 'LEFT')

@@ -5,27 +5,20 @@ use app\api\Base;
 use app\api\v1\model\Curriculum;
 use app\api\v1\model\UserCollection;
 
-class Course extends Base
-{
+class Course extends Base {
 
     // 文件保存路径
     private $save_file_path = 'static/update/';
 
 
-    public function __construct()
-    {
+    public function __construct () {
         parent::__construct();
     }
 
     /**
      * 获取课程列表
-     * @return \think\response\Json
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
      */
-    public function get_course_list()
-    {
+    public function get_course_list () {
         if($this->request->isPost()) {
             // 获取列表分页参数
             $p = intval(input('p',1)); // 页码
@@ -40,8 +33,9 @@ class Course extends Base
 
             $curModel = new Curriculum();
 
+            $fields = 'c.id, c.title, c.chapter_num, cc.name as classify_name,c.back_img';
             // 获取课程分页列表
-            $data = $curModel->getCourseList($where, $p, $l);
+            $data = $curModel->getCourseList($where, $p, $l, $fields);
 
             if(!empty($data)) {
                 // 查询成功，返回课程列表
@@ -56,8 +50,7 @@ class Course extends Base
     /**
      * 获取课程详情
      */
-    public function get_course_info()
-    {
+    public function get_course_info () {
 
         if($this->request->isPost()) {
 
@@ -68,9 +61,15 @@ class Course extends Base
 
                 $curModel = new Curriculum();
 
-                $where  = ['c.id ' => $id];
+                $where  = [
+                    'c.id ' => $id
+                ];
+
+                $fields = 'c.id, c.title, c.back_img as banner_img, c.desc, c.chapter_num';
+                $fields .= ', cc.name as classify_name,IF(uc.id, "1", 0) AS is_collection';
+
                 // 获取课程分页列表
-                $data = $curModel->getDetail($uid, $where);
+                $data = $curModel->getDetail($uid, $where, $fields);
 
                 if ($data) {
 

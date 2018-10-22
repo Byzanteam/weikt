@@ -75,3 +75,97 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
     return false;
 
 }
+
+function get_user_token ($code, $redirect_uri) {
+    $url = config('llapi.formal_url').'/oauth/token';
+
+    // 整理请求参数
+    $param = [
+        'client_id'     => config('llapi.client_id'),
+        'client_secret' => config('llapi.client_secret'),
+        'redirect_uri'  => $redirect_uri,
+        'code'          => $code,
+        'grant_type'    => 'authorization_code',
+    ];
+
+    $output = curlRequest($url, 'POST', [], $param);
+
+    $data = json_decode($output,true);
+
+    // 判断请求是否成功
+    if($output != false && $data != false && is_array($data) && !array_key_exists('error',$data) && array_key_exists('access_token',$data)) {
+        // 获取成功，返回 token 字符串
+        return $data['access_token'];
+    }
+
+    // 失败fasle
+    return false;
+}
+
+function get_user_info ($token) {
+
+    $url = config('llapi.formal_url').'/api/v1/user';
+    // 拼接token
+    $url .= '/?access_token=' . $token;
+
+    $result = curlRequest($url, 'GET');
+
+    $user_info = json_decode($result,true);
+
+    // 判断 curl 请求是否成功
+    if($result != false || $user_info != false || is_array($user_info) || !array_key_exists('error',$user_info)) {
+        // 获取用户信息成功
+        return $user_info;
+    }
+    // 获取用户信息失败，返回false
+    return false;
+}
+
+/**
+ * 提交数据
+ * @param  string $url 请求Url
+ * @param  string $method 请求方式
+ * @param  array/string $headers Headers信息
+ * @param  array/string $params 请求参数
+ * @return 返回的
+ */
+function curlRequest ($url, $method, $headers = [], $params = []) {
+    if (is_array($params)) {
+        $requestString = http_build_query($params);
+    } else {
+        $requestString = $params ? : '';
+    }
+    if (empty($headers)) {
+        $headers = array('Content-type: text/json');
+    } elseif (!is_array($headers)) {
+        parse_str($headers,$headers);
+    }
+    // setting the curl parameters.
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_VERBOSE, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    // turning off the server and peer verification(TrustManager Concept).
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    // setting the POST FIELD to curl
+    switch ($method){
+        case "GET" : curl_setopt($ch, CURLOPT_HTTPGET, 1);break;
+        case "POST": curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $requestString);break;
+        case "PUT" : curl_setopt ($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $requestString);break;
+        case "DELETE":  curl_setopt ($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $requestString);break;
+    }
+    // getting response from server
+    $response = curl_exec($ch);
+
+    //close the connection
+    curl_close($ch);
+
+    //return the response
+    return $response;
+}
