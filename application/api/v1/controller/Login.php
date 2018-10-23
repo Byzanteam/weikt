@@ -15,8 +15,7 @@ class Login extends Base
      * 4.用户信息获取成功，session存储用户信息，重定向到后台首页
      */
 
-    public function __construct()
-    {
+    public function __construct () {
         parent::__construct();
     }
 
@@ -34,12 +33,12 @@ class Login extends Base
 
                     $userModel = new UserBasic();
 
-                    $login_token = $userModel->update_user_info($user_info, false);
+                    if ($login_token = $userModel->update_user_info($user_info, false)) {
+                        $url = SITE_URL . '/view/index.html#/?login_token=' . $login_token;
 
-                    $url = SITE_URL . '/view/index.html#/?login_token=' . $login_token;
-
-                    // 用户登录成功
-                    $this->redirect($url);
+                        // 用户登录成功
+                        $this->redirect($url);
+                    }
                 }
 
                 echo '用户登录失败';exit;

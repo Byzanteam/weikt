@@ -101,8 +101,10 @@ Route::group('api',function(){
 
             // 获取用户ID
             $user_id = session($auth);
+
+            $model = new \app\console\model\UserBasic();
             // 获取用户信息
-            $userinfo = db('user_basic')->where(['id' => $user_id])->find();
+            $userinfo = $model->getOne(['ll_id' => $user_id]);
 
             if(empty($userinfo)){
                 return json(['code' => -1, 'msg' => '请求错误，用户不存在']);

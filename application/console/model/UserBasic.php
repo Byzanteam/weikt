@@ -54,15 +54,13 @@ class UserBasic extends Model {
     /**
      * 处理登录时的数据处理
      * @param array $userinfo 用户信息
+     * @param bool $is_teacher
      * @return bool|string
      * @throws \think\Exception
      */
     public function update_user_info ($userinfo = [], $is_teacher = true) {
 
-        // 查询用户是否存在
-        $where = [
-            'll_id' => $userinfo['id']
-        ];
+        $where['ll_id'] = $userinfo['id'];
 
         // 整理用户数据
         $data['ll_id']      = $userinfo['id'];
@@ -71,17 +69,24 @@ class UserBasic extends Model {
         $data['phone']      = $userinfo['phone'];
         $data['openid']     = $userinfo['openid'];
         $data['headimgurl'] = $userinfo['headimgurl'];
-        $data['root_organization_ids']  = import(',', $userinfo['root_organization_ids']);
+        $data['root_organization_ids']  = implode(',', $userinfo['root_organization_ids']);
 
-        if ($this->save($data, $where)) {
+        if ($detail = $this->getOne($where, 'last_time,studytime')) {
 
-            if ($is_teacher === false) {
-                // 判断 如果本次登录时间 大于 上次登录时间的23:59 则表示已经过了一天，总学习时间 +1
-                $where['last_time < ?'] = date('Y-m-d 00:00:00');
-                $this->where($where)
-                    ->setInc('studytime')
-                    ->update(['last_time' => date('Y-m-d H:i:s')]);
+            $data['last_time'] = date('Y-m-d H:i:s');
+
+            // 如果最后登录时间在今天之前，学习时间 +1
+            if ($detail['last_time'] < date('Y-m-d 00:00:00') && $is_teacher === false) {
+                $data['studytime'] = (float)$detail['studytime'] + 1;
             }
+
+            $result = $this->update($data, $where);
+
+        } else {
+            $result = $this->save($data);
+        }
+
+        if ($result !== false) {
 
             // 生成用户 登录token
             $login_token = strtoupper(md5('weikt-'.md5($userinfo['id'].'-'.time())));
