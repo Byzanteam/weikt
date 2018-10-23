@@ -146,9 +146,9 @@ function curlRequest ($url, $method, $headers = [], $params = []) {
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_TIMEOUT, 40);
 
-    if (empty($headers)) {
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    }
+
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
 
     // turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);

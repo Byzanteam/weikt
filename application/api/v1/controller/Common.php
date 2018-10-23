@@ -3,13 +3,11 @@ namespace app\api\v1\controller;
 
 use app\api\Base;
 
-class Common extends Base
-{
+class Common extends Base {
     /**
      * 获取了了 js_ticket
      */
-    public function get_ticket()
-    {
+    public function get_ticket () {
 
         // 当前时间-60秒
         $new_time = time() - 60;
@@ -22,24 +20,12 @@ class Common extends Base
         }
 
         // 设置请求的header参数
-        $auto = 'Authorization:'.config('llapi.v4_api_Authorization');
-        $headers = [$auto];
+        $headers = ['Authorization:'.config('llapi.v4_api_Authorization')];
 
         // 设置请求URL
         $url = config('llapi.formal_url').'/api/v4/wechat_clients/jsapi_ticket';
 
-        // 初始化 curl
-        $chs = curl_init();
-        // curl 设置
-        curl_setopt($chs, CURLOPT_URL, $url);    # 需要获取的URL地址
-        curl_setopt($chs, CURLOPT_TIMEOUT, 40);  # 设置 请求超时时间 单位秒
-        curl_setopt($chs, CURLOPT_RETURNTRANSFER, 1);    # 设置获取到的内容不直接输出，而是返回存储到一个变量中
-        curl_setopt($chs, CURLOPT_SSL_VERIFYPEER, false); # 禁止 cURL 验证对等证书
-        curl_setopt($chs, CURLOPT_HTTPHEADER, $headers);
-
-        $result = curl_exec($chs);
-        // 结束curl请求
-        curl_close($chs);
+        $result = curlRequest($url, '', $headers);
 
         $data = json_decode($result,true);
 
@@ -57,8 +43,7 @@ class Common extends Base
     /**
      * 设置微信jssdk权限验证配置
      */
-    public function generate_config()
-    {
+    public function generate_config () {
         if($this->request->isGet()) {
 
             if($js_ticket = $this->get_ticket()){
@@ -98,8 +83,7 @@ class Common extends Base
      * @param int $length
      * @return string
      */
-    private function createNonceStr($length = 16)
-    {
+    private function createNonceStr ($length = 16) {
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $str = '';
         for ($i = 0; $i < $length; $i++) {
