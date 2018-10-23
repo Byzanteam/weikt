@@ -1,27 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: xiaoy
- * Date: 2018-8-27
- * Time: 0:20
- */
-
 namespace app\console\model;
 
 use think\Model;
 
-class CurriculumChapter extends Model
-{
+class CurriculumChapter extends Model {
 
     /**
      * 分页获取数据列表
-     * @param where 查询条件
-     * @param page  分页页码
-     * @param limit 每页显示数量
-     * @param order 排序方式
+     * @param array $where 查询条件
+     * @param int $page 分页页码
+     * @param int $limit 每页显示数量
+     * @param string $order 排序方式
+     * @return array
+     * @throws \think\exception\DbException
      */
-    public function getTablePageList($where = [], $page = 1, $limit = 10, $order = 'id desc')
-    {
+    public function getTablePageList ($where = [], $page = 1, $limit = 10, $order = 'id desc') {
 
         // tp5 分页调用方式
         $res = $this->where($where)
@@ -63,8 +56,42 @@ class CurriculumChapter extends Model
      * @param $id
      * @return int
      */
-    public function del($id)
-    {
+    public function del ($id) {
         return $this->where(['id'=>$id])->delete();
+    }
+
+    /**
+     * 获取章节列表 并获取用户的学习情况
+     * @param $uid
+     * @param $where
+     * @param string $fields
+     * @param array $order
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getChapterList ($uid, $where = [], $fields = '*', $order = ['sort', 'id'=>'desc']) {
+        return $this->alias('ch')
+            ->join('vcr_user_study st', 'ch.id = st.chapter_id AND user_id = ' . $uid, 'LEFT')
+            ->where($where)
+            ->field($fields)
+            ->order($order)
+            ->select();
+    }
+
+    /**
+     * 获取章节信息
+     * @param array $where
+     * @param string $fields
+     * @return array|false|\PDOStatement|string|Model
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getOne ($where = [], $fields = '*') {
+        return $this->where($where)
+            ->field($fields)
+            ->find();
     }
 }

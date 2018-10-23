@@ -4,6 +4,10 @@ namespace app\api\v1\controller;
 use app\api\Base;
 use app\api\v1\model\Curriculum;
 use app\api\v1\model\UserCollection;
+use app\api\v1\model\UserStudy;
+use app\console\model\CurriculumChapter;
+use app\console\model\CurriculumExercise;
+use app\console\model\UserBasic;
 
 class Course extends Base {
 
@@ -15,9 +19,7 @@ class Course extends Base {
         parent::__construct();
     }
 
-    /**
-     * 获取课程列表
-     */
+    /** 获取课程列表 */
     public function get_course_list () {
         if($this->request->isPost()) {
             // 获取列表分页参数
@@ -47,9 +49,7 @@ class Course extends Base {
     }
 
 
-    /**
-     * 获取课程详情
-     */
+    /** 获取课程详情 */
     public function get_course_info () {
 
         if($this->request->isPost()) {
@@ -73,14 +73,13 @@ class Course extends Base {
 
                 if ($data) {
 
-                    // 获取课程下章节列表
-                    // 学习状态暂无
-                    $data['chapter_list'] = db('curriculum_chapter')->alias('ch')
-                        ->join('vcr_user_study st', 'ch.id = st.chapter_id AND user_id = ' . $uid, 'LEFT')
-                        ->where(['cp_id'=>$id])
-                        ->field('ch.id,ch.title,ch.media_type,from_unixtime(ch.is_time, \'%Y-%m-%d\') as is_time,ch.study_num,IF(st.state, st.state, 0) AS state')
-                        ->order(['sort', 'id'=>'desc'])
-                        ->select();
+                    $chaModel = new CurriculumChapter();
+
+                    $chaFields = 'ch.id,ch.title,ch.media_type,from_unixtime(ch.is_time, \'%Y-%m-%d\') as is_time,ch.study_num,IF(st.state, st.state, 0) AS state';
+                    $chaWhere = [
+                        'cp_id' => $id
+                    ];
+                    $data['chapter_list'] = $chaModel->getChapterList($uid, $chaWhere, $chaFields);
 
                     return json(['code' => 200, 'msg' => '课程信息获取成功', 'data' => $data]);
                 }
@@ -91,9 +90,7 @@ class Course extends Base {
         return json(['code' => 400, 'msg' => '请求方式不正确', 'data' => []]);
     }
 
-    /**
-     * 课程收藏
-     */
+    /** 课程收藏 */
     public function collect_course () {
         if ($this->request->isPost()) {
             // 整理参数
@@ -136,24 +133,24 @@ class Course extends Base {
     }
 
 
-    /**
-     * 获取章节信息
-     * @param id 章节ID
-     */
-    public function get_chapter_info()
-    {
+    /** 获取章节信息 */
+    public function get_chapter_info () {
         if($this->request->isPost()) {
 
-            // 参数整理
+            //
             $id = intval(input('id',0));
 
             if(!empty($id)) {
 
                 // 获取章节内容
-                $data = db('curriculum_chapter')
-                    ->where(['id'=>$id])
-                    ->field('id,cp_id,title,study_num,media_type,media_path,content,test_type,from_unixtime(is_time, \'%Y-%m-%d\') as is_time')
-                    ->find();
+
+                $chaModel = new CurriculumChapter();
+
+                $fields = 'id,cp_id,title,study_num,media_type,media_path,content,test_type,from_unixtime(is_time, \'%Y-%m-%d\') as is_time';
+                $where = [
+                    'id' => $id
+                ];
+                $data = $chaModel->getOne($where, $fields);
 
                 if(!empty($data)) {
                     // 平均
@@ -170,12 +167,8 @@ class Course extends Base {
     }
 
 
-    /**
-     * 获取章节对应练习题
-     * @param id 章节ID
-     */
-    public function get_chapter_exercise()
-    {
+    /** 获取章节对应练习题 */
+    public function get_chapter_exercise () {
         if($this->request->isPost()) {
 
             // 参数整理
@@ -183,10 +176,12 @@ class Course extends Base {
             if(!empty($id)) {
 
                 // 获取章节对应练习题
-                $data = db('curriculum_exercise')
-                    ->where(['cc_id'=>$id])
-                    ->order(['sort', 'id' => 'desc'])
-                    ->select();
+                $exModel = new CurriculumExercise();
+
+                $where = [
+                    'cc_id' => $id
+                ];
+                $data = $exModel->getList($where, '');
 
                 if(!empty($data)) {
 
@@ -205,21 +200,22 @@ class Course extends Base {
     }
 
 
-    /**
-     * 获取章节对应的测验题
-     * @param id 章节ID
-     */
-    public function get_chapter_test()
-    {
-        if($this->request->isPost()) {
+    /** 获取章节对应的测验题 */
+    public function get_chapter_test () {
 
-            // 参数整理
+        if ($this->request->isPost()) {
+            // 章节ID
             $id = intval(input('id',0));
 
-            if(!empty($id)) {
+            if($id > 0) {
 
                 // 获取章节基本信息
-                $data = db('curriculum_chapter')->where(['id'=>$id])->field('test_type')->find();
+                $chaModel = new CurriculumChapter();
+
+                $where = [
+                    'id' => $id
+                ];
+                $data = $chaModel->getOne($where, 'test_type');
                 if(!empty($data)) {
 
                     // 获取章节对应的测验题
@@ -255,29 +251,23 @@ class Course extends Base {
 
 
 
-    /**
-     * 作业提交 - 音频
-     * @param u_id 用户ID
-     * @param cc_id 章节ID
-     * @param files 提交文件数据
-     */
-    public function audio_work_submit()
-    {
-        if($this->request->isPost()) {
+    /** 作业提交 - 音频 */
+    public function audio_work_submit () {
+        if ($this->request->isPost()) {
 
             // 参数接受
             $u_id = $this->userinfo['id'];
-            $cc_id = intval(input('cc_id',0));
-            $file = $_FILES['files'];
+            $cc_id = intval(input('cc_id',0)); // 章节ID
+            $file = $_FILES['files']; // 提交文件数据
 
-            if(!empty($u_id) && !empty($cc_id) && !empty($file) && $file['error'] == 0) {
+            if (!empty($u_id) && !empty($cc_id) && !empty($file) && $file['error'] == 0) {
 
                 // 获取文件类型
                 $arr = explode('/',$file['type']);
                 $type = $arr[0];
 
                 // 判断文件类型是否正确
-                if($type == 'audio') {
+                if ($type == 'audio') {
 
                     // 释放变量
                     unset($arr);
@@ -382,20 +372,14 @@ class Course extends Base {
     }
 
 
-    /**
-     * 作业提交 - 选择题作业提交
-     * @param u_id      用户ID
-     * @param cc_id     章节ID
-     * @param result    选择题作业 二维数组
-     */
-    public function slect_work_submit()
-    {
-        if($this->request->isPost()) {
+    /** 作业提交 - 选择题作业提交 */
+    public function slect_work_submit () {
+        if ($this->request->isPost()) {
 
             // 整理参数
             $u_id    = $this->userinfo['id'];
-            $cc_id  = intval(input('cc_id',0));
-            $result = input('result/a');
+            $cc_id  = intval(input('cc_id',0)); // 章节ID
+            $result = input('result/a'); // 选择题作业 二维数组
 
             if(!empty($u_id) && !empty($cc_id) && !empty($result) && is_array($result)) {
 
@@ -404,65 +388,34 @@ class Course extends Base {
                 // 3.添加/更新学习记录
                 // 4.返回作业结果
 
-                // 判断作业记录是否存在，不存在，则直接添加
-                // 存在则判断作业是否点评，没有则进行数据覆盖，已点评则直接返回 作业已提交
-                if(!db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id])->find()) {
-                    // 作业记录不存在，添加作业记录
-                    // 整理作业数据
-                    $workDate['chapter_id'] = $cc_id;
-                    $workDate['user_id']    = $u_id;
-                    $workDate['sub_time']   = time();
-                    $workDate['test_type']  = 2;
-                    $workDate['content']    = json_encode($result);
-                    $workDate['state']      = 2;
+                $stuModel = new UserStudy();
+                $basModel = new UserBasic();
 
-                    if(!db('user_task')->insert($workDate)) {
-                        return json(['code' => 403, 'msg' => '抱歉！作业提交失败', 'data' => []]);
+
+                // 判断 盖章节是否已经学习过，如果已经存在学习记录 并且学习完成 则不累计学习章节  否则 +1
+                $where = [
+                    'chapter_id' => $cc_id,
+                    'user_id'    => $u_id,
+                ];
+                if ($study = $stuModel->getDetail($where, 'id')) {
+
+                    if ($study['state'] != 2) {
+                        // 改变学习章节数
+                        $basModel->where(['id' => $u_id])->setInc('curriculum');
+
+                        $stuModel->save(['state' => 2], $where);
                     }
 
-                }else{
-
-                    // 作业记录存在，判断是否点评
-                    if(db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id, 'state' => 1])->find()) {
-                        // 作业以点评，返回提示
-                        return json(['code' => 203, 'msg' => '作业以点评，不需要再次提交', 'data' => []]);
-
-                    }
-
-                    // 作业未点评，数据覆盖
-                    $workDate['sub_time']   = time();
-                    $workDate['test_type']  = 2;
-                    $workDate['content']    = json_encode($result);
-
-                    if(!db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id, 'state' => 2])->update($workDate)) {
-                        return json(['code' => 403, 'msg' => '抱歉！作业提交失败', 'data' => []]);
-                    }
-
-                }
-
-                // 作业提交成功
-
-
-                // 判断 盖章节是否已经学习过，如果已经存在学习记录 并且学习完成 则不累计 学习章节
-                if(!db('user_study')->where(['chapter_id' => $cc_id, 'user_id' => $u_id, 'state' => 2])->find()) {
-                    // 学习完成章节数+1
-                    db('user_basic')->where(['id'=>$u_id])->setInc('curriculum');
-                }
-
-
-                // 更新学习记录
-                // 查询 学习 记录是否存在，存在则检查状态，修改学习中未 学习完成
-                if(db('user_study')->where(['chapter_id' => $cc_id, 'user_id' => $u_id])->find()) {
-                    // 修改状态为2 已学习完成
-                    db('user_study')->where(['chapter_id' => $cc_id, 'user_id' => $u_id])->update(['state' => 2]);
-                }else{
-                    // 学习记录不存在，新添加一条，并直接设置状态为2 学习完成
+                } else {
                     $studyData['chapter_id']    = $cc_id;
                     $studyData['user_id']       = $u_id;
                     $studyData['study_date']    = time();
                     $studyData['study_time']    = 0;
                     $studyData['state']         = 2;
-                    db('user_study')->insert($studyData);
+                    $stuModel->insert($studyData);
+
+                    // 改变学习章节数
+                    $basModel->where(['id' => $u_id])->setInc('curriculum');
                 }
 
                 // 获取做题结果
@@ -478,9 +431,13 @@ class Course extends Base {
 
     /**
      * 对选择题结果进行判断
+     * @param $result
+     * @return array
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
      */
-    public function jubSelectResult($result)
-    {
+    private function jubSelectResult ($result) {
 
         $correctArr = [];
         // 总题目数量

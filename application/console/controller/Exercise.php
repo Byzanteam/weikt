@@ -4,6 +4,8 @@ namespace app\console\controller;
 use app\console\Base;
 use app\console\model\CurriculumExercise as Exercise_model;
 use app\console\model\CurriculumClassification as Classify_model;
+use app\console\model\CurriculumChapter;
+use app\console\model\Curriculum;
 
 class Exercise extends Base
 {
@@ -113,18 +115,17 @@ class Exercise extends Base
     /**
      * 习题编辑
      */
-    public function edit()
-    {
-        if(\think\Request::instance()->isGet()){
+    public function edit () {
+        if (\think\Request::instance()->isGet()) {
 
             $id = intval(input('id'));
 
-            if(!empty($id)){
+            if (!empty($id)) {
 
                 // 获习题记录
-                $data = db('curriculum_exercise')->where(['id'=>$id])->find();
+                $data =$this->model->getOne(['id' => $id]);
 
-                if(!empty($data)){
+                if (!empty($data)) {
 
                     // 获取所有分类
                     // 获取分类
@@ -132,15 +133,17 @@ class Exercise extends Base
                     $classifyList = $classify->getClassifyAll();
 
                     // 获取习题选定分类下课程
-                    $courseList = db('curriculum')->where(['cl_id'=>$data['cl_id']])->select();
+                    $curModel = new Curriculum();
+                    $courseList =$curModel->getOne(['cl_id' => $data['cl_id']]);
 
                     // 获取所选课程下的章节
-                    $chapterList = db('curriculum_chapter')->where(['cp_id'=>$data['cp_id']])->select();
+                    $chaModel = new CurriculumChapter();
+                    $chapterList = $chaModel->getOne(['cp_id' => $data['cp_id']]);
 
-                    $this->assign('classify_list',$classifyList);
-                    $this->assign('course_list',$courseList);
-                    $this->assign('chapter_list',$chapterList);
-                    $this->assign('data',$data);
+                    $this->assign('classify_list', $classifyList);
+                    $this->assign('course_list', $courseList);
+                    $this->assign('chapter_list', $chapterList);
+                    $this->assign('data', $data);
                     return $this->fetch('console/exercise/edit');
                 }
                 $this->assign('msg','没有找到您要编辑的记录');
@@ -156,9 +159,8 @@ class Exercise extends Base
     /**
      * 记录异步编辑
      */
-    public function editExercise()
-    {
-        if(\think\Request::instance()->isPost()){
+    public function editExercise () {
+        if (\think\Request::instance()->isPost()) {
             $id = intval(input('id'));
             $data['title'] = input('title','','strip_tags,trim');
             $data['cl_id'] = intval(input('cl_id',0));
@@ -198,11 +200,9 @@ class Exercise extends Base
 
     /**
      * 删除记录
-     * @param id 记录ID
      */
-    public function delExercise()
-    {
-        if(\think\Request::instance()->isPost()) {
+    public function delExercise () {
+        if (\think\Request::instance()->isPost()) {
             $id = intval(input('id'));
             if(!empty($id)){
                 // 删除前 获取一下数据，检查数据是否存在
