@@ -134,11 +134,11 @@ class Exercise extends Base
 
                     // 获取习题选定分类下课程
                     $curModel = new Curriculum();
-                    $courseList =$curModel->getOne(['cl_id' => $data['cl_id']]);
+                    $courseList =$curModel->getList(['cl_id' => $data['cl_id']]);
 
                     // 获取所选课程下的章节
                     $chaModel = new CurriculumChapter();
-                    $chapterList = $chaModel->getOne(['cp_id' => $data['cp_id']]);
+                    $chapterList = $chaModel->getList(['cp_id' => $data['cp_id']]);
 
                     $this->assign('classify_list', $classifyList);
                     $this->assign('course_list', $courseList);

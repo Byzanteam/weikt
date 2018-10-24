@@ -60,4 +60,21 @@ class Curriculum extends Model {
             ->find();
     }
 
+    /**
+     * 获取课程列表
+     * @param array $where
+     * @param string $fields
+     * @param array $order
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getList ($where = [], $fields = '*', $order = ['sort', 'id' => 'desc']) {
+        return $this->field($fields)
+            ->where($where)
+            ->order($order)
+            ->select();
+    }
+
 }

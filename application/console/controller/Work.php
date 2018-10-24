@@ -54,8 +54,6 @@ class Work extends Base {
                 $where['state'] = $state;
             }
 
-            $where['test_type'] = 1;
-
             $data = $this->model->getTablePageList($where, $page, $limit);
 
             if(!empty($data['data'])){
@@ -77,6 +75,7 @@ class Work extends Base {
             $id = intval(input('id'));
 
             if(!empty($id)){
+                $work = [];
 
                 // 获取作业记录
                 $data = db('user_task')->where(['id' => $id])->find();
@@ -84,7 +83,7 @@ class Work extends Base {
                 if (!empty($data)) {
 
                     // 获取作业内容
-                    if ($data['test_type'] == 1) {
+//                    if ($data['test_type'] == 1) {
                         // 阅读题
                         $work['topic'] = db('curriculum_test')->where(['cc_id' => $data['chapter_id']])->find();
                         $work['topic']['topic'] = htmlspecialchars_decode($work['topic']['topic']);
@@ -92,23 +91,23 @@ class Work extends Base {
                         $work['work'] = '/'.$arr['url'];
 
                         $temp_path = 'console/work/read_view';
-                    } else {
+//                    } else {
+//
+//                        // 选择题
+//                        $arr = json_decode($data['content'], true);
+//                        foreach ($arr as $k => $v){
+//                            $res = db('curriculum_test')->where(['id' => $k])->find();
+//                            $topic = $res;
+//                            $topic['correct_option'] = db('curriculum_test_option')->where(['id' => $v])->find();
+//                            // 获取题目选项
+//                            $topic['options'] = db('curriculum_test_option')->where(['ct_id' => $res['id']])->order(['sort', 'id' => 'desc'])->select();
+//                            $work[] = $topic;
+//                        }
+//
+//                        $temp_path = 'console/work/option_view';
+//                    }
 
-                        // 选择题
-                        $arr = json_decode($data['content'], true);
-                        foreach ($arr as $k => $v){
-                            $res = db('curriculum_test')->where(['id' => $k])->find();
-                            $topic = $res;
-                            $topic['correct_option'] = db('curriculum_test_option')->where(['id' => $v])->find();
-                            // 获取题目选项
-                            $topic['options'] = db('curriculum_test_option')->where(['ct_id' => $res['id']])->order(['sort', 'id' => 'desc'])->select();
-                            $work[] = $topic;
-                        }
-
-                        $temp_path = 'console/work/option_view';
-                    }
-
-                    $this->assign('data',$work);
+                    $this->assign('data', $work);
                     return $this->fetch($temp_path);
                 }
                 $this->assign('msg','没有找到您要查看的记录');
