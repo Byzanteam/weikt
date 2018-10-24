@@ -3,8 +3,7 @@ namespace app\console\model;
 
 use think\Model;
 
-class CurriculumExercise extends Model
-{
+class CurriculumExercise extends Model {
 
     /**
      * 分页获取数据列表
@@ -58,7 +57,7 @@ class CurriculumExercise extends Model
      * @throws \think\exception\DbException
      */
     public function getList ($where = [], $fields = '*', $order = ['sort', 'id' => 'desc']) {
-        return $this->field($fields)
+        return db('curriculum_exercise')->field($fields)
                 ->where($where)
                 ->order($order)
                 ->select();
@@ -74,8 +73,8 @@ class CurriculumExercise extends Model
      * @throws \think\exception\DbException
      */
     public function getOne ($where = [], $fields = '*') {
-        return $this->where($where)
-            ->field($fields)
+        return db('curriculum_exercise')->field($fields)
+            ->where($where)
             ->find();
     }
 }

@@ -15,9 +15,9 @@ return [
     // 服务器地址
     'hostname'        => '127.0.0.1',
     // 数据库名
-    'database'        => 'weikt_webuildus',
+    'database'        => 'wkt', // weikt_webuildus
     // 用户名
-    'username'        => 'weikt_webuildus',
+    'username'        => 'root', // weikt_webuildus
     // 密码
     'password'        => 'root',
     // 端口

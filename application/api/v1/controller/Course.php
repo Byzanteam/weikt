@@ -7,6 +7,8 @@ use app\api\v1\model\UserCollection;
 use app\api\v1\model\UserStudy;
 use app\console\model\CurriculumChapter;
 use app\console\model\CurriculumExercise;
+use app\console\model\CurriculumTest;
+use app\console\model\CurriculumTestOption;
 use app\console\model\UserBasic;
 
 class Course extends Base {
@@ -35,9 +37,9 @@ class Course extends Base {
 
             $curModel = new Curriculum();
 
-            $fields = 'c.id, c.title, c.chapter_num, cc.name as classify_name,c.back_img';
+            $fields = 'c.id, c.title, c.chapter_num,cc.name as classify_name,c.back_img';
             // 获取课程分页列表
-            $data = $curModel->getCourseList($where, $p, $l, $fields);
+            $data = $curModel->getCourseList($where, $p, $l, ['c.sort', 'id' => 'desc'], $fields);
 
             if(!empty($data)) {
                 // 查询成功，返回课程列表
@@ -209,36 +211,36 @@ class Course extends Base {
 
             if($id > 0) {
 
-                // 获取章节基本信息
                 $chaModel = new CurriculumChapter();
+                $tesModel = new CurriculumTest();
+                $optModel = new CurriculumTestOption();
 
+                // 获取章节基本信息
                 $where = [
                     'id' => $id
                 ];
-                $data = $chaModel->getOne($where, 'test_type');
-                if(!empty($data)) {
+                $cha_data = $chaModel->getOne($where, 'test_type');
+
+                if(!empty($cha_data)) {
 
                     // 获取章节对应的测验题
-                    $data['list'] = db('curriculum_test')->where(['cc_id'=>$id,'is_type'=>$data['test_type']])->select();
-                    if(!empty($data)) {
+                    $cha_data['list'] = $tesModel->getList(['cc_id' => $id, 'is_type' => $cha_data['test_type']]);
+
+                    if(!empty($cha_data['list'])) {
 
                         // 测验题获取成功，判断日过是选择题，则获取对应题目下的选项
-                        if ($data['test_type'] == 2) {
-                            foreach ($data['list'] as $k => $v) {
-                                $data['list'][$k]['option'] = db('curriculum_test_option')
-                                    ->where(['ct_id'=>$v['id']])
-                                    ->field('id,ct_id,option_str')
-                                    ->order(['sort','id'])
-                                    ->select();
+                        if ($cha_data['test_type'] == 2) {
+                            foreach ($cha_data['list'] as $k => $v) {
+                                $cha_data['list'][$k]['option'] = $optModel->getList(['ct_id' => $v['id']], 'id,ct_id,option_str');
                             }
                         } else {
-                            foreach ($data['list'] as $k => $v) {
-                                $v['topic'] = html_entity_decode($v['topic']);
-                                $data['list'][$k] = $v;
+
+                            foreach ($cha_data['list'] as $k => $v) {
+                                $cha_data['list'][$k]['topic'] = html_entity_decode($v['topic']);
                             }
                         }
 
-                        return json(['code' => 200, 'msg' => '测验题获取成功', 'data' => $data]);
+                        return json(['code' => 200, 'msg' => '测验题获取成功', 'data' => $cha_data]);
                     }
                     return json(['code' => 404, 'msg' => '没有找到该章节对应的测验题记录', 'data' => []]);
                 }
@@ -397,7 +399,7 @@ class Course extends Base {
                     'chapter_id' => $cc_id,
                     'user_id'    => $u_id,
                 ];
-                if ($study = $stuModel->getDetail($where, 'id')) {
+                if ($study = $stuModel->getDetail($where, 'id,state')) {
 
                     if ($study['state'] != 2) {
                         // 改变学习章节数
@@ -412,7 +414,7 @@ class Course extends Base {
                     $studyData['study_date']    = time();
                     $studyData['study_time']    = 0;
                     $studyData['state']         = 2;
-                    $stuModel->insert($studyData);
+                    $stuModel->save($studyData);
 
                     // 改变学习章节数
                     $basModel->where(['id' => $u_id])->setInc('curriculum');
@@ -421,7 +423,7 @@ class Course extends Base {
                 // 获取做题结果
                 $correctArr = $this->jubSelectResult($result);
 
-                return json(['code' => 200, 'msg' => '作业上传成功，请等候老师点评', 'data' => $correctArr]);
+                return json(['code' => 200, 'msg' => '答题完成', 'data' => $correctArr]);
             }
             return json(['code' => 403, 'msg' => '作业提交失败，缺少必要参数', 'data' => []]);
         }
@@ -439,7 +441,7 @@ class Course extends Base {
      */
     private function jubSelectResult ($result) {
 
-        $correctArr = [];
+        $correctArr = $data = [];
         // 总题目数量
         $correctArr['total_topic'] = count($result);
         // 正确题目数量
@@ -447,31 +449,53 @@ class Course extends Base {
         // 错误题目数量
         $errorTopic = 0;
 
-        foreach ($result as $k => $v) {
-            // 查询，如果选项错误 则获取正确选项
-            if(db('curriculum_test_option')->where(['ct_id' => $k, 'id' => $v, 'state' => 2])->find()) {
-                // 题目错误，错题数+1
-                $errorTopic = $errorTopic + 1;
+        $tesModel = new CurriculumTest();
+        $optModel = new CurriculumTestOption();
 
-                // 获取题目
-                $data = db('curriculum_test')->where(['id'=>$k])->field('id,cc_id,is_type,topic')->find();
-                // 获取正确选项ID
-                $correct_option = db('curriculum_test_option')->where(['ct_id' => $k, 'state' => 1])->field('id,analyze')->find();
-                $data['correct_option'] = $correct_option['id'];
-                $data['currect_analyze'] = $correct_option['analyze'];
-                // 获取所有选项
-                $data['child_options'] = db('curriculum_test_option')->where(['ct_id' => $k])->field('id,ct_id,option_str,state')->select();
-                $correctArr['list'][] = $data;
-            }else{
-                $correctTopic = $correctTopic + 1;
+        foreach ($result as $k => $v) {
+
+            $child_options = $optModel->getList(['ct_id' => $k],'id,ct_id,option_str,state,analyze');
+
+            foreach ($child_options as $key => $val) {
+
+                $val['my_answer'] = 0;
+
+                if ($v == $val['id']) {
+
+                    if ($val['state'] == 2) {
+                        $errorTopic++;
+
+                        $is_answer[$k] = false;
+
+                        $val['my_answer'] = 1;
+
+                    } else {
+                        $correctTopic++;
+                    }
+                }
+
+                if($val['state'] == 1) {
+                    $test = $tesModel->getOne(['id' => $k], 'topic');
+
+                    $data['topic'] = $test['topic'];
+
+                    $data['option_str']      = $val['option_str'];
+                    $data['currect_analyze'] = $val['analyze'];
+                }
+
+                $data['child_options'][$key] = $val;
             }
+
+            if (isset($is_answer) && $is_answer[$k] === false) {
+                $correctArr['list'][] = $data;
+            }
+
         }
 
         $correctArr['correct_topic'] = $correctTopic;
-        $correctArr['error_topic'] = $errorTopic;
+        $correctArr['error_topic']   = $errorTopic;
 
         return $correctArr;
     }
 
 }
-

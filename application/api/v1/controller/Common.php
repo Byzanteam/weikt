@@ -4,41 +4,6 @@ namespace app\api\v1\controller;
 use app\api\Base;
 
 class Common extends Base {
-    /**
-     * 获取了了 js_ticket
-     */
-    public function get_ticket () {
-
-        // 当前时间-60秒
-        $new_time = time() - 60;
-
-        if(session('weikt_jssdk')){
-            // 如果session 存在，则判断是否过去，如果没有过过期
-            if($new_time < session('weikt_jssdk.expired_at')){
-                return session('weikt_jssdk.ticket');
-            }
-        }
-
-        // 设置请求的header参数
-        $headers = ['Authorization:'.config('llapi.v4_api_Authorization')];
-
-        // 设置请求URL
-        $url = config('llapi.formal_url').'/api/v4/wechat_clients/jsapi_ticket';
-
-        $result = curlRequest($url, '', $headers);
-
-        $data = json_decode($result,true);
-
-        // 判断请求是否成功
-        if($result != false && $data != false && is_array($data) && !array_key_exists('error',$data)){
-
-            // 请求成功，将结存储到session中
-            session('weikt_jssdk',$data);
-
-            return $data['ticket'];
-        }
-        return false;
-    }
 
     /**
      * 设置微信jssdk权限验证配置
@@ -46,10 +11,10 @@ class Common extends Base {
     public function generate_config () {
         if($this->request->isGet()) {
 
-            if($js_ticket = $this->get_ticket()){
-
+            $js_ticket = get_ticket();
+            if($js_ticket){
                 $timestamp = time();
-                $url = input('curUrl');//SITE_URL . $_SERVER['REQUEST_URI'];//$_SERVER['REQUEST_URI']
+                $url = input('curUrl');
                 $nonceStr = $this->createNonceStr();
 
                 // 这里参数的顺序要按照 key 值 ASCII 码升序排序

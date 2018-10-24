@@ -3,6 +3,7 @@ namespace app\console\controller;
 
 use app\console\Base;
 use app\console\model\CurriculumChapter as Chapter_model;
+use app\console\model\UserBasic;
 
 
 class CurriculumChapter extends Base
@@ -31,8 +32,7 @@ class CurriculumChapter extends Base
     /**
      * 异步获取列表数据
      */
-    public function getChapterList()
-    {
+    public function getChapterList () {
         if(\think\Request::instance()->isGet()){
 
             $page = intval(input('page',1));
@@ -45,17 +45,21 @@ class CurriculumChapter extends Base
             $where = [];
 
             if($id > 0){
-                $where['cp_id'] = ['eq',$id];
+                $where['cp_id'] = ['eq', $id];
             }
 
             if(!empty($title)){
-                $where['title'] = ['like','%'.$title.'%'];
+                $where['title'] = ['like', '%'.$title.'%'];
             }
 
-
             $data = $this->model->getTablePageList($where,$page,$limit);
-            if(!empty($data['data'])){
-                return json(['code' => 200, 'msg' => '列表获取成功', 'count' => $data['total'], 'data' => $data['data']]);
+            if (!empty($data['data'])) {
+                return json([
+                    'code' => 200,
+                    'msg' => '列表获取成功',
+                    'count' => $data['total'],
+                    'data'  => $data['data']
+                ]);
             }
             return json(['code' => 0, 'msg' => '没有数据了', 'count' => 0, 'data' => []]);
         }
@@ -66,20 +70,27 @@ class CurriculumChapter extends Base
      * 章节添加页面加载
      * @return mixed
      */
-    public function add()
-    {
+    public function add () {
         // 获取课程列表
         $courseList = db('curriculum')->where([])->field('id,title')->select();
 
-        $this->assign('list',$courseList);
+        $userModel = new UserBasic();
+
+        $fields = 'll_id as id,name';
+        $uWhere = [
+            'root_organization_ids' => 25751
+        ];
+        $teacher_list = $userModel->getList($uWhere, $fields);
+
+        $this->assign('list', $courseList);
+        $this->assign('teacher_list', $teacher_list);
         return $this->fetch('console/curriculum_chapter/add');
     }
 
     /**
      * 章节添加异步处理
      */
-    public function addChapter()
-    {
+    public function addChapter () {
         if(\think\Request::instance()->isPost()){
 
             $data['title'] = input('title','','strip_tags,trim');
@@ -90,8 +101,9 @@ class CurriculumChapter extends Base
             $data['media_path'] = input('media_path','','trim');
             $data['test_type'] = intval(input('test_type',0));
             $data['content'] = input('content','');
+            $data['teachers'] = input('teachers/a');
 
-            if(!empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) && !empty($data['test_type'])){
+            if(!empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) && !empty($data['test_type']) && !empty($data['teachers'])){
 
                 // 判断媒体类型
                 if($data['media_type'] == 'audio' || $data['media_type'] == 'video'){
@@ -112,7 +124,7 @@ class CurriculumChapter extends Base
                     return json(['code' => 0, 'msg' => '章节名称重复,章节添加失败']);
                 }
 
-
+                $data['teachers'] = implode(',', $data['teachers']);
                 // 添加到数据库
                 $res = db('curriculum_chapter')->insert($data);
                 if($res){
@@ -130,11 +142,8 @@ class CurriculumChapter extends Base
     }
 
 
-    /**
-     * 编辑页面加载
-     */
-    public function edit()
-    {
+    /** 编辑页面加载 */
+    public function edit () {
 
         if(\think\Request::instance()->isGet()){
 
@@ -151,8 +160,18 @@ class CurriculumChapter extends Base
                     $courseList = db('curriculum')->where([])->field('id,title')->select();
 
                     // 文本内容反编译
-                    $data['content'] = htmlspecialchars_decode($data['content']);
+                    $data['content']  = htmlspecialchars_decode($data['content']);
+                    // 转为数组
+                    $data['teachers'] = $data['teachers'] ? explode(',', $data['teachers']) : [];
 
+                    $userModel = new UserBasic();
+                    $fields = 'll_id as id,name';
+                    $uWhere = [
+                        'root_organization_ids' => 25751
+                    ];
+                    $teacher_list = $userModel->getList($uWhere, $fields);
+
+                    $this->assign('teacher_list', $teacher_list);
                     $this->assign('list',$courseList);
                     $this->assign('data',$data);
                     return $this->fetch('console/curriculum_chapter/edit');
@@ -177,15 +196,16 @@ class CurriculumChapter extends Base
             $id = intval(input('id'));
             $data['title'] = input('title','','strip_tags,trim');
             $data['cp_id'] = intval(input('cp_id',0));
-            $data['sort'] = intval(input('sort',0));
+            $data['sort']  = intval(input('sort',0));
             $data['media_type'] = input('media_type','','strip_tags,trim');
-            $data['file_name'] = input('file_name','','strip_tags,trim');
+            $data['file_name']  = input('file_name','','strip_tags,trim');
             $data['media_path'] = input('media_path','','trim');
-            $data['test_type'] = intval(input('test_type',0));
+            $data['test_type']  = intval(input('test_type',0));
             $data['content'] = input('content','');
+            $data['teachers'] = input('teachers/a');
 
 
-            if(!empty($id) && !empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) &&!empty($data['test_type'])){
+            if(!empty($id) && !empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) &&!empty($data['test_type']) && !empty($data['teachers'])){
 
                 // 检查记录是否存在
                 $arr = db('curriculum_chapter')->where(['id'=>$id])->find();
@@ -200,6 +220,8 @@ class CurriculumChapter extends Base
                     if(db('curriculum_chapter')->where(['id'=>['neq',$id],'cp_id'=>$data['cp_id'],'title'=>$data['title']])->find()){
                         return json(['code' => 0, 'msg' => '章节名称重复,章节添加失败']);
                     }
+
+                    $data['teachers'] = implode(',', $data['teachers']);
 
                     $res = db('curriculum_chapter')->where(['id'=>$id])->update($data);
                     if($res){

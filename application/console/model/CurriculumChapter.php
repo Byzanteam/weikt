@@ -90,8 +90,8 @@ class CurriculumChapter extends Model {
      * @throws \think\exception\DbException
      */
     public function getOne ($where = [], $fields = '*') {
-        return $this->where($where)
-            ->field($fields)
+        return db('curriculum_chapter')->field($fields)
+            ->where($where)
             ->find();
     }
 }

@@ -43,7 +43,7 @@ class Curriculum extends Model {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getCourseList($where = [], $p = 1, $l = 10, $order = ['c.sort', 'id' => 'desc'], $fields = '*') {
+    public function getCourseList($where = [], $p = 1, $l = 10, $order = [], $fields = '*') {
         return $this->alias('c')
                     ->join('vcr_curriculum_classification cc','c.cl_id = cc.id', 'LEFT')
                     ->field($fields)

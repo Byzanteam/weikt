@@ -12,13 +12,6 @@
     <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    <style>
-        .layui-form-select dl{
-            max-height: 150px;
-        }
-
-    </style>
-
 </head>
 <body class="layui-layout-body">
 
@@ -40,7 +33,7 @@
             <label class="layui-form-label"><span class="form_important">*</span> 所属课程</label>
             <div class="layui-input-block" style="width: 70%;">
                 <select name="cp_id" lay-verify="required">
-                    <option value="0">请选择所属章节</option>
+                    <option value="0">请选择所属课程</option>
                     {notempty name='list'}
                         {volist name='list' id='vo'}
                         <option value="{$vo.id}">├ {$vo.title}</option>
@@ -85,6 +78,17 @@
             <label class="layui-form-label">文本内容</label>
             <div class="layui-input-block" style="">
                 <div id="editor" style="width: 92%"></div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"><span class="form_important">*</span>点评老师</label>
+            <div class="layui-input-block">
+                {notempty name='teacher_list'}
+                {volist name='teacher_list' id='vo'}
+                <input lay-verify="required" type="checkbox" value="{$vo.id}" name="teachers[]" title="{$vo.name}">
+                {/volist}
+                {/notempty}
             </div>
         </div>
 

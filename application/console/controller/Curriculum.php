@@ -129,8 +129,7 @@ class Curriculum extends Base
     /**
      * 记录编辑页面
      */
-    public function edit()
-    {
+    public function edit () {
 
         if(\think\Request::instance()->isGet()){
 
@@ -164,8 +163,7 @@ class Curriculum extends Base
     /**
      * 记录异步编辑
      */
-    public function editCurriculum()
-    {
+    public function editCurriculum () {
         if(\think\Request::instance()->isPost()){
             $id = intval(input('id'));
             $data['title'] = input('title','','strip_tags,trim');

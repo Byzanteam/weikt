@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: xiaoy
- * Date: 2018-8-26
- * Time: 22:20
- */
-
 namespace app\console\model;
 
 use think\Model;

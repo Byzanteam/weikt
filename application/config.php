@@ -262,6 +262,6 @@ return [
         'v4_api_Authorization' => 'e33b2892827b2892b0d1ca1dc851361e7d67e37b2e7f4924a26b38539399ef60:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lc3BhY2VfaWQiOjIwMH0.X2awG59KhXERtS3tWawJDTRFTKHDIKMazxYJxV2sWvM',
 
         # 教师所在组织ID
-        'teacher_organ' => [24668]
+        'teacher_organ' => [24668, 25751]
     ],
 ];

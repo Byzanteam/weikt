@@ -69,7 +69,7 @@ class CurriculumTest extends Model {
      * @throws \think\exception\DbException
      */
     public function getList ($where = [], $fields = '*', $order = ['sort', 'id' => 'desc']) {
-        return $this->field($fields)
+        return db('curriculum_test')->field($fields)
             ->where($where)
             ->order($order)
             ->select();
@@ -85,7 +85,7 @@ class CurriculumTest extends Model {
      * @throws \think\exception\DbException
      */
     public function getOne ($where = [], $fields = '*') {
-        return $this->where($where)
+        return db('curriculum_test')->where($where)
             ->field($fields)
             ->find();
     }

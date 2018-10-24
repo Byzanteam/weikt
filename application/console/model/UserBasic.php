@@ -52,6 +52,20 @@ class UserBasic extends Model {
     }
 
     /**
+     * 获取用户列表
+     * @param array $where
+     * @param string $fields
+     * @param array $order
+     * @return mixed
+     */
+    public function getList ($where = [], $fields = '*', $order = ['id' => 'desc']) {
+        return $this->field($fields)
+            ->where($where)
+            ->order($order)
+            ->select();
+    }
+
+    /**
      * 处理登录时的数据处理
      * @param array $userinfo 用户信息
      * @param bool $is_teacher

@@ -26,8 +26,7 @@ class Login extends Base
     /**
      * 登录第一步：获取授权码，获取成功，到回调接口接受 code
      */
-    public function index()
-    {
+    public function index() {
 
         // 拼接 获取授权码 api 地址
         $url = config('llapi.formal_url').'/oauth/authorize';
@@ -55,66 +54,49 @@ class Login extends Base
         // 获取用户授权码
         $code = input('code','','strip_tags,trim');
 
-        $output = get_user_token($code, config('llapi.console_redirect_uri'));
-
-        $data = json_decode($output,true);
-
-        if($output == false || $data == false || !is_array($data) || array_key_exists('error',$data)){
-            // 获取token失败
-            echo $data['error_description'];exit;
-        }
+        $access_token = get_user_token($code, config('llapi.console_redirect_uri'));
 
         // 获取token成功
+        if ($info = get_user_info($access_token)) {
 
-        // 请求成功，将请求结果 存储到 session
-        session('weikt_token',$data);
+            // 请求成功
+            // 判断用户所在组织，是否允许登录后台
+            // 生成登录token
+            // session 记录用户信息
+            // cookie 写用户登录token
 
-        $result = get_user_info($data['access_token']);
+            // 获取允许登录组织
+            $teacher_organ = config('llapi.teacher_organ');
 
-        $info = json_decode($result, true);
+            // 是否允许登录 默认false
+            $is_log_in = false;
 
-        // 获取用户信息失败
-        if($result == false || $info == false || !is_array($info) || array_key_exists('error', $info)){
+//            foreach ($info['root_organization_ids'] as $k => $v){
+//                if(in_array($v,$teacher_organ)){
+                    $model = new UserBasic();
 
-            echo $info['error_description'];exit;
-        }
+                    $model->update_user_info($info);
 
-        // 请求成功
-        // 判断用户所在组织，是否允许登录后台
-        // 生成登录token
-        // session 记录用户信息
-        // cookie 写用户登录token
+                    $is_log_in = true;
+//                }
+//            }
 
-        // 获取允许登录组织
-        $teacher_organ = config('llapi.teacher_organ');
+            if($is_log_in){
+                // 允许登录
+                // 生成登录token
+                $token = strtoupper(md5('weikt_'.md5($info['id'].time())));
 
-        // 是否允许登录 默认false
-        $is_log_in = false;
+                // session 存储 用户信息
+                session($token,$info);
 
-        foreach ($info['root_organization_ids'] as $k => $v){
-            if(in_array($v,$teacher_organ)){
-                $model = new UserBasic();
+                // 写入登录cookie
+                cookie('USER-TOKEN', $token ,$this->login_exp);
+                cookie('USER-LOGIN-TIME', time());
 
-                $model->update_user_info($info);
-
-                $is_log_in = true;
+                // 登录成功，跳转到后台首页
+                $this->redirect('/console/Index/index');
             }
         }
 
-        if($is_log_in){
-            // 允许登录
-            // 生成登录token
-            $token = strtoupper(md5('weikt_'.md5($info['id'].time())));
-
-            // session 存储 用户信息
-            session($token,$info);
-
-            // 写入登录cookie
-            cookie('USER-TOKEN', $token ,$this->login_exp);
-            cookie('USER-LOGIN-TIME', time());
-
-            // 登录成功，跳转到后台首页
-            $this->redirect('/console/Index/index');
-        }
     }
 }

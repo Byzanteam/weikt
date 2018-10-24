@@ -16,7 +16,7 @@ class UserStudy extends Model {
      * @throws \think\exception\DbException
      */
     public function getDetail ($where = [], $fields = '*') {
-        return $this->field($fields)
+        return db('user_study')->field($fields)
                     ->where($where)
                     ->find();
     }

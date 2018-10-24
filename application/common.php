@@ -76,32 +76,90 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
 
 }
 
-function get_user_token ($code, $redirect_uri) {
-    $url = config('llapi.formal_url').'/oauth/token';
+/**
+ * 获取 jsapi_ticket
+ * @return bool|mixed
+ */
+function get_ticket () {
 
-    // 整理请求参数
-    $param = [
-        'client_id'     => config('llapi.client_id'),
-        'client_secret' => config('llapi.client_secret'),
-        'code'          => $code,
-        'grant_type'    => 'authorization_code',
-        'redirect_uri'  => $redirect_uri
-    ];
+    // 当前时间-60秒
+    $new_time = time() - 60;
 
-    $output = curlRequest($url, 'POST', [], $param);
+    if(session('weikt_jssdk')){
+        // 如果session 存在，则判断是否过去，如果没有过过期
+        if($new_time < session('weikt_jssdk.expired_at')){
+            return session('weikt_jssdk.ticket');
+        }
+    }
 
-    $data = json_decode($output,true);
+    // 设置请求的header参数
+    $headers = ['Authorization:'.config('llapi.v4_api_Authorization')];
+
+    // 设置请求URL
+    $url = config('llapi.formal_url').'/api/v4/wechat_clients/jsapi_ticket';
+
+    $result = curlRequest($url, '', $headers);
+
+    $data = json_decode($result,true);
 
     // 判断请求是否成功
-    if($output != false && $data != false && is_array($data) && !array_key_exists('error',$data) && array_key_exists('access_token',$data)) {
-        // 获取成功，返回 token 字符串
-        return $data['access_token'];
+    if($result != false && $data != false && is_array($data) && !array_key_exists('error',$data)){
+
+        // 请求成功，将结存储到session中
+        session('weikt_jssdk',$data);
+
+        return $data['ticket'];
+    }
+    return false;
+}
+
+/**
+ * 获取token
+ * @param $code 验证码
+ * @param $redirect_uri  回调地址
+ * @return bool|mixed
+ */
+function get_user_token ($code, $redirect_uri) {
+
+    $token = session('weikt_token');
+    if(!empty($token) && time() < ($token['created_at'] + $token['expires_in'])) {
+
+        return $token['access_token'];
+    } else {
+
+        $url = config('llapi.formal_url').'/oauth/token';
+
+        // 整理请求参数
+        $param = [
+            'client_id'     => config('llapi.client_id'),
+            'client_secret' => config('llapi.client_secret'),
+            'code'          => $code,
+            'grant_type'    => 'authorization_code',
+            'redirect_uri'  => $redirect_uri
+        ];
+
+        $output = curlRequest($url, 'POST', [], $param);
+
+        $data = json_decode($output,true);
+
+        session('weikt_token', $data);
+
+        // 判断请求是否成功
+        if($output != false && $data != false && is_array($data) && !isset($user_info['error']) && isset($user_info['access_token'])) {
+            // 获取成功，返回 token 字符串
+            return $data['access_token'];
+        }
     }
 
     // 失败fasle
     return false;
 }
 
+/**
+ * 获取用户信息
+ * @param $token
+ * @return bool|mixed
+ */
 function get_user_info ($token) {
 
     $url = config('llapi.formal_url').'/api/v1/user';
@@ -111,9 +169,9 @@ function get_user_info ($token) {
     $result = curlRequest($url, 'GET');
 
     $user_info = json_decode($result,true);
-
+    return $user_info;
     // 判断 curl 请求是否成功
-    if($result != false || $user_info != false || is_array($user_info) || !array_key_exists('error',$user_info)) {
+    if($result != false || $user_info != false || is_array($user_info) || !isset($user_info['error'])) {
         // 获取用户信息成功
         return $user_info;
     }

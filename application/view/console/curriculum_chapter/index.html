@@ -127,11 +127,11 @@
                     var index = layer.open({
                         title : '记录编辑',
                         type : 2,
-                        area: ['774px',"780px"],
-                        offset: '0',
-                        content : "/console/CurriculumChapter/edit?id=" +id,
-                        success : function(layero, index){
-
+                        area: ['80%', '830px'],
+                        offset: '30px',
+                        content : ['/console/CurriculumChapter/edit?id=' + id, 'no'],
+                        success: function(layero, index) {
+                            layer.iframeAuto(index);
                         },
                         cancel : function () {  // 层关闭触发
                             // 弹框关闭，重载表单
@@ -178,16 +178,15 @@
             });
 
 
-            // 添加分类
             $(".add_but").on('click',function(){
                 var index = layer.open({
                     title : '添加章节',
                     type : 2,
-                    area: ['774px',"780px"],
-                    offset: '0',
-                    content : "/console/CurriculumChapter/add",
-                    success : function(layero, index){
-
+                    area: ['80%', '830px'],
+                    offset: '30px',
+                    content : ['/console/CurriculumChapter/add', 'no'],
+                    success: function(layero, index) {
+                        layer.iframeAuto(index);
                     },
                     cancel : function () {  // 层关闭触发
                         // 弹框关闭，重载表单
