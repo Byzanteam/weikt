@@ -76,6 +76,39 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
 
 }
 
+
+function weixin_tempalte ($openid, $data, $template_id) {
+    $template = array(
+        'touser' => $openid, // openID
+        'template_id' => $template_id, // 模版id
+        'url'      => $data['url'],
+        'topcolor' => "#7B68EE",
+        'data' => array(
+            'first'    => array('value' => $data['first'], 'color' => "#000"),
+            'keyword1' => array('value' => $data['keyword1'], 'color' => '#F70997'),
+            'keyword2' => array('value' => $data['keyword2'], 'color' => '#248d24'),
+            'remark'   => array('value' => $data['remark'], 'color' => '#1784e8'),)
+    );//各个参数不明白的就去看文档，很详细。
+    return json_encode($template, JSON_UNESCAPED_UNICODE);
+}
+
+function send_weixin_msg ($openid, $data, $template_id = 'XcVL1dSyOdOKfEQBxLN8Qkz5usZPYTUBIetBcrJG_oA'){
+    $token = session('weikt_token');
+    if(!empty($token) && time() < ($token['created_at'] + $token['expires_in'])) {
+
+        $fp    = fsockopen('api.weixin.qq.com', 80, $error, $errstr, 1);
+
+        $params = weixin_tempalte($openid, $data, $template_id);
+
+        $http  = 'POST /cgi-bin/message/template/send?access_token=' . $token['access_token'];
+        $http .= ' HTTP/1.1\r\nHost: api.weixin.qq.com\r\nContent-type: application/x-www-form-urlencoded\r\nContent-Length: ';
+        $http .= '\r\nConnection:close\r\n\r\n' . $params . '\r\n\r\n';
+
+        fwrite($fp, $http);
+        fclose($fp);
+    }
+}
+
 /**
  * 获取 jsapi_ticket
  * @return bool|mixed

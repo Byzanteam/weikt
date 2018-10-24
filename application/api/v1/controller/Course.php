@@ -303,10 +303,9 @@ class Course extends Base {
                             if(!db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id])->find()) {
                                 // 作业不存在，直接新增作业记录
                                 // 作业数据整理
-                                $workDate['chapter_id']    = $cc_id;
+                                $workDate['chapter_id'] = $cc_id;
                                 $workDate['user_id']    = $u_id;
                                 $workDate['sub_time']   = time();
-                                $workDate['test_type']  = 1;
                                 $workDate['content']    = json_encode(['url' => $path.$file_name]);
                                 $workDate['state']      = 2;
 
@@ -325,7 +324,6 @@ class Course extends Base {
 
                                 // 作业没有点评 ，进行数据覆盖
                                 $workDate['sub_time']   = time();
-                                $workDate['test_type']  = 1;
                                 $workDate['content']    = json_encode(['url' => $path.$file_name]);
 
                                 if(!db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id, 'state' => 2])->update($workDate)) {

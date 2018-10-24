@@ -155,38 +155,32 @@ class User extends Base
         return json(['code' => 400, 'msg' => '请求方式不正确', 'data' => []]);
     }
 
-    /**
-     * 获取指定作业点评详情
-     * @param id 作业ID
-     */
-    public function get_work_info()
-    {
-        if($this->request->isPost()) {
-            // 参数整理
-            $id  = intval(input('id',0));
-            $uid = $this->userinfo['id'];
+    /** 获取指定作业点评详情 */
+    public function get_work_info () {
 
-            if(!empty($id)) {
-                $utModel = new UserTask();
+        // 参数整理
+        $id  = intval(input('id',0)); // 作业ID
+        $uid = $this->userinfo['id'];
 
-                $where = [
-                    'ut.id' => $id,
-                    'ut.user_id' => $uid
-                ];
-                $fields = 'ut.fraction,ut.id,ut.chapter_id,from_unixtime(ut.sub_time, \'%Y-%m-%d\') as sub_time,ut.state,ut.comment,ut.name,ut.img,cc.title';
-                $data = $utModel->getDetail($where, $fields);
-                // 检查作业是否点评
-                if (!empty($data)) {
-                    if ($data['state'] == 1) {
-                        return json(['code' => 200, 'msg' => '作业点评获取成功', 'data' => $data]);
-                    }
-                    return json(['code' => 404, 'msg' => '作业还未点评', 'data' => []]);
+        if(!empty($id)) {
+            $utModel = new UserTask();
+
+            $where = [
+                'ut.id' => $id,
+                'ut.user_id' => $uid
+            ];
+            $fields = 'ut.fraction,ut.id,ut.chapter_id,from_unixtime(ut.sub_time, \'%Y-%m-%d\') as sub_time,ut.state,ut.comment,ut.name,ut.img,cc.title';
+            $data = $utModel->getDetail($where, $fields);
+            // 检查作业是否点评
+            if (!empty($data)) {
+                if ($data['state'] == 1) {
+                    return json(['code' => 200, 'msg' => '作业点评获取成功', 'data' => $data]);
                 }
-                return json(['code' => 404, 'msg' => '没有找到作业的点评信息', 'data' => []]);
+                return json(['code' => 404, 'msg' => '作业还未点评', 'data' => []]);
             }
-            return json(['code' => 403, 'msg' => '请选择要查看点评的作业', 'data' => []]);
+            return json(['code' => 404, 'msg' => '没有找到作业的点评信息', 'data' => []]);
         }
-        return json(['code' => 400, 'msg' => '请求方式不正确', 'data' => []]);
+        return json(['code' => 403, 'msg' => '请选择要查看点评的作业', 'data' => []]);
     }
 }
 

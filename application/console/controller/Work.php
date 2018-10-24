@@ -3,6 +3,8 @@ namespace app\console\controller;
 
 use app\console\Base;
 use app\console\model\UserTask as userTask_model;
+use app\console\model\CurriculumTest;
+use app\console\model\UserTask;
 
 /**
  * 作业处理控制器
@@ -85,12 +87,17 @@ class Work extends Base {
                     // 获取作业内容
 //                    if ($data['test_type'] == 1) {
                         // 阅读题
-                        $work['topic'] = db('curriculum_test')->where(['cc_id' => $data['chapter_id']])->find();
-                        $work['topic']['topic'] = htmlspecialchars_decode($work['topic']['topic']);
-                        $arr = json_decode($data['content'], true);
-                        $work['work'] = '/'.$arr['url'];
+                    $testModel = new CurriculumTest();
 
-                        $temp_path = 'console/work/read_view';
+                    $work = $testModel->getOne(['cc_id' => $data['chapter_id']], 'topic');
+
+                    $work['topic'] = htmlspecialchars_decode($work['topic']);
+
+                    $arr = json_decode($data['content'], true);
+
+                    $work['work'] = '/'.$arr['url'];
+
+                    $temp_path = 'console/work/read_view';
 //                    } else {
 //
 //                        // 选择题
@@ -158,21 +165,39 @@ class Work extends Base {
      */
     public function editReview () {
         if (\think\Request::instance()->isPost()) {
-            $id = intval(input('id'));
+
+            $id = intval(input('id')); // 作业ID
+
             $data['comment'] = input('comment','','strip_tags,trim');
             $data['fraction'] = input('fraction',0,'strip_tags,trim');
 
             if (!empty($id) && !empty($data['comment'])) {
 
-                $data['name'] = $this->userinfo['name'];
-                $data['img'] = $this->userinfo['headimgurl'];
-                $data['state'] = 1;
+                $taskModel = new UserTask();
 
-                $res = db('user_task')->where(['id'=>$id])->update($data);
-                if ($res) {
-                    return json(['code' => 200, 'msg' => '分类编辑成功']);
+                $where = ['id' => $id];
+
+                if ($params = $taskModel->getUserAndTask($where, 'u.openid,cc.title as keyword2,c.title as keyword1')) {
+
+                    $data['ll_id'] = $this->userinfo['id'];
+                    $data['state'] = 1;
+
+                    $res = db('user_task')->where(['id'=>$id])->update($data);
+                    if ($res) {
+                        $openid = $params['openid'];
+                        unset($params['openid']);
+
+                        $params['url']    = SITE_URL . '/api/v1/User/get_work_info?id=' . $id;
+                        $params['first']  = '您的作业已被批改';
+                        $params['remark'] = '点击下面详情链接查看分数或老师评语';
+
+                        send_weixin_msg($openid, $params);
+
+                        return json(['code' => 200, 'msg' => '记录点评提交成功']);
+                    }
                 }
-                return json(['code' => 0, 'msg' => '分类编辑失败，请重新操作']);
+
+                return json(['code' => 0, 'msg' => '记录点评提交失败，请重新操作']);
             }
             return json(['code' => 0, 'msg' => '缺少必要参数，修改失败']);
         }

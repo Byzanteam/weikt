@@ -52,8 +52,26 @@ class UserTask extends Model
      * @param $id
      * @return int
      */
-    public function del($id)
-    {
+    public function del ($id) {
         return $this->where(['id'=>$id])->delete();
+    }
+
+    /**
+     * 获取提交作业的人和作业信息
+     * @param array $where 条件
+     * @param string $fields 要获取的字段
+     * @return array|false|\PDOStatement|string|Model
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getUserAndTask ($where = [], $fields = '*') {
+        return $this->alias('ut')
+            ->field($fields)
+            ->join('user_basic u', 'u.id = ut.user_id')
+            ->join('curriculum_chapter cc', 'cc.id = ut.chapter_id')
+            ->join('curriculum c', 'c.id = cc.cp_id')
+            ->where($where)
+            ->find();
     }
 }
