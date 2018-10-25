@@ -18,7 +18,8 @@ class UserTask extends Model
         $res = $this->alias('ut')
             ->join('curriculum_chapter cc', 'cc.id = ut.chapter_id')
             ->join('user_basic u', 'u.id = ut.user_id')
-            ->field('ut.id,ut.chapter_id,cc.title,ut.user_id,u.name as user_name,ut.sub_time,ut.state,ut.name')
+            ->join('user_basic u1', 'u1.ll_id = ut.ll_id', 'left')
+            ->field('ut.id,ut.chapter_id,cc.title,ut.user_id,u.name as user_name,ut.sub_time,ut.state,u1.name')
             ->where($where)
             ->order($order)
             ->paginate($limit,false,[

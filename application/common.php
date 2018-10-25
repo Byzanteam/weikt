@@ -77,36 +77,35 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
 }
 
 
-function weixin_tempalte ($openid, $data, $template_id) {
-    $template = array(
-        'touser' => $openid, // openID
+function weixin_tempalte ($data, $template_id) {
+
+    $template = (object)[
         'template_id' => $template_id, // 模版id
         'url'      => $data['url'],
-        'topcolor' => "#7B68EE",
-        'data' => array(
-            'first'    => array('value' => $data['first'], 'color' => "#000"),
-            'keyword1' => array('value' => $data['keyword1'], 'color' => '#F70997'),
-            'keyword2' => array('value' => $data['keyword2'], 'color' => '#248d24'),
-            'remark'   => array('value' => $data['remark'], 'color' => '#1784e8'),)
-    );//各个参数不明白的就去看文档，很详细。
-    return json_encode($template, JSON_UNESCAPED_UNICODE);
+        'data' => [
+            'first'    => ['value' => $data['first'], 'color' => "#000"],
+            'keyword1' => ['value' => $data['keyword1'], 'color' => '#F70997'],
+            'keyword2' => ['value' => $data['keyword2'], 'color' => '#248d24'],
+            'remark'   => ['value' => $data['remark'], 'color' => '#1784e8']
+        ]
+    ];
+
+    return $template;
 }
 
 function send_weixin_msg ($openid, $data, $template_id = 'XcVL1dSyOdOKfEQBxLN8Qkz5usZPYTUBIetBcrJG_oA'){
-    $token = session('weikt_token');
-    if(!empty($token) && time() < ($token['created_at'] + $token['expires_in'])) {
 
-        $fp    = fsockopen('api.weixin.qq.com', 80, $error, $errstr, 1);
+    $url = config('llapi.formal_url'). '/api/v4/pushes/wechat';
 
-        $params = weixin_tempalte($openid, $data, $template_id);
+    // 设置请求的header参数
+    $headers = ['Authorization:'.config('llapi.v4_api_Authorization')];
 
-        $http  = 'POST /cgi-bin/message/template/send?access_token=' . $token['access_token'];
-        $http .= ' HTTP/1.1\r\nHost: api.weixin.qq.com\r\nContent-type: application/x-www-form-urlencoded\r\nContent-Length: ';
-        $http .= '\r\nConnection:close\r\n\r\n' . $params . '\r\n\r\n';
+    $params['openids'] = $openid;
+    $params['template_entity'] = weixin_tempalte($data, $template_id);
 
-        fwrite($fp, $http);
-        fclose($fp);
-    }
+    $result = curlRequest($url, 'POST', $headers, $params);
+
+    print_r($result);
 }
 
 /**
@@ -148,40 +147,44 @@ function get_ticket () {
 
 /**
  * 获取token
- * @param $code 验证码
- * @param $redirect_uri  回调地址
+ * @param string $code 验证码
+ * @param string $redirect_uri  回调地址
  * @return bool|mixed
  */
-function get_user_token ($code, $redirect_uri) {
+function get_user_token ($code = '', $redirect_uri = '') {
 
-    $token = session('weikt_token');
-    if(!empty($token) && time() < ($token['created_at'] + $token['expires_in'])) {
+    $file = getcwd().'/weikt_token.json';
+
+    $token = file_exists($file) ? json_decode(file_get_contents($file), true) : null;
+
+    if (!empty($token) && time() < ($token['created_at'] + $token['expires_in'])) {
 
         return $token['access_token'];
-    } else {
 
-        $url = config('llapi.formal_url').'/oauth/token';
+    }
 
-        // 整理请求参数
-        $param = [
-            'client_id'     => config('llapi.client_id'),
-            'client_secret' => config('llapi.client_secret'),
-            'code'          => $code,
-            'grant_type'    => 'authorization_code',
-            'redirect_uri'  => $redirect_uri
-        ];
+    $url = config('llapi.formal_url').'/oauth/token';
 
-        $output = curlRequest($url, 'POST', [], $param);
+    // 整理请求参数
+    $param = [
+        'client_id'     => config('llapi.client_id'),
+        'client_secret' => config('llapi.client_secret'),
+        'code'          => $code,
+        'grant_type'    => 'authorization_code',
+        'redirect_uri'  => $redirect_uri
+    ];
 
-        $data = json_decode($output,true);
+    $output = curlRequest($url, 'POST', [], $param);
 
-        session('weikt_token', $data);
+    $data = json_decode($output,true);
 
-        // 判断请求是否成功
-        if($output != false && $data != false && is_array($data) && !isset($user_info['error']) && isset($user_info['access_token'])) {
-            // 获取成功，返回 token 字符串
-            return $data['access_token'];
-        }
+    // 判断请求是否成功
+    if ($data['access_token']) {
+
+        file_put_contents($file, json_encode($data));
+
+        // 获取成功，返回 token 字符串
+        return $data['access_token'];
     }
 
     // 失败fasle
@@ -202,7 +205,7 @@ function get_user_info ($token) {
     $result = curlRequest($url, 'GET');
 
     $user_info = json_decode($result,true);
-    return $user_info;
+
     // 判断 curl 请求是否成功
     if($result != false || $user_info != false || is_array($user_info) || !isset($user_info['error'])) {
         // 获取用户信息成功
@@ -226,20 +229,13 @@ function curlRequest ($url, $method, $headers = [], $params = []) {
     } else {
         $requestString = $params ? : '';
     }
-    if (empty($headers)) {
-//        $headers = ['Content-type: text/json'];
-    } elseif (!is_array($headers)) {
-        parse_str($headers,$headers);
-    }
 
     // setting the curl parameters.
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_TIMEOUT, 40);
 
-
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
 
     // turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);

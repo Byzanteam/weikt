@@ -175,7 +175,7 @@ class Work extends Base {
 
                 $taskModel = new UserTask();
 
-                $where = ['id' => $id];
+                $where = ['ut.id' => $id];
 
                 if ($params = $taskModel->getUserAndTask($where, 'u.openid,cc.title as keyword2,c.title as keyword1')) {
 

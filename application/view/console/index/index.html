@@ -10,13 +10,12 @@
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <div class="layui-logo">微课堂</div>
-        <ul class="layui-nav layui-layout-right">
-            <li class="layui-nav-item">
+        <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+            <li class="layui-nav-item" lay-unselect="">
                 <a href="javascript:;">
                     <img src="{if condition="$userinfo['headimgurl']"}{$userinfo['headimgurl']}{else}http://t.cn/RCzsdCq{/if}" class="layui-nav-img">
-                    {$userinfo['name']}
+                    <cite>{$userinfo['name']}</cite>
                 </a>
-
             </li>
         </ul>
     </div>
