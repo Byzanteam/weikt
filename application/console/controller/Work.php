@@ -187,7 +187,7 @@ class Work extends Base {
                         $openid = $params['openid'];
                         unset($params['openid']);
 
-                        $params['url']    = SITE_URL . '/api/v1/User/get_work_info?id=' . $id;
+                        $params['url']    = SITE_URL . '/view/index.html#/comment?id=' . $id;
                         $params['first']  = '您的作业已被批改';
                         $params['remark'] = '点击下面详情链接查看分数或老师评语';
 
