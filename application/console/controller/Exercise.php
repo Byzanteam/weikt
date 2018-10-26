@@ -95,9 +95,6 @@ class Exercise extends Base
 
             if(!empty($data['title']) && !empty($data['cl_id']) && !empty($data['cp_id']) && !empty($data['cc_id']) && !empty($data['media_path'])){
 
-                // 补全
-                $data['is_time'] = time();
-
                 // 添加到数据库
                 $res = db('curriculum_exercise')->insert($data);
                 if($res){

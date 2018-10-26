@@ -42,9 +42,6 @@ class CurriculumChapter extends Model {
                     $item->test_type_str = '选择题';
                 }
 
-
-                $item->is_time = date("Y-m-d H:i:s",$item->is_time);
-
             })
             ->toArray();
 

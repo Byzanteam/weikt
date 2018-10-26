@@ -105,13 +105,9 @@ class Curriculum extends Base
 
             if(!empty($data['title']) && !empty($data['cl_id']) && !empty($data['desc'])){
 
-                // 补全
-                $data['is_time'] = time();
-
                 if(db('curriculum')->where(['cl_id'=>$data['cl_id'], 'title'=>$data['title']])->find()){
                     return json(['code' => 0, 'msg' => '课程名称重复，课程添加失败']);
                 }
-
 
                 // 添加到数据库
                 $res = db('curriculum')->insert($data);
@@ -191,19 +187,18 @@ class Curriculum extends Base
     }
 
 
-    /**
-     * 删除记录
-     * @param id 记录ID
-     */
-    public function delCurriculum()
-    {
-        if(\think\Request::instance()->isPost()) {
-            $id = intval(input('id'));
-            if(!empty($id)){
+    /** 删除记录 */
+    public function delCurriculum () {
+        if (\think\Request::instance()->isPost()) {
+
+            $id = intval(input('id')); // 课程ID
+
+            if (!empty($id)) {
 
                 // 判断课程下是否拥有章节
-                $is_chapter = db('curriculum_chapter')->where(['cp_id'=>$id])->select();
-                if(empty($is_chapter)){
+                $is_chapter = db('curriculum_chapter')->where(['cp_id' => $id])->select();
+
+                if (empty($is_chapter)) {
                     // 执行删除
                     $res = $this->model->del($id);
                     if($res){
@@ -219,22 +214,19 @@ class Curriculum extends Base
     }
 
 
-    /**
-     * 置顶状态修改
-     * @param id 记录ID
-     * @param is_state 状态码
-     */
-    public function editState()
-    {
-        if(\think\Request::instance()->isPost()){
-            $id = intval(input('id'));
-            $is_state = intval(input('is_state'));
+    /** 置顶状态修改 */
+    public function editState () {
 
-            if($is_state != 0 && $is_state != 1){
+        if (\think\Request::instance()->isPost()) {
+
+            $id = intval(input('id')); // 记录ID
+            $is_state = intval(input('is_state')); // 状态码
+
+            if ($is_state != 0 && $is_state != 1) {
                 return json(['code' => 0, 'msg' => '参数异常，修改失败']);
             }
 
-            if(!empty($id)){
+            if (!empty($id)) {
                 // 修改数据记录
                 $res = db('curriculum')->where(['id'=>$id])->update(['state'=>$is_state]);
                 if($res){

@@ -41,8 +41,6 @@ class CurriculumTest extends Model {
                 $item->topic = strip_tags($str = htmlspecialchars_decode($item->topic));
 
 
-                $item->is_time = date("Y-m-d H:i:s",$item->is_time);
-
             })
             ->toArray();
 

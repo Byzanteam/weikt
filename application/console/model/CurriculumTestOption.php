@@ -34,8 +34,6 @@ class CurriculumTestOption extends Model {
                 }
 
 
-                $item->is_time = date("Y-m-d H:i:s",$item->is_time);
-
             })
             ->toArray();
 

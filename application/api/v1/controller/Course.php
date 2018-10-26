@@ -209,7 +209,7 @@ class Course extends Base {
             // 章节ID
             $id = intval(input('id',0));
 
-            if($id > 0) {
+            if ($id > 0) {
 
                 $chaModel = new CurriculumChapter();
                 $tesModel = new CurriculumTest();
@@ -221,7 +221,7 @@ class Course extends Base {
                 ];
                 $cha_data = $chaModel->getOne($where, 'test_type');
 
-                if(!empty($cha_data)) {
+                if (!empty($cha_data)) {
 
                     // 获取章节对应的测验题
                     $cha_data['list'] = $tesModel->getList(['cc_id' => $id, 'is_type' => $cha_data['test_type']]);
@@ -258,28 +258,14 @@ class Course extends Base {
         if ($this->request->isPost()) {
 
             // 参数接受
-            $u_id = $this->userinfo['id'];
+            $u_id  = $this->userinfo['id'];
             $cc_id = intval(input('cc_id',0)); // 章节ID
-            $file = $_FILES['files']; // 提交文件数据
+            $media_id  = input('files');
 
-            if (!empty($u_id) && !empty($cc_id) && !empty($file) && $file['error'] == 0) {
-
-                // 获取文件类型
-                $arr = explode('/',$file['type']);
-                $type = $arr[0];
-
-                // 判断文件类型是否正确
-                if ($type == 'audio') {
-
-                    // 释放变量
-                    unset($arr);
-
-                    // 获取上传文件后缀
-                    $arr = explode('.',$file['name']);
-                    $suffix = $arr[count($arr)-1];
+            if (!empty($u_id) && !empty($cc_id)) {
 
                     // 设置文件名称 时间戳_用户ID_文章ID.文件原后缀
-                    $file_name = time().'_'.$u_id."_".$cc_id.".$suffix";
+                    $file_name = time() . '_' . $u_id . '_' . $cc_id . '.mp3';
 
                     // 设置文件保存路径
                     $path = $this->save_file_path.'work/';
@@ -292,9 +278,10 @@ class Course extends Base {
                         }
                     }
 
-
-                    // 进行文件移动
-                    if(move_uploaded_file($file['tmp_name'],$path.$file_name)) {
+                    $url = 'http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=';
+                    $url .= get_ticket() . '&media_id=' . $media_id;
+                file_put_contents('./a1.txt', json_encode($url));
+                    if(copy($url, $path.$file_name)) {
 
                         // 上传完成，判断下文件是否存在
                         if(file_exists($path.$file_name)) {
@@ -365,9 +352,8 @@ class Course extends Base {
                     return json(['code' => 403, 'msg' => '上传失败', 'data' => []]);
                 }
                 return json(['code' => 403, 'msg' => '上传失败，文件类型不允许', 'data' => []]);
-            }
-            return json(['code' => 403, 'msg' => '音频作业提交失败，数据不完整', 'data' => []]);
         }
+
         return json(['code' => 400, 'msg' => '请求方式不正确', 'data' => []]);
     }
 

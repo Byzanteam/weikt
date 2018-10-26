@@ -116,8 +116,6 @@ class CurriculumChapter extends Base
                     }
                 }
 
-                // 补全
-                $data['is_time'] = time();
 
                 // 通课程下，章节名称重复判断
                 if(db('curriculum_chapter')->where(['cp_id'=>$data['cp_id'],'title'=>$data['title']])->find()){
@@ -162,7 +160,7 @@ class CurriculumChapter extends Base
                     // 文本内容反编译
                     $data['content']  = htmlspecialchars_decode($data['content']);
                     // 转为数组
-                    $data['teachers'] = $data['teachers'] ? explode(',', $data['teachers']) : [];
+                    $data['teachers'] = !empty($data['teachers']) ? explode(',', $data['teachers']) : [];
 
                     $userModel = new UserBasic();
                     $fields = 'll_id as id,name';
@@ -190,8 +188,7 @@ class CurriculumChapter extends Base
     /**
      * 记录异步编辑
      */
-    public function editChapter()
-    {
+    public function editChapter () {
         if(\think\Request::instance()->isPost()){
             $id = intval(input('id'));
             $data['title'] = input('title','','strip_tags,trim');

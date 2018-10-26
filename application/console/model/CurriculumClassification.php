@@ -34,8 +34,6 @@ class CurriculumClassification extends Model
                     $item->parent_name = "[ ".$parentData['id']." ] - ".$parentData['name'];
                 }
 
-                $item->is_time = date("Y-m-d H:i:s",$item->is_time);
-
             })
             ->toArray();
 

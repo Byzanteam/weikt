@@ -153,9 +153,9 @@ function get_ticket () {
  */
 function get_user_token ($code = '', $redirect_uri = '') {
 
-    $file = getcwd().'/weikt_token.json';
+    $file = session('weikt_token');
 
-    $token = file_exists($file) ? json_decode(file_get_contents($file), true) : null;
+    $token = ($file && !is_array($file)) ? json_decode($file, true) : null;
 
     if (!empty($token) && time() < ($token['created_at'] + $token['expires_in'])) {
 
@@ -181,7 +181,7 @@ function get_user_token ($code = '', $redirect_uri = '') {
     // 判断请求是否成功
     if ($data['access_token']) {
 
-        file_put_contents($file, json_encode($data));
+        session('weikt_token', $output);
 
         // 获取成功，返回 token 字符串
         return $data['access_token'];

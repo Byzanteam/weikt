@@ -29,8 +29,6 @@ class CurriculumExercise extends Model {
                 $item->chapter_name = '[ '.$data['id'].' ] '.$data['title'];
 
 
-                $item->is_time = date("Y-m-d H:i:s",$item->is_time);
-
             })
             ->toArray();
 

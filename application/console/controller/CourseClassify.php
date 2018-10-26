@@ -90,7 +90,6 @@ class CourseClassify extends Base
             if(!empty($data['name'])){
 
                 $data['level'] = empty($data['parent_id']) ? 0 : 1;
-                $data['is_time'] = time();
 
                 // 判断名称是否重复
                 if(db('curriculum_classification')->where(['name'=>$data['name'], 'level'=>$data['level'], 'parent_id'=>$data['parent_id']])->find()){
@@ -110,16 +109,11 @@ class CourseClassify extends Base
     }
 
 
-    /**
-     * 置顶状态修改
-     * @param id 记录ID
-     * @param is_state 状态码
-     */
-    public function editState()
-    {
+    /** 置顶状态修改 */
+    public function editState () {
         if(\think\Request::instance()->isPost()){
-            $id = intval(input('id'));
-            $is_state = intval(input('is_state'));
+            $id = intval(input('id')); // 记录ID
+            $is_state = intval(input('is_state')); // 状态码
 
             if($is_state != 0 && $is_state != 1){
                 return json(['code' => 0, 'msg' => '参数异常，修改失败']);
@@ -139,14 +133,12 @@ class CourseClassify extends Base
     }
 
 
-    /**
-     * 删除记录
-     * @param id 记录ID
-     */
-    public function delClassify()
-    {
+    /** 删除记录 */
+    public function delClassify () {
         if(\think\Request::instance()->isPost()) {
-            $id = intval(input('id'));
+
+            $id = intval(input('id')); // 记录ID
+
             if(!empty($id)){
 
                 // 分类删除
