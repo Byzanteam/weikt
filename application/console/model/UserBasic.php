@@ -84,10 +84,9 @@ class UserBasic extends Model {
         $data['openid']     = $userinfo['openid'];
         $data['headimgurl'] = $userinfo['headimgurl'];
         $data['root_organization_ids']  = implode(',', $userinfo['root_organization_ids']);
+        $data['last_time']  = date('Y-m-d H:i:s');
 
         if ($detail = $this->getOne($where, 'last_time,studytime')) {
-
-            $data['last_time'] = date('Y-m-d H:i:s');
 
             // 如果最后登录时间在今天之前，学习时间 +1
             if ($detail['last_time'] < date('Y-m-d 00:00:00') && $is_teacher === false) {

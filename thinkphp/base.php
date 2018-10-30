@@ -42,15 +42,15 @@ if (is_file(ROOT_PATH . '.env')) {
     $env = parse_ini_file(ROOT_PATH . '.env', true);
 
     foreach ($env as $key => $val) {
-        $name = ENV_PREFIX . strtoupper($key);
+        $name = strtoupper($key);
 
         if (is_array($val)) {
             foreach ($val as $k => $v) {
                 $item = $name . '_' . strtoupper($k);
-                putenv("$item=$v");
+                putenv($item . '=' . $v);
             }
         } else {
-            putenv("$name=$val");
+            putenv($name. '=' .$val);
         }
     }
 }

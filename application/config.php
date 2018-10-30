@@ -15,7 +15,7 @@ return [
     // +----------------------------------------------------------------------
 
     // 应用调试模式
-    'app_debug'              => true,
+    'app_debug'              => false,
     // 应用Trace
     'app_trace'              => false,
     // 应用模式状态
@@ -244,22 +244,24 @@ return [
         # 服务器URL
         'formal_url' => 'https://skylarkly.com', // 测试服 https://beta.skylarkly.com 正式服 https://skylarkly.com
         # 微课堂公众号 appid
-        'appid' => 'wx2e3b67da97589455', //   e33b2892827b2892b0d1ca1dc851361e7d67e37b2e7f4924a26b38539399ef60
+        'appid'      => getenv('APPID'),
         # 微课堂公众号 appsecret
-        'appsecret' => '6f82f9c31a1490e5a9001e00bd09a2f510d8af9da55552bbd3bf3e4c954d0e8f',
-        # 微课堂 了了登录 client_id
-        'client_id' => 'f5919b76d847ff3875eab973ce39e4ca6724c1d0efa3b988785d6249e5bfcd74',
-        # 微课堂 了了登录 client_secret
-        'client_secret' => 'af656f3d75a8d35cc445d5536ca3a1afb8eacb489ea77b291f9ca1427d949997',
-        # 微课堂 了了登录 授权接口返回类型
-        'response_type' => 'code',
-        # 微课堂 了了登录 后台  授权回调地址
-        'console_redirect_uri' => SITE_URL . '/console/Login/get_user_info',
-        # 微课堂 了了登录 api  回调地址
-        'api_redirect_uri' => SITE_URL . '/api/v1/Login/user_login', //  /view/index.html
+        'appsecret'  => getenv('APPSECRET'),
 
-        # 了了 V4 Api Authorization
-        'v4_api_Authorization' => 'e33b2892827b2892b0d1ca1dc851361e7d67e37b2e7f4924a26b38539399ef60:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lc3BhY2VfaWQiOjIwMH0.X2awG59KhXERtS3tWawJDTRFTKHDIKMazxYJxV2sWvM',
+        /** 微课堂 了了登录 */
+        # client_id
+        'client_id'  => getenv('CLIENT_ID'),
+        # client_secret
+        'client_secret' => getenv('CLIENT_SECRET'),
+        # 授权接口返回类型
+        'response_type' => 'code',
+        # 后台  授权回调地址
+        'console_redirect_uri' => SITE_URL . '/console/Login/get_user_info',
+        # api  回调地址
+        'api_redirect_uri'     => SITE_URL . '/api/v1/Login/user_login', //  /view/index.html
+
+        # V4 Api Authorization
+        'v4_api_Authorization' => getenv('API_AUTHORIZATION'),
 
         # 教师所在组织ID
         'teacher_organ' => [25751]
