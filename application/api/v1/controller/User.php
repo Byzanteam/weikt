@@ -4,34 +4,28 @@ namespace app\api\v1\controller;
 use app\api\Base;
 use app\api\v1\model\UserCollection;
 use app\api\v1\model\UserTask;
-use think\Db;
 
-class User extends Base
-{
+class User extends Base {
 
-    public function __construct()
-    {
+    public function __construct () {
         parent::__construct();
     }
 
-    /**
-     * 用户中心首页
-     */
-    public function user_center()
-    {
+    /** 用户中心首页 */
+    public function user_center () {
         /**
          * 1.用户数据：头像、姓名、累计学习天数、累计完成章节数、获得点评数
          * 2.排名位数
          * 3.本月学习时间
          */
-        if($this->request->isGet()) {
+        if ($this->request->isGet()) {
             // 参数整理
             $id = $this->userinfo['id'];
-            if(!empty($id)) {
+            if (!empty($id)) {
 
                 // 查询用户信息
                 $data['userinfo'] = db('user_basic')->where(['id'=>$id])->field('id,name,headimgurl,studytime,curriculum')->find();
-                if(!empty($data['userinfo'])) {
+                if (!empty($data['userinfo'])) {
                     // 用户信息获取成功
 
                     // 获取 获得 作业已点评数量
@@ -57,17 +51,12 @@ class User extends Base
     }
 
 
-    /**
-     * 获取收藏列表
-     * @param p 页码
-     * @param l 每页数量
-     */
-    public function get_collect_list()
-    {
-        if($this->request->isPost()) {
+    /** 获取收藏列表 */
+    public function get_collect_list () {
+        if ($this->request->isPost()) {
             // 参数整理
-            $page = intval(input('p',1));
-            $limit = intval(input('l',10));
+            $page = intval(input('p',1));   // 页码
+            $limit = intval(input('l',10)); // 每页数量
             $id = $this->userinfo['id'];
             if(!empty($id)) {
 
@@ -85,11 +74,8 @@ class User extends Base
         return json(['code' => 400, 'msg' => '请求方式不正确', 'data' => []]);
     }
 
-    /**
-     * 获取排名列表
-     */
-    public function get_rank_list()
-    {
+    /** 获取排名列表 */
+    public function get_rank_list () {
         if($this->request->isPost()) {
 
             $uid = $this->userinfo['id'];
@@ -125,18 +111,13 @@ class User extends Base
     }
 
 
-    /**
-     * 获取作业列表
-     * @param p 分页页码
-     * @param l 每页显示数量
-     */
-    public function get_work_list()
-    {
+    /** 获取作业列表 */
+    public function get_work_list () {
         if($this->request->isPost()) {
             // 参数整理
             $uid    = $this->userinfo['id'];
-            $page   = intval(input('p',1));
-            $limit  = intval(input('l',10));
+            $page   = intval(input('p',1));  // 分页页码
+            $limit  = intval(input('l',10)); // 每页显示数量
 
             // 判断用户ID不为空
             if(!empty($uid)) {
@@ -145,7 +126,8 @@ class User extends Base
                 $where  = ['user_id' => $uid];
                 $fields = 'cc.title,ut.id,from_unixtime(ut.sub_time, \'%Y-%m-%d\') as sub_time,ut.state';
                 $data   = $utModel->getList($where, $page, $limit, $fields);
-                if(!empty($data)) {
+
+                if (!empty($data)) {
                     return json(['code' => 200, 'msg' => '作业列表获取成功', 'data' => $data]);
                 }
                 return json(['code' => 404, 'msg' => '没有获取到作业记录', 'data' => []]);
@@ -183,4 +165,3 @@ class User extends Base
         return json(['code' => 403, 'msg' => '请选择要查看点评的作业', 'data' => []]);
     }
 }
-

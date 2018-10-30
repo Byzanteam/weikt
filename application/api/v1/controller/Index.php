@@ -2,7 +2,6 @@
 namespace app\api\v1\controller;
 
 use app\api\Base;
-use app\api\v1\controller\User;
 use app\api\v1\model\Curriculum;
 use app\api\v1\model\CurriculumClassification;
 
@@ -26,27 +25,13 @@ class Index extends Base
     public function get_home_data () {
 
         // 首页数据包括：
-        // 1. 学员信息：头像，名称，周学习排名，累加学习天数，累加完成章节数
-        // 2. 分类信息：推荐首页的1.2级分类 分类ID、名称、2级分类拥有的课程数量
-        // 3. 热门课程：1条课程下章节学习人数总和第一的课程，所属分类名称、分类ID、课程ID、课程名称、学习人员总数
-        // 4. 推荐课程：推荐到首页的课程。分类名称、分类ID、课程ID、课程名称、学习人员总数
+        // 1. 分类信息：推荐首页的1.2级分类 分类ID、名称、2级分类拥有的课程数量
+        // 2. 热门课程：1条课程下章节学习人数总和第一的课程，所属分类名称、分类ID、课程ID、课程名称、学习人员总数
+        // 3. 推荐课程：推荐到首页的课程。分类名称、分类ID、课程ID、课程名称、学习人员总数
+        // 4. 学员信息：头像，名称，周学习排名，累加学习天数，累加完成章节数
+
 
         $lag = input('lag', 'cn'); // cn学中文  en学英语
-
-        // 获取用户排名
-        $rank_no = 10;
-        if ($list = get_user_rank_no(2, $this->userinfo['id'], 0)) {
-            $rank_no = $list[0]['rank_no'];
-        }
-
-
-        // 用户信息整理
-        $result['userinfo']['id']   = $this->userinfo['id'];
-        $result['userinfo']['name'] = $this->userinfo['name'];
-        $result['userinfo']['headimgurl'] = $this->userinfo['headimgurl'];
-        $result['userinfo']['rank_no']    = $rank_no;
-        $result['userinfo']['studytime']  = $this->userinfo['studytime'];
-        $result['userinfo']['curriculum'] = $this->userinfo['curriculum'];
 
         // 获取 推荐首页 的顶级分类 2条
         $where = [
@@ -57,23 +42,44 @@ class Index extends Base
         $class_model = new CurriculumClassification();
 
         $result['recommend_classify'] = $class_model->getOne($where, 'id,name');
-       
 
-        // 获取子级推荐分类 并统计子分类下的课程数量
+        if ($result['recommend_classify']) {
+            // 获取子级推荐分类 并统计子分类下的课程数量
 
-        $result['recommend_classify']['childs'] = $class_model->getChildList($result['recommend_classify']['id']);
+            $result['recommend_classify']['childs'] = $class_model->getChildList($result['recommend_classify']['id']);
 
-        $curModel = new Curriculum();
+            $curModel = new Curriculum();
 
-        // 获取热门课程
-        $curWhere = ['cl.label' => $lag];
-        $result['popular_course'] = $curModel->getList($this->userinfo['id'], $curWhere, 'study_num desc', 3);
+            // 获取热门课程
+            $curWhere = ['cl.label' => $lag];
+            $result['popular_course'] = $curModel->getList($this->userinfo['id'], $curWhere, 'study_num desc', 3);
 
-        // 获取推荐课程
-        $curWhere['c.state'] = 1;
-        $result['recommend_course'] = $curModel->getList($this->userinfo['id'], $curWhere);
+            // 获取推荐课程
+            $curWhere['c.state'] = 1;
+            $result['recommend_course'] = $curModel->getList($this->userinfo['id'], $curWhere);
 
-        return json(['code'=>200,'msg'=>'获取成功！','data'=>$result]);
+
+            // 获取用户排名
+            $rank_no = 10;
+            if ($list = get_user_rank_no(2, $this->userinfo['id'], 0)) {
+                $rank_no = $list[0]['rank_no'];
+            }
+            // 用户信息整理
+            $result['userinfo'] = [
+                'id'         => $this->userinfo['id'],
+                'name'       => $this->userinfo['name'],
+                'headimgurl' => $this->userinfo['headimgurl'],
+                'rank_no'    => $rank_no,
+                'studytime'  => $this->userinfo['studytime'],
+                'curriculum' => $this->userinfo['curriculum']
+            ];
+
+            return json(['code'=>200, 'msg'=>'获取成功！', 'data'=>$result]);
+        } else {
+            return json(['code'=>404, 'msg'=>'分类不存在', 'data'=>[]]);
+        }
+
+
     }
 
 }
