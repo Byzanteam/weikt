@@ -145,7 +145,8 @@ class User extends Base
                 $where  = ['user_id' => $uid];
                 $fields = 'cc.title,ut.id,from_unixtime(ut.sub_time, \'%Y-%m-%d\') as sub_time,ut.state';
                 $data   = $utModel->getList($where, $page, $limit, $fields);
-                if(!empty($data)) {
+                echo  111;
+                if (!empty($data)) {
                     return json(['code' => 200, 'msg' => '作业列表获取成功', 'data' => $data]);
                 }
                 return json(['code' => 404, 'msg' => '没有获取到作业记录', 'data' => []]);
