@@ -114,6 +114,10 @@ class Work extends Base {
 //                        $temp_path = 'console/work/option_view';
 //                    }
 
+                    $work['state']    = $data['state'];
+                    $work['fraction'] = $data['fraction'];
+                    $work['comment']  = $data['comment'];
+
                     $this->assign('data', $work);
                     return $this->fetch($temp_path);
                 }
