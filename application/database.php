@@ -13,15 +13,15 @@ return [
     // 数据库类型
     'type'            => getenv('DB_CONNECTION'),
     // 服务器地址
-    'hostname'        => getenv('DB_HOST'),
+    'hostname'        => getenv('DATABASE_URL'),
     // 数据库名
     'database'        => getenv('DB_DATABASE'),
     // 用户名
-    'username'        =>  getenv('DB_USERNAME'),
+    'username'        => getenv('DB_USERNAME'),
     // 密码
-    'password'        =>  getenv('DB_PASSWORD'),
+    'password'        => getenv('DB_PASSWORD'),
     // 端口
-    'hostport'        =>  getenv('DB_PORT'),
+    'hostport'        => getenv('DB_PORT'),
     // 连接dsn
     'dsn'             => '',
     // 数据库连接参数
