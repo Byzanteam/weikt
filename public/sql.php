@@ -10,7 +10,7 @@
 $_sql = file_get_contents('weikt_webuildus.sql');
 
 
-print_r($_sql);
+print_r([getenv('DATABASE_URL'), getenv('DB_USERNAME'), getenv('DB_PASSWORD')]);
 $_arr = explode(';', $_sql);
 $_mysqli = new mysqli(getenv('DATABASE_URL'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'));
 if (mysqli_connect_errno()) {
