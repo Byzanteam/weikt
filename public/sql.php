@@ -12,7 +12,7 @@ $_sql = file_get_contents('weikt_webuildus.sql');
 
 print_r(getenv());
 $_arr = explode(';', $_sql);
-$_mysqli = new mysqli(getenv('DATABASE_URL'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'));
+$_mysqli = new mysqli(getenv('DATABASE_URL'), getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_USER'), getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_PASSWORD'));
 if (mysqli_connect_errno()) {
     exit('连接数据库出错');
 }
