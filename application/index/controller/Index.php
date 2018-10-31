@@ -28,15 +28,4 @@ class Index {
 
         $this->redirect($url);
     }
-
-    public function sql () {
-        echo  111;
-        $_sql = file_get_contents('weikt_webuildus.sql');
-        $_arr = explode(';', $_sql);
-
-        foreach ($_arr as $_value) {
-            Db::query($_value.';');
-        }
-    }
-
 }
