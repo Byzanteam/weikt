@@ -13,6 +13,8 @@ File Encoding         : 65001
 Date: 2018-10-31 16:33:43
 */
 
+-- create DATABASE weikt_webuildus;
+
 SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
