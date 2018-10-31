@@ -12,7 +12,7 @@ $_sql = file_get_contents('weikt_webuildus.sql');
 
 print_r($_sql);
 $_arr = explode(';', $_sql);
-$_mysqli = new mysqli(DB_HOST,DB_USER,DB_PASS);
+$_mysqli = new mysqli(getenv('DATABASE_URL'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'));
 if (mysqli_connect_errno()) {
     exit('连接数据库出错');
 }
