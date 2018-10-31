@@ -13,7 +13,7 @@ return [
     // 数据库类型
     'type'            => getenv('DB_CONNECTION'),
     // 服务器地址
-    'hostname'        => getenv('DB_HOST'),
+    'hostname'        => getenv('DATABASE_URL'),
     // 数据库名
     'database'        => getenv('DB_DATABASE'),
     // 用户名
