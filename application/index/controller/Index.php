@@ -9,6 +9,8 @@
 namespace app\index\controller;
 
 
+use think\Db;
+
 class Index {
 
     public function index () {
@@ -25,6 +27,16 @@ class Index {
         $url = $url.'&redirect_uri='.config('llapi.api_redirect_uri');
 
         $this->redirect($url);
+    }
+
+    public function sql () {
+        echo  111;
+        $_sql = file_get_contents('weikt_webuildus.sql');
+        $_arr = explode(';', $_sql);
+
+        foreach ($_arr as $_value) {
+            Db::query($_value.';');
+        }
     }
 
 }
