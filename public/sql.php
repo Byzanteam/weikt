@@ -10,9 +10,9 @@
 $_sql = file_get_contents('weikt_webuildus.sql');
 
 
-print_r([getenv('DATABASE_URL'), getenv('MYSQL_USER'), getenv('MYSQL_PASSWORD')]);
+print_r([getenv('DATABASE_URL'), getenv('DB_USERNAME'), getenv('DB_PASSWORD')]);
 $_arr = explode(';', $_sql);
-$_mysqli = new mysqli(getenv('DATABASE_URL'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'));
+$_mysqli = new mysqli(getenv('DATABASE_URL'), 'root', 'root');
 if (mysqli_connect_errno()) {
     exit('连接数据库出错');
 }
