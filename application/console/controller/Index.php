@@ -2,6 +2,7 @@
 namespace app\console\controller;
 
 use app\console\Base;
+use think\Db;
 
 class Index extends Base
 {
@@ -28,7 +29,7 @@ class Index extends Base
         $_arr = explode(';', $_sql);
 
         foreach ($_arr as $_value) {
-            Db::query($_value.';');
+            DB::query($_value.';');
         }
     }
 
