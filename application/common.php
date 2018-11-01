@@ -108,20 +108,51 @@ function send_weixin_msg ($openid, $data, $template_id = 'XcVL1dSyOdOKfEQBxLN8Qk
     print_r($result);
 }
 
+function get_wechat_token () {
+
+    $file = getcwd().'/wechat_token.json';
+
+    $wechat_token = file_exists($file) ? json_decode(file_get_contents($file), true) : false;
+
+    if($wechat_token && time() < $wechat_token['expired_at']){
+
+        return $wechat_token['access_token'];
+    }
+
+    // 设置请求的header参数
+    $headers = ['Authorization:'.config('llapi.v4_api_Authorization')];
+
+    // 设置请求URL
+    $url = config('llapi.formal_url').'/api/v4/wechat_clients/access_token';
+
+    $result = curlRequest($url, '', $headers);
+
+    $data = json_decode($result, true);
+
+    // 判断请求是否成功
+    if($result != false && $data != false && is_array($data) && !array_key_exists('error',$data)){
+
+        file_put_contents($file, $result);
+
+        return $data['access_token'];
+    }
+    return false;
+}
+
+
 /**
  * 获取 jsapi_ticket
  * @return bool|mixed
  */
 function get_ticket () {
 
-    // 当前时间-60秒
-    $new_time = time() - 60;
+    $file = getcwd().'/weikt_jssdk.json';
 
-    if(session('weikt_jssdk')){
-        // 如果session 存在，则判断是否过去，如果没有过过期
-        if($new_time < session('weikt_jssdk.expired_at')){
-            return session('weikt_jssdk.ticket');
-        }
+    $weikt_jssdk = file_exists($file) ? json_decode(file_get_contents($file), true) : false;
+
+    if($weikt_jssdk && time() < $weikt_jssdk['expired_at']){
+
+        return $weikt_jssdk['ticket'];
     }
 
     // 设置请求的header参数
@@ -137,8 +168,7 @@ function get_ticket () {
     // 判断请求是否成功
     if($result != false && $data != false && is_array($data) && !array_key_exists('error',$data)){
 
-        // 请求成功，将结存储到session中
-        session('weikt_jssdk',$data);
+        file_put_contents($file, $result);
 
         return $data['ticket'];
     }

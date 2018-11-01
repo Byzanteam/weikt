@@ -10,10 +10,8 @@ Target Server Type    : MYSQL
 Target Server Version : 50721
 File Encoding         : 65001
 
-Date: 2018-10-31 16:33:43
+Date: 2018-11-01 10:42:53
 */
-
--- create DATABASE weikt_webuildus;
 
 SET FOREIGN_KEY_CHECKS=0;
 
@@ -644,13 +642,13 @@ CREATE TABLE `vcr_user_basic` (
   `curriculum` int(10) unsigned DEFAULT '0' COMMENT '累加完成课程',
   `root_organization_ids` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`,`ll_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=44 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户信息表';
+) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户信息表';
 
 -- ----------------------------
 -- Records of vcr_user_basic
 -- ----------------------------
 INSERT INTO `vcr_user_basic` VALUES ('14', '320972', '石蔚鹏', 'Javen', '18280200461', 'oYTgqwlTusFLNG5XVaievNLLL2d4', 'http://thirdwx.qlogo.cn/mmopen/vi_32/tFArlex7uqALtUALOpa7fMZBGwh0wc7EEjsQIWyL12DmZEhC7iabC6tATlefZZQlzmR4blRS5NqeTN3F3NmACyQ/96', '2018-10-10 09:47:23', '2018-10-30 17:28:43', '12.00', '4', '25749');
-INSERT INTO `vcr_user_basic` VALUES ('13', '320923', '彭凯', '⊙_⊙', '13550236230', 'oYTgqwqqzLaRN-JKHWR5MMn4cEtc', 'http://thirdwx.qlogo.cn/mmopen/vi_32/VV0hlhNzS38M2fOV1icf6T3STmxwu38CKicsQKODolG51YE8iaJEobiayliaicFVcKuSkWIAhDljWnmTCfOic01FXlnEQ/96', '2018-10-09 20:18:00', '2018-10-31 11:44:44', '14.00', '2', '25749');
+INSERT INTO `vcr_user_basic` VALUES ('13', '320923', '彭凯', '⊙_⊙', '13550236230', 'oYTgqwqqzLaRN-JKHWR5MMn4cEtc', 'http://thirdwx.qlogo.cn/mmopen/vi_32/VV0hlhNzS38M2fOV1icf6T3STmxwu38CKicsQKODolG51YE8iaJEobiayliaicFVcKuSkWIAhDljWnmTCfOic01FXlnEQ/96', '2018-10-09 20:18:00', '2018-11-01 10:26:05', '15.00', '2', '25749');
 INSERT INTO `vcr_user_basic` VALUES ('12', '318129', '林倩', 'What', '18084826978', 'oYTgqwmmXNF8P9Ip7Nt25EZ8ssoc', 'http://thirdwx.qlogo.cn/mmopen/vi_32/iaJ4JpIkIBNgG4UUQgGc4lG9icuMPEic8ZqCXfmXicGn8ib4hmMecBmfwMu0qdickbzorZvu7ulGg40rMQ5WHIDroprg/96', '2018-10-09 13:02:59', '2018-10-20 10:18:51', '9.00', '2', '25751');
 INSERT INTO `vcr_user_basic` VALUES ('10', '316979', '杜忠', 'Mikeeeees', '17748784272', 'oYTgqwhz7Geedu8PekbOL95vWnO8', 'http://thirdwx.qlogo.cn/mmopen/vi_32/1BnibicDYM3RJqsShVn5ygtZIJD0kRrCeq8Tz5sOGD53ULcHFgofVNST4iaPibCMZbJTgoKUsm2LibtaycQDSYvTCFA/96', '2018-09-27 19:08:26', '2018-09-27 19:08:26', '1.00', '0', '25751');
 INSERT INTO `vcr_user_basic` VALUES ('15', '291252', '华侨小助手', 'LIZILIANG.', '17623135230', 'oYTgqwtsqs5I-Zf9LMvkzqdMk6sY', 'http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTL4lAGa4ARLWqFFguKficictWg2oR1DEic9PKsG6l7c18hO27aYAuHbkpGKKibTialpp9ibYJq2KPvHoNiag/96', '2018-10-10 09:54:19', '2018-10-26 12:20:00', '7.00', '4', '24579,25749');
@@ -668,7 +666,7 @@ INSERT INTO `vcr_user_basic` VALUES ('26', '293832', '育川', '育川', null, '
 INSERT INTO `vcr_user_basic` VALUES ('27', '293812', 'Max', 'Max', null, 'oYTgqwlbJn1KMkEC_xxOwi_1lPyg', 'http://thirdwx.qlogo.cn/mmopen/vi_32/QwFIz8rCvOtnFAQ6YkKDk3fQxNY6NiavUkTibImr8UlJs9gJd6pw8YsgZedLIgnM8suEhCl54ibzWoPt3xj62GnnA/96', '2018-10-16 11:42:36', '2018-10-16 11:42:36', '1.00', '0', '25751');
 INSERT INTO `vcr_user_basic` VALUES ('28', '242184', '李子良', 'LI ZI LIANG.', '17623135230', 'obZfX0Y8ZPqVqU3C9eaxUcAEQkNQ', 'http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJk0L9eAibPyMHp23m8pdxvH1EBfoCHYf7JtIycXl3ZTsGm7kTlyvdnLOtbfXwZszWYiacWgfbpkCGg/96', '2018-10-16 19:45:21', '2018-10-16 21:44:29', '1.00', '0', '25751');
 INSERT INTO `vcr_user_basic` VALUES ('29', '21357', '陈世芬', '云淡风清', '13540634882', 'oFDAfs8Nnfz_6pmUK-ZuezGXV8ZI', 'http://wx.qlogo.cn/mmopen/EictgwJcsaJcYiau7Shpab582BUjNDoiaZHh7ZCZR3oicVgjlibPRHFb12puSF4MyQWgdcojricm8xhgTibMeBTTlrpibWFTgzyETKRd/96', '2018-10-17 17:28:59', '2018-10-17 17:28:59', '1.00', '0', '25751');
-INSERT INTO `vcr_user_basic` VALUES ('30', '301728', '华侨学院', '华侨学院', '17729839715', 'oYTgqwg07U9y0-hW4N0v3E1tyB8w', 'http://thirdwx.qlogo.cn/mmopen/vi_32/EgcsUmxlibI5N6ibFoQyR33H1ibofADmia6LwMnQ9PADRuxv4DV1UxZO7Ar5xFxU8WG6lhbW0iaaCBWWhNAzXMAxbpw/96', '2018-10-17 17:36:48', '2018-10-17 17:36:48', '1.00', '0', '25751');
+INSERT INTO `vcr_user_basic` VALUES ('30', '301728', '华侨学院', '华侨学院', '17729839715', 'oYTgqwg07U9y0-hW4N0v3E1tyB8w', 'http://thirdwx.qlogo.cn/mmopen/vi_32/EgcsUmxlibI5N6ibFoQyR33H1ibofADmia6LwMnQ9PADRuxv4DV1UxZO7Ar5xFxU8WG6lhbW0iaaCBWWhNAzXMAxbpw/96', '2018-10-17 17:36:48', '2018-11-01 09:35:56', '1.00', '0', '24579');
 INSERT INTO `vcr_user_basic` VALUES ('31', '321978', '闾鹏', '低 语丶', '13683476522', 'oYTgqwpqg31r3HbZWV6y9Pq61On4', 'http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJ8Gv7uH8y9Dpribn2RJ5C9sP0psFtVbJrIJGRd1MDibVibyCWR9nkfsiac34jgR1rMdsbrDElCePLpBQ/96', '2018-10-17 19:02:28', '2018-10-30 18:33:02', '6.00', '2', '25749');
 INSERT INTO `vcr_user_basic` VALUES ('32', '317860', 'fahchen', 'fahchen', null, 'oYTgqwmZLbBwNdvil9_fowX7dFyc', 'http://thirdwx.qlogo.cn/mmopen/vi_32/nsic4ThicIrYJsQRyHF1X3u40qQZ7KS6M816Kjd0XibNP69e8ytacRFp026IXSjwzHlVcFWDgPl6GEia0dzAqxiabHA/96', '2018-10-18 13:08:08', '2018-10-18 13:08:08', '1.00', '0', '25751');
 INSERT INTO `vcr_user_basic` VALUES ('33', '255015', '李子良', 'LIZILIANG.', '17623135230', 'ofl2Ut01V5a9tbena7sjZwmbSAhk', 'http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIfOpXksb74ZfMkAnzsMDsmx353tZ8sO4fVbC6SCFI9Q9U5ovAMIDryxAp5ibs95VpGK6k8CFJG1Tg/96', '2018-10-19 08:48:28', '2018-10-19 08:55:28', '1.00', '1', '25751');
@@ -677,9 +675,10 @@ INSERT INTO `vcr_user_basic` VALUES ('35', '207168', '刘育川2', 'Max', '13198
 INSERT INTO `vcr_user_basic` VALUES ('42', '115537', '杜畅宇', 'summer夏天', '18382337056', 'oFDAfs3bcW-708YhU2Kel_VRzdAc', 'http://wx.qlogo.cn/mmopen/vi_32/g26kxhEsDsPxmzmfyYqgUBSYibc30kWDR8V9ncbNhicL335ZGoVAl1sOicd3IjjsibN4nzvkRibNVtHSs3Cdy9WicLsA/96', '2018-10-30 15:06:53', '2018-10-30 15:06:53', '1.00', '0', '21190,21204,22073,22325,20617,14004');
 INSERT INTO `vcr_user_basic` VALUES ('37', '324337', 'Max', 'Max', '13198509103', 'oYTgqwlbJn1KMkEC_xxOwi_1lPyg', 'http://thirdwx.qlogo.cn/mmopen/vi_32/QwFIz8rCvOtnFAQ6YkKDk3fQxNY6NiavUkTibImr8UlJs9gJd6pw8YsgZedLIgnM8scM31ibJ0S6RvDbE1qhtNEhQ/96', '2018-10-23 17:15:47', '2018-10-23 17:26:48', '2.00', '0', '24579,25751');
 INSERT INTO `vcr_user_basic` VALUES ('38', '208168', '李子良', 'LIZILIANG.', '17623135230', 'o_e_xw9sYzQL_DT0jPDKO8D9gXaA', 'http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLYDwh9yOGZ8O4KaHuVRRngHZkuIOr9nV15GoicRbf7r5lau9N9NJhYZ1VOjpiacIX142X9iaEfVu7Jg/96', '2018-10-25 15:59:22', '2018-10-25 17:15:13', '2.00', '0', '24645');
-INSERT INTO `vcr_user_basic` VALUES ('39', '112889', '岳静静', '静静', '18335832463', 'ofl2Ut0yQ4oR9QWQMb-X5R0TCEcs', 'http://thirdwx.qlogo.cn/mmopen/vi_32/wTTz0eiaugqgOIJxiaEyvIc09VEf5n8Eib3hLLZXkDJn2vkS33454H83xskT2yOrib5icic6LAHD3h5qsD5ZOlXEXHibw/96', '2018-10-25 19:02:46', '0000-00-00 00:00:00', '1.00', '0', '13545,21150,24585,24928,25737');
+INSERT INTO `vcr_user_basic` VALUES ('39', '112889', '岳静静', '静静', '18335832463', 'ofl2Ut0yQ4oR9QWQMb-X5R0TCEcs', 'http://thirdwx.qlogo.cn/mmopen/vi_32/wTTz0eiaugqgOIJxiaEyvIc09VEf5n8Eib3hLLZXkDJn2vkS33454H83xskT2yOrib5icic6LAHD3h5qsD5ZOlXEXHibw/96', '2018-10-25 19:02:46', '2018-11-01 09:49:53', '1.00', '0', '13545,21150,24585,24928,25737');
 INSERT INTO `vcr_user_basic` VALUES ('40', '25318', '马阔', '马小阔', '15198222994', 'oFDAfs_frYBMOsi4_LLNzsJuJGKU', 'http://thirdwx.qlogo.cn/mmopen/vi_32/icSyFvfuVJH5RYdhJ1mmrtkItr5W2N2FT99PqibH3MQnRe3CHtichpYTMyRujEZZ6COJOM4ia6W34ic5HoJsiboJoKDA/96', '2018-10-26 12:19:39', '2018-10-26 12:21:18', '2.00', '0', '21190,22073,22325,20617,14004,22063');
 INSERT INTO `vcr_user_basic` VALUES ('41', '324750', '苏凯', '招呼不到patrick', '18980807092', 'oYTgqwi_COtqdA1ybGQ2EEAexSlM', 'http://thirdwx.qlogo.cn/mmopen/vi_32/rrWrLOC1e2N2ibDpicz9kjchfOjRo4Oicxw5Lia7IKP3bMjJJxhbLv1Jzt40fTicgic9DhHn5n9RQZtNxWFT6eoasFIw/96', '2018-10-26 12:23:57', '0000-00-00 00:00:00', '1.00', '0', '25749');
+INSERT INTO `vcr_user_basic` VALUES ('44', '325684', 'LIZILIANG.', 'LIZILIANG.', null, 'oYTgqwtsqs5I-Zf9LMvkzqdMk6sY', 'http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTL4lAGa4ARLWqFFguKficictWg2oR1DEic9PKsG6l7c18hO27aYAuHbkpGEgMhtYx1721icFPuwiaQdnibA/96', '2018-11-01 10:28:40', '2018-11-01 10:32:42', '1.00', '0', '24586');
 
 -- ----------------------------
 -- Table structure for vcr_user_collection
@@ -794,10 +793,4 @@ CREATE TABLE `vcr_user_task` (
 -- ----------------------------
 -- Records of vcr_user_task
 -- ----------------------------
-INSERT INTO `vcr_user_task` VALUES ('22', '45', '13', '1540515076', '{\"url\":\"static\\/update\\/work\\/1540515076_13_45.mp3\"}', '2', '', null, '0');
-INSERT INTO `vcr_user_task` VALUES ('23', '46', '15', '1540506886', '{\"url\":\"static\\/update\\/work\\/1540506886_15_46.amr\"}', '1', 'OK', '291252', '98');
-INSERT INTO `vcr_user_task` VALUES ('24', '45', '15', '1540516405', '{\"url\":\"static\\/update\\/work\\/1540516405_15_45.mp3\"}', '1', '很好', '291252', '10');
-INSERT INTO `vcr_user_task` VALUES ('25', '46', '19', '1540514997', '{\"url\":\"static\\/update\\/work\\/1540514997_19_46.mp3\"}', '2', '', null, '0');
-INSERT INTO `vcr_user_task` VALUES ('26', '47', '19', '1540515116', '{\"url\":\"static\\/update\\/work\\/1540515116_19_47.mp3\"}', '2', '', null, '0');
-INSERT INTO `vcr_user_task` VALUES ('27', '47', '15', '1540516368', '{\"url\":\"static\\/update\\/work\\/1540516368_15_47.mp3\"}', '1', 'OK', '291252', '12');
-INSERT INTO `vcr_user_task` VALUES ('28', '45', '14', '1540516171', '{\"url\":\"static\\/update\\/work\\/1540516171_14_45.mp3\"}', '1', '很好', '291252', '9');
+INSERT INTO `vcr_user_task` VALUES ('22', '45', '13', '1541039488', '{\"url\":\"static\\/update\\/work\\/1541039487_13_45.mp3\"}', '2', '', null, '0');
