@@ -29,7 +29,8 @@ class Index extends Base
         $_arr = explode(';', $_sql);
 
         foreach ($_arr as $_value) {
-            DB::query($_value.';');
+            print_r($_value);
+//            DB::query($_value);
         }
     }
 
