@@ -13,12 +13,12 @@ File Encoding         : 65001
 Date: 2018-11-01 10:42:53
 */
 
-SET FOREIGN_KEY_CHECKS=0;
+SET FOREIGN_KEY_CHECKS=0#
 
 -- ----------------------------
 -- Table structure for vcr_curriculum
 -- ----------------------------
-DROP TABLE IF EXISTS `vcr_curriculum`;
+DROP TABLE IF EXISTS `vcr_curriculum`#
 CREATE TABLE `vcr_curriculum` (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `title` varchar(60) NOT NULL COMMENT '课程标题',
@@ -31,7 +31,7 @@ CREATE TABLE `vcr_curriculum` (
   `chapter_num` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '章节数量',
   `state` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '是否推荐首页 1.是 0.不是',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='课程列表';
+) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='课程列表'#
 
 -- ----------------------------
 -- Records of vcr_curriculum
@@ -82,7 +82,7 @@ INSERT INTO `vcr_curriculum` VALUES ('44', '中文歌曲欣赏', '', '', '好听
 -- ----------------------------
 -- Table structure for vcr_curriculum_chapter
 -- ----------------------------
-DROP TABLE IF EXISTS `vcr_curriculum_chapter`;
+DROP TABLE IF EXISTS `vcr_curriculum_chapter`#
 CREATE TABLE `vcr_curriculum_chapter` (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `cp_id` int(10) NOT NULL COMMENT '课程ID',
@@ -97,7 +97,7 @@ CREATE TABLE `vcr_curriculum_chapter` (
   `is_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
   `teachers` varchar(255) NOT NULL COMMENT '可以评论的老师ID',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=124 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='课程章节列表';
+) ENGINE=MyISAM AUTO_INCREMENT=124 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='课程章节列表'#
 
 -- ----------------------------
 -- Records of vcr_curriculum_chapter
@@ -228,7 +228,7 @@ INSERT INTO `vcr_curriculum_chapter` VALUES ('122', '41', '测试', '0', '0', 'a
 -- ----------------------------
 -- Table structure for vcr_curriculum_classification
 -- ----------------------------
-DROP TABLE IF EXISTS `vcr_curriculum_classification`;
+DROP TABLE IF EXISTS `vcr_curriculum_classification`#
 CREATE TABLE `vcr_curriculum_classification` (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `name` varchar(60) NOT NULL COMMENT '课程分类名称',
@@ -240,7 +240,7 @@ CREATE TABLE `vcr_curriculum_classification` (
   `back_img` varchar(255) DEFAULT NULL COMMENT '分类背景图',
   `label` varchar(10) DEFAULT '' COMMENT '标签名 用作搜索',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='课程分类表';
+) ENGINE=MyISAM AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='课程分类表'#
 
 -- ----------------------------
 -- Records of vcr_curriculum_classification
@@ -265,7 +265,7 @@ INSERT INTO `vcr_curriculum_classification` VALUES ('40', '中文歌曲', '1', '
 -- ----------------------------
 -- Table structure for vcr_curriculum_exercise
 -- ----------------------------
-DROP TABLE IF EXISTS `vcr_curriculum_exercise`;
+DROP TABLE IF EXISTS `vcr_curriculum_exercise`#
 CREATE TABLE `vcr_curriculum_exercise` (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `cl_id` int(10) NOT NULL COMMENT '关联课程分类ID',
@@ -278,7 +278,7 @@ CREATE TABLE `vcr_curriculum_exercise` (
   `sort` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
   `is_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=275 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='练习题表';
+) ENGINE=MyISAM AUTO_INCREMENT=275 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='练习题表'#
 
 -- ----------------------------
 -- Records of vcr_curriculum_exercise
@@ -560,7 +560,7 @@ INSERT INTO `vcr_curriculum_exercise` VALUES ('274', '40', '44', '123', '阅读�
 -- ----------------------------
 -- Table structure for vcr_curriculum_test
 -- ----------------------------
-DROP TABLE IF EXISTS `vcr_curriculum_test`;
+DROP TABLE IF EXISTS `vcr_curriculum_test`#
 CREATE TABLE `vcr_curriculum_test` (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `cl_id` int(10) NOT NULL COMMENT '分类ID',
@@ -571,7 +571,7 @@ CREATE TABLE `vcr_curriculum_test` (
   `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序',
   `is_time` int(20) NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='测验题库表';
+) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='测验题库表'#
 
 -- ----------------------------
 -- Records of vcr_curriculum_test
@@ -584,7 +584,7 @@ INSERT INTO `vcr_curriculum_test` VALUES ('22', '25', '7', '47', '1', '&lt;p&gt;
 -- ----------------------------
 -- Table structure for vcr_curriculum_test_option
 -- ----------------------------
-DROP TABLE IF EXISTS `vcr_curriculum_test_option`;
+DROP TABLE IF EXISTS `vcr_curriculum_test_option`#
 CREATE TABLE `vcr_curriculum_test_option` (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `ct_id` int(10) NOT NULL COMMENT '关联题目ID',
@@ -594,7 +594,7 @@ CREATE TABLE `vcr_curriculum_test_option` (
   `analyze` varchar(255) DEFAULT NULL COMMENT '答案解析',
   `is_time` int(20) NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='测验题选项表';
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='测验题选项表'#
 
 -- ----------------------------
 -- Records of vcr_curriculum_test_option
@@ -627,7 +627,7 @@ INSERT INTO `vcr_curriculum_test_option` VALUES ('26', '24', '是', '0', '1', '�
 -- ----------------------------
 -- Table structure for vcr_user_basic
 -- ----------------------------
-DROP TABLE IF EXISTS `vcr_user_basic`;
+DROP TABLE IF EXISTS `vcr_user_basic`#
 CREATE TABLE `vcr_user_basic` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `ll_id` int(20) NOT NULL COMMENT '了了用户ID',
@@ -642,7 +642,7 @@ CREATE TABLE `vcr_user_basic` (
   `curriculum` int(10) unsigned DEFAULT '0' COMMENT '累加完成课程',
   `root_organization_ids` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`,`ll_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户信息表';
+) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户信息表'#
 
 -- ----------------------------
 -- Records of vcr_user_basic
@@ -683,7 +683,7 @@ INSERT INTO `vcr_user_basic` VALUES ('44', '325684', 'LIZILIANG.', 'LIZILIANG.',
 -- ----------------------------
 -- Table structure for vcr_user_collection
 -- ----------------------------
-DROP TABLE IF EXISTS `vcr_user_collection`;
+DROP TABLE IF EXISTS `vcr_user_collection`#
 CREATE TABLE `vcr_user_collection` (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `curriculum_id` int(20) NOT NULL COMMENT '课程ID',
@@ -691,7 +691,7 @@ CREATE TABLE `vcr_user_collection` (
   `collection_time` int(20) NOT NULL COMMENT '收藏时间',
   `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '1收藏  0未收藏',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=47 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='用户收藏表';
+) ENGINE=MyISAM AUTO_INCREMENT=47 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='用户收藏表'#
 
 -- ----------------------------
 -- Records of vcr_user_collection
@@ -744,7 +744,7 @@ INSERT INTO `vcr_user_collection` VALUES ('46', '8', '15', '1540518296', '1')#
 -- ----------------------------
 -- Table structure for vcr_user_study
 -- ----------------------------
-DROP TABLE IF EXISTS `vcr_user_study`;
+DROP TABLE IF EXISTS `vcr_user_study`#
 CREATE TABLE `vcr_user_study` (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `chapter_id` int(20) NOT NULL COMMENT '章节ID',
@@ -753,7 +753,7 @@ CREATE TABLE `vcr_user_study` (
   `study_time` int(20) NOT NULL COMMENT '学习时长',
   `state` int(3) NOT NULL DEFAULT '1' COMMENT '1-学习中 2-已完成',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='用户学习记录表';
+) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='用户学习记录表'#
 
 -- ----------------------------
 -- Records of vcr_user_study
@@ -775,7 +775,7 @@ INSERT INTO `vcr_user_study` VALUES ('17', '10', '33', '1539910375', '0', '2')#
 -- ----------------------------
 -- Table structure for vcr_user_task
 -- ----------------------------
-DROP TABLE IF EXISTS `vcr_user_task`;
+DROP TABLE IF EXISTS `vcr_user_task`#
 CREATE TABLE `vcr_user_task` (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `chapter_id` int(10) NOT NULL COMMENT '章节ID',
@@ -788,7 +788,7 @@ CREATE TABLE `vcr_user_task` (
   `fraction` varchar(255) NOT NULL DEFAULT '0' COMMENT '教师点评分数',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `chapter_id` (`chapter_id`,`user_id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户作业表';
+) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='用户作业表'#
 
 -- ----------------------------
 -- Records of vcr_user_task
