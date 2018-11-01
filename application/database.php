@@ -19,7 +19,7 @@ return [
     // 用户名
     'username'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_USER'),
     // 密码
-    'password'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_PASSWORD'),
+    'password'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_ROOT_PASSWORD'),
     // 端口
     'hostport'        => getenv('DOKKU_MYSQL_WEIKT_DB_PORT_3306_TCP_PORT'),
     // 连接dsn
