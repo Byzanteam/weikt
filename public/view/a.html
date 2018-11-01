@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+sdssad
+</body>
+<script src="../static/jquery-3.3.1.min.js"></script>
+<script>
+  var storage=window.localStorage;
+  
+  storage.login_token='FF2E15698EE6C146CB360B1EC4DBBCA7';
+
+  $.ajax({
+    headers: {
+      'x-auth-info': storage.login_token
+    },
+    url: '/api/v1/Index/get_home_data',
+    type: 'POST',
+    data: {lag:'en'},
+    success: function(result){
+      console.log(result)
+    },
+    error: function(){
+      layer.msg('网络错误！', {icon: 5});
+    }
+  });
+</script>
+</html>
