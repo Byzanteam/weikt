@@ -13,13 +13,13 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => getenv('DATABASE_URL'),
+    'hostname'        => getenv('DOKKU_MYSQL_WEIKT_DB_PORT_3306_TCP_ADDR'),
     // 数据库名
     'database'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_DATABASE'),
     // 用户名
     'username'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_USER'),
     // 密码
-    'password'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_ROOT_PASSWORD'),
+    'password'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_PASSWORD'),
     // 端口
     'hostport'        => getenv('DOKKU_MYSQL_WEIKT_DB_PORT_3306_TCP_PORT'),
     // 连接dsn

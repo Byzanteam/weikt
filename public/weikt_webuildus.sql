@@ -1,5 +1,3 @@
-SET GLOBAL sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'#
-
 DROP TABLE IF EXISTS `vcr_user_basic`#
 CREATE TABLE `vcr_user_basic` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
@@ -10,7 +8,7 @@ CREATE TABLE `vcr_user_basic` (
   `openid` varchar(50) NOT NULL COMMENT '微信openid用户唯一标识',
   `headimgurl` varchar(255) DEFAULT NULL COMMENT '头像',
   `registrationtime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
-  `last_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '最后登录时间',
+  `last_time` datetime NOT NULL DEFAULT '0000-01-01 00:00:00' COMMENT '最后登录时间',
   `studytime` float(5,2) unsigned DEFAULT '1.00' COMMENT '总计学习时间',
   `curriculum` int(10) unsigned DEFAULT '0' COMMENT '累加完成课程',
   `root_organization_ids` varchar(255) DEFAULT NULL,
