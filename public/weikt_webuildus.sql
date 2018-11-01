@@ -742,4 +742,4 @@ CREATE TABLE `vcr_user_task` (
 -- ----------------------------
 -- Records of vcr_user_task
 -- ----------------------------
-INSERT INTO `vcr_user_task` VALUES ('22', '45', '13', '1541039488', '{\"url\":\"static\\/update\\/work\\/1541039487_13_45.mp3\"}', '2', '', null, '0')#
+INSERT INTO `vcr_user_task` VALUES ('22', '45', '13', '1541039488', '{\"url\":\"static\\/update\\/work\\/1541039487_13_45.mp3\"}', '2', '', null, '0')
