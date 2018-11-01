@@ -13,7 +13,7 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => getenv('DOKKU_MYSQL_WEIKT_DB_PORT_3306_TCP_ADDR'),
+    'hostname'        => getenv('DATABASE_URL'),
     // 数据库名
     'database'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_DATABASE'),
     // 用户名
