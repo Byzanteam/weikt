@@ -2,6 +2,7 @@
 namespace app\console\controller;
 
 use app\console\Base;
+use app\console\model\ChapterContent;
 use app\console\model\CurriculumChapter as Chapter_model;
 use app\console\model\UserBasic;
 
@@ -23,8 +24,7 @@ class CurriculumChapter extends Base
     /**
      * 章节管理表单页载入
      */
-    public function index()
-    {
+    public function index () {
         return $this->fetch('console/curriculum_chapter/index');
     }
 
@@ -68,7 +68,6 @@ class CurriculumChapter extends Base
 
     /**
      * 章节添加页面加载
-     * @return mixed
      */
     public function add () {
         // 获取课程列表
@@ -96,11 +95,7 @@ class CurriculumChapter extends Base
             $data['title'] = input('title','','strip_tags,trim');
             $data['cp_id'] = intval(input('cp_id',0));
             $data['sort'] = intval(input('sort',0));
-            $data['media_type'] = input('media_type','','strip_tags,trim');
-            $data['file_name'] = input('file_name','','strip_tags,trim');
-            $data['media_path'] = input('media_path','','trim');
             $data['test_type'] = intval(input('test_type',0));
-            $data['content'] = input('content','');
             $data['teachers'] = input('teachers/a');
 
             if(!empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) && !empty($data['test_type']) && !empty($data['teachers'])){
@@ -157,8 +152,6 @@ class CurriculumChapter extends Base
                     // 获取课程列表
                     $courseList = db('curriculum')->where([])->field('id,title')->select();
 
-                    // 文本内容反编译
-                    $data['content']  = htmlspecialchars_decode($data['content']);
                     // 转为数组
                     $data['teachers'] = !empty($data['teachers']) ? explode(',', $data['teachers']) : [];
 
@@ -194,11 +187,7 @@ class CurriculumChapter extends Base
             $data['title'] = input('title','','strip_tags,trim');
             $data['cp_id'] = intval(input('cp_id',0));
             $data['sort']  = intval(input('sort',0));
-            $data['media_type'] = input('media_type','','strip_tags,trim');
-            $data['file_name']  = input('file_name','','strip_tags,trim');
-            $data['media_path'] = input('media_path','','trim');
             $data['test_type']  = intval(input('test_type',0));
-            $data['content'] = input('content','');
             $data['teachers'] = input('teachers/a');
 
 
@@ -245,12 +234,10 @@ class CurriculumChapter extends Base
 
     /**
      * 删除记录
-     * @param id 记录ID
      */
-    public function delChapter()
-    {
+    public function delChapter () {
         if(\think\Request::instance()->isPost()) {
-            $id = intval(input('id'));
+            $id = intval(input('id')); // 记录ID
             if(!empty($id)){
                 // 删除前 获取一下数据，检查数据是否存在
                 $data = db('curriculum_chapter')->where(['id'=>$id])->find();
@@ -268,8 +255,11 @@ class CurriculumChapter extends Base
                     // 执行删除
                     $res = $this->model->del($id);
                     if($res){
+                        $conModel = new ChapterContent();
+                        $conModel->del(['cc_id' => $id]);
+
                         // 删除成功，修改课程拥有章节数-1
-                        db('curriculum')->where(['id'=>$data['cp_id']])->setDec('chapter_num');
+                        db('curriculum')->where(['id' => $data['cp_id']])->setDec('chapter_num');
 
                         return json(['code' => 200, 'msg' => '数据删除成功']);
                     }
@@ -282,4 +272,125 @@ class CurriculumChapter extends Base
         return json(['code' => 0, 'msg' => '请求方式错误']);
     }
 
+    /**
+     * 章节内容列表单页载入
+     * @return mixed
+     */
+    public function contentList () {
+        $cc_id = intval(input('cc_id')); // 章节ID
+
+        $this->assign('cc_id', $cc_id);
+        return $this->fetch('console/curriculum_chapter/content');
+    }
+
+    /**
+     * 章节内容列表
+     */
+    public function ajaxContentList () {
+        $cc_id = intval(input('cc_id')); // 章节ID
+
+        if ($cc_id > 0) {
+            $conModel = new ChapterContent();
+
+            $where = [
+                'cc_id' => $cc_id
+            ];
+            $data = $conModel->getList($where);
+
+            if (!empty($data)) {
+
+                foreach ($data as $k => $v) {
+                    if($v['media_type'] == 'audio'){
+                        $v['media_type_name'] = '音频';
+                    }elseif ($v['media_type'] == 'video'){
+                        $v['media_type_name'] = '视频';
+                    }else{
+                        $v['media_type_name'] = '文本';
+                    }
+                    $data[$k] = $v;
+                }
+
+                return json([
+                    'code' => 200,
+                    'msg'  => '列表获取成功',
+                    'data' => $data
+                ]);
+            }
+            return json(['code' => 0, 'msg' => '没有数据', 'count' => 0, 'data' => []]);
+        }
+        return json(['code' => 0, 'msg' => '缺少章节ID', 'count' => 0, 'data' => []]);
+    }
+
+    public function editContent () {
+        $cc_id = intval(input('cc_id')); // 章节ID
+        $id    = intval(input('id', 0)); // 章节内容ID
+
+        $conModel = new ChapterContent();
+
+        $data = [];
+        if ($id > 0) {
+            $where = [
+                'cc_id' => $cc_id,
+                'id'    => $id
+            ];
+
+            $data = $conModel->getOne($where);
+
+            // 文本内容反编译
+            $data['content'] = htmlspecialchars_decode($data['content']);
+        }
+
+        if ($data) {
+            $this->assign('data', $data);
+            $fetch = 'console/curriculum_chapter/edit_content';
+        } else {
+            $this->assign('cc_id', $cc_id);
+            $fetch = 'console/curriculum_chapter/add_content';
+        }
+
+        return $this->fetch($fetch);
+    }
+
+    public function ajaxAddContent () {
+        $id    = intval(input('id', 0)); // 章节内容ID
+
+        $data['cc_id']      = intval(input('cc_id')); // 章节ID
+        $data['sort']       = intval(input('sort',0));
+        $data['media_type'] = input('media_type','','strip_tags,trim');
+        $data['file_name']  = input('file_name','','strip_tags,trim');
+        $data['media_path'] = input('media_path','','trim');
+        $data['content']    = input('content','');
+
+        $conModel = new ChapterContent();
+        $where = [];
+
+        $msg = '添加成功';
+        $error_msg = '添加失败';
+
+        if ($id > 0) {
+            $where = [
+                'id' => $id
+            ];
+
+            $msg = '编辑成功';
+            $error_msg = '编辑失败';
+        }
+
+        if ($conModel->save($data, $where) !== false) {
+            return json(['code' => 200, 'msg' => $msg]);
+        }
+
+        return json(['code' => 0, 'msg' => $error_msg]);
+    }
+
+    public function delChapterContent () {
+        $id = intval(input('id', 0)); // 章节内容ID
+
+        $conModel = new ChapterContent();
+        if ($conModel->del(['id' => $id])) {
+            return json(['code' => 200, 'msg' => '数据删除成功']);
+        }
+
+        return json(['code' => 0, 'msg' => '数据删除失败']);
+    }
 }

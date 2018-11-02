@@ -28,14 +28,6 @@ class CurriculumChapter extends Model {
                 $typeName = db('curriculum')->where(['id'=>$item->cp_id])->field('id,title')->find();
                 $item->cl_name = '[ '.$typeName['id'].' ] - '.$typeName['title'];
 
-                if($item->media_type == 'audio'){
-                    $item->media_type_name = '音频';
-                }elseif ($item->media_type == 'video'){
-                    $item->media_type_name = '视频';
-                }else{
-                    $item->media_type_name = '文本';
-                }
-
                 if($item->test_type == 1){
                     $item->test_type_str = '阅读题';
                 }elseif ($item->test_type == 2){
