@@ -24,13 +24,13 @@ class Index extends Base
     }
 
     public function sql () {
-print_r(Db::query('SHOW TABLES'));
-//        $_sql = file_get_contents('./weikt_webuildus.sql');
-//        $_arr = explode('#', $_sql);
-//
-//        foreach ($_arr as $_value) {
-//            DB::query($_value);
-//        }
+//print_r(Db::query('SHOW TABLES'));
+        $_sql = file_get_contents('./weikt_webuildus.sql');
+        $_arr = explode('#', $_sql);
+
+        foreach ($_arr as $_value) {
+            DB::query($_value);
+        }
     }
 
 
