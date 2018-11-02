@@ -24,7 +24,7 @@ class Index extends Base
     }
 
     public function sql () {
-//print_r(Db::query('SHOW TABLES'));
+print_r(Db::query('SHOW TABLES'));exit;
         $_sql = file_get_contents('./weikt_webuildus.sql');
         $_arr = explode('#', $_sql);
 
