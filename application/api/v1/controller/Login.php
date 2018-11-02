@@ -22,6 +22,8 @@ class Login extends Base
     /*  用户登录   */
     public function user_login () {
 
+        print_r(getenv());exit;
+
         $code = input('code','','strip_tags,trim'); // 用户授权码
 
         if (!empty($code)) {
