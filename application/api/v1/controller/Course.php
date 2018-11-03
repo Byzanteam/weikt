@@ -164,7 +164,7 @@ class Course extends Base {
                         'cc_id' => $data['id']
                     ];
                     $data['content_list'] = $conModel->getList($where, $fields) ?: [];
-print_r($data);exit;
+
                     if (!empty($data['content_list'])) {
                         foreach ($data['content_list'] as $k => $v) {
 

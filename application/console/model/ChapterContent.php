@@ -19,13 +19,10 @@ class ChapterContent extends Model {
      * @param array $where
      * @param string $fields
      * @param array $order
-     * @return false|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
+     * @return mixed
      */
     public function getList ($where = [], $fields = '*', $order = ['sort', 'id' => 'desc']) {
-        return $this->field($fields)
+        return db('chapter_content')->field($fields)
             ->where($where)
             ->order($order)
             ->select();
