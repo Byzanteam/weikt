@@ -78,7 +78,7 @@ class Course extends Base {
 
                     $chaModel = new CurriculumChapter();
 
-                    $chaFields = 'ch.id,ch.title,from_unixtime(ch.is_time, \'%Y-%m-%d\') as is_time,ch.study_num,IF(st.state, st.state, 0) AS state';
+                    $chaFields = 'ch.id,ch.title,date_format(ch.is_time, \'%Y-%m-%d\') as is_time,ch.study_num,IF(st.state, st.state, 0) AS state';
                     $chaWhere = [
                         'cp_id' => $id
                     ];
@@ -149,7 +149,7 @@ class Course extends Base {
 
                 $chaModel = new CurriculumChapter();
 
-                $fields = 'id,cp_id,title,study_num,test_type,from_unixtime(is_time, \'%Y-%m-%d\') as is_time';
+                $fields = 'id,cp_id,title,study_num,test_type,date_format(is_time, \'%Y-%m-%d\') as is_time';
                 $where = [
                     'id' => $id
                 ];
