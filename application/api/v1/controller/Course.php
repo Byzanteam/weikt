@@ -5,6 +5,7 @@ use app\api\Base;
 use app\api\v1\model\Curriculum;
 use app\api\v1\model\UserCollection;
 use app\api\v1\model\UserStudy;
+use app\console\model\ChapterContent;
 use app\console\model\CurriculumChapter;
 use app\console\model\CurriculumExercise;
 use app\console\model\CurriculumTest;
@@ -77,7 +78,7 @@ class Course extends Base {
 
                     $chaModel = new CurriculumChapter();
 
-                    $chaFields = 'ch.id,ch.title,ch.media_type,from_unixtime(ch.is_time, \'%Y-%m-%d\') as is_time,ch.study_num,IF(st.state, st.state, 0) AS state';
+                    $chaFields = 'ch.id,ch.title,from_unixtime(ch.is_time, \'%Y-%m-%d\') as is_time,ch.study_num,IF(st.state, st.state, 0) AS state';
                     $chaWhere = [
                         'cp_id' => $id
                     ];
@@ -148,16 +149,31 @@ class Course extends Base {
 
                 $chaModel = new CurriculumChapter();
 
-                $fields = 'id,cp_id,title,study_num,media_type,media_path,content,test_type,from_unixtime(is_time, \'%Y-%m-%d\') as is_time';
+                $fields = 'id,cp_id,title,study_num,test_type,from_unixtime(is_time, \'%Y-%m-%d\') as is_time';
                 $where = [
                     'id' => $id
                 ];
                 $data = $chaModel->getOne($where, $fields);
 
                 if(!empty($data)) {
-                    // 平均
-                    $data['media_path'] = SITE_URL . $data['media_path'];
-                    $data['content'] = html_entity_decode($data['content']);
+                    // 获取章节相关内容列表
+                    $conModel = new ChapterContent();
+
+                    $fields = 'media_type,media_path,content';
+                    $where = [
+                        'cc_id' => $data['id']
+                    ];
+                    $data['content_list'] = $conModel->getList($where, $fields) ?: [];
+
+                    if (!empty($data['content_list'])) {
+                        foreach ($data['content_list'] as $k => $v) {
+
+                            $v['media_path'] = SITE_URL . $data['media_path'];
+                            $v['content']    = html_entity_decode($data['content']);
+
+                            $data['content_list'][] = $v;
+                        }
+                    }
 
                     return json(['code' => 200, 'msg' => '章节信息获取成功', 'data' => $data]);
                 }
