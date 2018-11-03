@@ -170,7 +170,7 @@ class Course extends Base {
                         foreach ($data['content_list'] as $k => $v) {
 
 //                            $v['media_path'] = $v['media_path'] ? SITE_URL . $data['media_path'] : '';
-                            $data['content_list'][$k]['content']    = html_entity_decode($data['content']);
+//                            $data['content_list'][$k]['content']    = html_entity_decode($data['content']);
 
                         }
                     }
