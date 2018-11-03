@@ -225,8 +225,10 @@ class CourseClassify extends Base
                     return json(['code' => 0, 'msg' => '分类名称重复！添加失败！']);
                 }
 
-                $res = db('curriculum_classification')->where(['id'=>$id])->update($data);
+                $res = db('curriculum_classification')->where(['id' => $id])->update($data);
                 if($res){
+                    db('curriculum_classification')->where(['parent_id' => $id])->update(['label' => $data['label']]);
+
                     return json(['code' => 200, 'msg' => '分类编辑成功']);
                 }
                 return json(['code' => 0, 'msg' => '分类编辑失败，请重新操作']);
