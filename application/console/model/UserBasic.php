@@ -79,7 +79,7 @@ class UserBasic extends Model {
         // 整理用户数据
         $data['ll_id']      = $userinfo['id'];
         $data['name']       = $userinfo['name'];
-        $data['nickname']   = $userinfo['nickname'];
+        $data['nickname']   = base64_encode($userinfo['nickname']);
         $data['phone']      = $userinfo['phone'];
         $data['openid']     = $userinfo['openid'];
         $data['headimgurl'] = $userinfo['headimgurl'];

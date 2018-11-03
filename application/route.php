@@ -106,18 +106,16 @@ Route::group('api',function(){
             // 获取用户信息
             $userinfo = $model->getOne(['ll_id' => $user_id]);
 
-            if(empty($userinfo)){
+            if (empty($userinfo)) {
                 return json(['code' => -1, 'msg' => '请求错误，用户不存在']);
             }
-
+            $userinfo['nickname'] = base64_decode($userinfo['nickname']);
             $controller_obj->userinfo = $userinfo;
 
         }
 
         // 检测完毕，执行请求
         return $controller_obj->$method();
-
-
 
     });
 
