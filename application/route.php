@@ -91,12 +91,12 @@ Route::group('api',function(){
             // 非豁免请求，进行权限验证，获取头部 x-auth-info
             $auth = $request->header('x-auth-info');
             if(empty($auth)){
-                return json(['code' => -1, 'msg' => '请求错误，无访问权限']);
+                return json(['code' => -100, 'msg' => '请求错误，无访问权限']);
             }
 
             // 判断 login_token 是否正确
             if(!session($auth)){
-                return json(['code' => -1, 'msg' => '请求错误，无访问权限']);
+                return json(['code' => -100, 'msg' => '请求错误，无访问权限']);
             }
 
             // 获取用户ID
