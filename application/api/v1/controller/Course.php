@@ -167,12 +167,12 @@ class Course extends Base {
 
                     if (!empty($data['content_list'])) {
 
-//                        foreach ($data['content_list'] as $k => $v) {
+                        foreach ($data['content_list'] as $key => $value) {
 
-//                            $v['media_path'] = $v['media_path'] ? SITE_URL . $data['media_path'] : '';
-//                            $data['content_list'][$k]['content']    = html_entity_decode($data['content']);
+                            $data['content_list'][$key]['media_path'] = $value['media_path'] ? SITE_URL . $value['media_path'] : '';
+                            $data['content_list'][$key]['content']    = html_entity_decode($value['content']);
 
-//                        }
+                        }
                     }
 
                     return json(['code' => 200, 'msg' => '章节信息获取成功', 'data' => $data]);
