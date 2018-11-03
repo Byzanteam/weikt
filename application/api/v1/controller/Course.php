@@ -166,6 +166,7 @@ class Course extends Base {
                     $data['content_list'] = $conModel->getList($where, $fields) ?: [];
 
                     if (!empty($data['content_list'])) {
+                        print_r($data['content_list']);exit;
                         foreach ($data['content_list'] as $k => $v) {
 
                             $v['media_path'] = $v['media_path'] ? SITE_URL . $data['media_path'] : '';
