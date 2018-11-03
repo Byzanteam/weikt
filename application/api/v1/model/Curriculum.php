@@ -16,7 +16,7 @@ class Curriculum extends Model {
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getList($uid, $where = [], $order = 'c.chapter_num desc', $limit = 0, $fields = 'cl.id as classify_id,cl.name as classify_name,c.id as id,c.title,IF(SUM(study_num),SUM(study_num),0) AS study_num,IF(st.state,st.state,0) as is_study,index_img'){
+    public function getList($uid, $where = [], $order = '', $limit = 0, $fields = '*'){
         $this->alias('c')
                     ->join('vcr_curriculum_classification cl', 'c.cl_id = cl.id','LEFT')
                     ->join('vcr_curriculum_chapter cc', 'c.id = cc.cp_id', 'LEFT')
