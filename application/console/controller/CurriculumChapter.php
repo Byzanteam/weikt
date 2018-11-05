@@ -88,7 +88,7 @@ class CurriculumChapter extends Base {
             $data['test_type'] = intval(input('test_type',0));
             $data['teachers'] = input('teachers/a');
 
-            if (!empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) && !empty($data['test_type']) && !empty($data['teachers'])) {
+            if (!empty($data['title']) && !empty($data['cp_id']) && !empty($data['test_type']) && !empty($data['teachers'])) {
 
                 // 判断媒体类型
                 if ($data['media_type'] == 'audio' || $data['media_type'] == 'video') {
