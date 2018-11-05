@@ -4,16 +4,12 @@ namespace app\console\controller;
 use app\console\Base;
 use app\console\model\ChapterContent;
 use app\console\model\CurriculumChapter as Chapter_model;
-use app\console\model\UserBasic;
 
-
-class CurriculumChapter extends Base
-{
+class CurriculumChapter extends Base {
 
     private $model;
 
-    public function __construct()
-    {
+    public function __construct () {
         parent::__construct();
 
         $this->model = new Chapter_model();
@@ -33,7 +29,7 @@ class CurriculumChapter extends Base
      * 异步获取列表数据
      */
     public function getChapterList () {
-        if(\think\Request::instance()->isGet()){
+        if (\think\Request::instance()->isGet()) {
 
             $page = intval(input('page',1));
             $limit = intval(input('limit',10));
@@ -44,11 +40,11 @@ class CurriculumChapter extends Base
 
             $where = [];
 
-            if($id > 0){
+            if ($id > 0) {
                 $where['cp_id'] = ['eq', $id];
             }
 
-            if(!empty($title)){
+            if (!empty($title)) {
                 $where['title'] = ['like', '%'.$title.'%'];
             }
 
@@ -73,13 +69,7 @@ class CurriculumChapter extends Base
         // 获取课程列表
         $courseList = db('curriculum')->where([])->field('id,title')->select();
 
-        $userModel = new UserBasic();
-
-        $fields = 'll_id as id,name';
-        $uWhere = [
-            'root_organization_ids' => 25751
-        ];
-        $teacher_list = $userModel->getList($uWhere, $fields);
+        $teacher_list = get_user_list(25751);
 
         $this->assign('list', $courseList);
         $this->assign('teacher_list', $teacher_list);
@@ -90,7 +80,7 @@ class CurriculumChapter extends Base
      * 章节添加异步处理
      */
     public function addChapter () {
-        if(\think\Request::instance()->isPost()){
+        if (\think\Request::instance()->isPost()) {
 
             $data['title'] = input('title','','strip_tags,trim');
             $data['cp_id'] = intval(input('cp_id',0));
@@ -98,14 +88,14 @@ class CurriculumChapter extends Base
             $data['test_type'] = intval(input('test_type',0));
             $data['teachers'] = input('teachers/a');
 
-            if(!empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) && !empty($data['test_type']) && !empty($data['teachers'])){
+            if (!empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) && !empty($data['test_type']) && !empty($data['teachers'])) {
 
                 // 判断媒体类型
-                if($data['media_type'] == 'audio' || $data['media_type'] == 'video'){
+                if ($data['media_type'] == 'audio' || $data['media_type'] == 'video') {
                     if(empty($data['media_path'])){
                         return json(['code' => 0, 'msg' => '请上传对应的多媒体文件']);
                     }
-                }elseif ($data['media_type'] == 'text'){
+                } elseif ($data['media_type'] == 'text'){
                     if(empty($data['content'])){
                         return json(['code' => 0, 'msg' => '请填写文本内容']);
                     }
@@ -113,14 +103,14 @@ class CurriculumChapter extends Base
 
 
                 // 通课程下，章节名称重复判断
-                if(db('curriculum_chapter')->where(['cp_id'=>$data['cp_id'],'title'=>$data['title']])->find()){
+                if (db('curriculum_chapter')->where(['cp_id'=>$data['cp_id'],'title'=>$data['title']])->find()) {
                     return json(['code' => 0, 'msg' => '章节名称重复,章节添加失败']);
                 }
 
                 $data['teachers'] = implode(',', $data['teachers']);
                 // 添加到数据库
                 $res = db('curriculum_chapter')->insert($data);
-                if($res){
+                if ($res) {
 
                     // 章节添加成功，课程拥有的章节数量+1
                     db('curriculum')->where(['id'=>$data['cp_id']])->setInc('chapter_num');
@@ -138,11 +128,11 @@ class CurriculumChapter extends Base
     /** 编辑页面加载 */
     public function edit () {
 
-        if(\think\Request::instance()->isGet()){
+        if (\think\Request::instance()->isGet()) {
 
             $id = intval(input('id'));
 
-            if(!empty($id)){
+            if (!empty($id)) {
 
                 // 获取课程记录
                 $data = db('curriculum_chapter')->where(['id'=>$id])->find();
@@ -155,12 +145,7 @@ class CurriculumChapter extends Base
                     // 转为数组
                     $data['teachers'] = !empty($data['teachers']) ? explode(',', $data['teachers']) : [];
 
-                    $userModel = new UserBasic();
-                    $fields = 'll_id as id,name';
-                    $uWhere = [
-                        'root_organization_ids' => 25751
-                    ];
-                    $teacher_list = $userModel->getList($uWhere, $fields);
+                    $teacher_list = get_user_list(25751);
 
                     $this->assign('teacher_list', $teacher_list);
                     $this->assign('list',$courseList);
@@ -182,16 +167,16 @@ class CurriculumChapter extends Base
      * 记录异步编辑
      */
     public function editChapter () {
-        if(\think\Request::instance()->isPost()){
+        if (\think\Request::instance()->isPost()) {
             $id = intval(input('id'));
             $data['title'] = input('title','','strip_tags,trim');
             $data['cp_id'] = intval(input('cp_id',0));
             $data['sort']  = intval(input('sort',0));
-            $data['test_type']  = intval(input('test_type',0));
-            $data['teachers'] = input('teachers/a');
+            $data['test_type'] = intval(input('test_type',0));
+            $data['teachers']  = input('teachers/a');
 
 
-            if(!empty($id) && !empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) &&!empty($data['test_type']) && !empty($data['teachers'])){
+            if (!empty($id) && !empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) &&!empty($data['test_type']) && !empty($data['teachers'])) {
 
                 // 检查记录是否存在
                 $arr = db('curriculum_chapter')->where(['id'=>$id])->find();
@@ -236,7 +221,7 @@ class CurriculumChapter extends Base
      * 删除记录
      */
     public function delChapter () {
-        if(\think\Request::instance()->isPost()) {
+        if (\think\Request::instance()->isPost()) {
             $id = intval(input('id')); // 记录ID
             if(!empty($id)){
                 // 删除前 获取一下数据，检查数据是否存在

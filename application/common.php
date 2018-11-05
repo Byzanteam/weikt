@@ -76,7 +76,31 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
 
 }
 
+function get_user_list ($organization_id) {
+    // 设置请求的header参数
+    $headers = ['Authorization:'.config('llapi.v4_api_Authorization')];
 
+    // 设置请求URL
+    $url = config('llapi.formal_url').'/api/v4/organizations/' . $organization_id . '/members';
+
+    $result = curlRequest($url, '', $headers);
+
+    $data = json_decode($result, true);
+
+    // 判断请求是否成功
+    if($result != false && $data != false && is_array($data) && !array_key_exists('error',$data)){
+
+        return $data;
+    }
+    return false;
+}
+
+/**
+ * 发送模板消息
+ * @param $data
+ * @param $template_id
+ * @return object
+ */
 function weixin_tempalte ($data, $template_id) {
 
     $template = (object)[
@@ -103,9 +127,7 @@ function send_weixin_msg ($openid, $data, $template_id = 'XcVL1dSyOdOKfEQBxLN8Qk
     $params['openids'] = $openid;
     $params['template_entity'] = weixin_tempalte($data, $template_id);
 
-    $result = curlRequest($url, 'POST', $headers, $params);
-
-    print_r($result);
+    curlRequest($url, 'POST', $headers, $params);
 }
 
 function get_wechat_token () {
