@@ -128,37 +128,32 @@ class CurriculumChapter extends Base {
     /** 编辑页面加载 */
     public function edit () {
 
-        if (\think\Request::instance()->isGet()) {
+        $id = intval(input('id'));
 
-            $id = intval(input('id'));
+        if ($id < 0) {
 
-            if (!empty($id)) {
+            // 获取课程记录
+            $data = db('curriculum_chapter')->where(['id'=>$id])->find();
 
-                // 获取课程记录
-                $data = db('curriculum_chapter')->where(['id'=>$id])->find();
+            if(!empty($data)){
 
-                if(!empty($data)){
+                // 获取课程列表
+                $courseList = db('curriculum')->where([])->field('id,title')->select();
 
-                    // 获取课程列表
-                    $courseList = db('curriculum')->where([])->field('id,title')->select();
+                // 转为数组
+                $data['teachers'] = !empty($data['teachers']) ? explode(',', $data['teachers']) : [];
 
-                    // 转为数组
-                    $data['teachers'] = !empty($data['teachers']) ? explode(',', $data['teachers']) : [];
+                $teacher_list = get_user_list(25751);
 
-                    $teacher_list = get_user_list(25751);
-
-                    $this->assign('teacher_list', $teacher_list);
-                    $this->assign('list',$courseList);
-                    $this->assign('data',$data);
-                    return $this->fetch('console/curriculum_chapter/edit');
-                }
-                $this->assign('msg','没有找到您要编辑的记录');
-                return $this->fetch('console/public/open_error_msg');
+                $this->assign('teacher_list', $teacher_list);
+                $this->assign('list',$courseList);
+                $this->assign('data',$data);
+                return $this->fetch('console/curriculum_chapter/edit');
             }
-            $this->assign('msg','缺少必要参数');
+            $this->assign('msg','没有找到您要编辑的记录');
             return $this->fetch('console/public/open_error_msg');
         }
-        $this->assign('msg','错误的请求');
+        $this->assign('msg','缺少必要参数');
         return $this->fetch('console/public/open_error_msg');
     }
 
