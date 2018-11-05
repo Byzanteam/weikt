@@ -231,7 +231,7 @@ function get_user_token ($code = '', $redirect_uri = '') {
     $data = json_decode($output,true);
 
     // 判断请求是否成功
-    if ($data['access_token']) {
+    if (isset($data['access_token'])) {
 
         session('weikt_token', $output);
 
