@@ -107,7 +107,7 @@ Route::group('api',function(){
             $user_info = $model->getOne(['ll_id' => $user_id]);
 
             if (empty($userinfo)) {
-                return json(['code' => -1, 'msg' => '请求错误，用户不存在']);
+                return json(['code' => -1, 'msg' => $user_info.'请求错误，用户不存在']);
             }
 
             $user_info['name'] = base64_decode($user_info['name']);

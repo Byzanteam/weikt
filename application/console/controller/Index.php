@@ -24,6 +24,8 @@ class Index extends Base
     }
 
     public function sql () {
+        Db::query('ALTER TABLE `vcr_user_basic`
+MODIFY COLUMN `name`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT \'\' COMMENT \'用户姓名\' AFTER `ll_id`');
 //        $_sql = file_get_contents('./weikt_webuildus.sql');
 //        $_arr = explode('#', $_sql);
 //
