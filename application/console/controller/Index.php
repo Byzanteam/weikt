@@ -24,10 +24,6 @@ class Index extends Base
     }
 
     public function sql () {
-Db::query('UPDATE vcr_curriculum_exercise SET cc_id = cc_id - 40 WHERE cc_id <= 67 && cc_id > 40');
-        Db::query('UPDATE vcr_curriculum_exercise SET cc_id = cc_id + 40 WHERE cc_id >= 67');
-
-exit;
 //        $_sql = file_get_contents('./weikt_webuildus.sql');
 //        $_arr = explode('#', $_sql);
 //
