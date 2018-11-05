@@ -90,18 +90,6 @@ class CurriculumChapter extends Base {
 
             if (!empty($data['title']) && !empty($data['cp_id']) && !empty($data['test_type']) && !empty($data['teachers'])) {
 
-                // 判断媒体类型
-                if ($data['media_type'] == 'audio' || $data['media_type'] == 'video') {
-                    if(empty($data['media_path'])){
-                        return json(['code' => 0, 'msg' => '请上传对应的多媒体文件']);
-                    }
-                } elseif ($data['media_type'] == 'text'){
-                    if(empty($data['content'])){
-                        return json(['code' => 0, 'msg' => '请填写文本内容']);
-                    }
-                }
-
-
                 // 通课程下，章节名称重复判断
                 if (db('curriculum_chapter')->where(['cp_id'=>$data['cp_id'],'title'=>$data['title']])->find()) {
                     return json(['code' => 0, 'msg' => '章节名称重复,章节添加失败']);
@@ -181,11 +169,6 @@ class CurriculumChapter extends Base {
                 // 检查记录是否存在
                 $arr = db('curriculum_chapter')->where(['id'=>$id])->find();
                 if(!empty($arr)){
-
-                    // 判断 file_name 为空则 unset
-                    if(empty($data['file_name'])){
-                        unset($data['file_name']);
-                    }
 
                     // 通课程下，章节名称重复判断
                     if(db('curriculum_chapter')->where(['id'=>['neq',$id],'cp_id'=>$data['cp_id'],'title'=>$data['title']])->find()){
@@ -345,6 +328,17 @@ class CurriculumChapter extends Base {
         $data['file_name']  = input('file_name','','strip_tags,trim');
         $data['media_path'] = input('media_path','','trim');
         $data['content']    = input('content','');
+
+        // 判断媒体类型
+        if ($data['media_type'] == 'audio' || $data['media_type'] == 'video') {
+            if(empty($data['media_path'])){
+                return json(['code' => 0, 'msg' => '请上传对应的多媒体文件']);
+            }
+        } elseif ($data['media_type'] == 'text'){
+            if(empty($data['content'])){
+                return json(['code' => 0, 'msg' => '请填写文本内容']);
+            }
+        }
 
         $conModel = new ChapterContent();
         $where = [];
