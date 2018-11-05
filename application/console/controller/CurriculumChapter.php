@@ -128,32 +128,37 @@ class CurriculumChapter extends Base {
     /** 编辑页面加载 */
     public function edit () {
 
-        $id = intval(input('id'));
+        if (\think\Request::instance()->isGet()) {
 
-        if ($id < 0) {
+            $id = intval(input('id'));
 
-            // 获取课程记录
-            $data = db('curriculum_chapter')->where(['id'=>$id])->find();
+            if ($id > 0) {
 
-            if(!empty($data)){
+                // 获取课程记录
+                $data = db('curriculum_chapter')->where(['id'=>$id])->find();
 
-                // 获取课程列表
-                $courseList = db('curriculum')->where([])->field('id,title')->select();
+                if(!empty($data)){
 
-                // 转为数组
-                $data['teachers'] = !empty($data['teachers']) ? explode(',', $data['teachers']) : [];
+                    // 获取课程列表
+                    $courseList = db('curriculum')->where([])->field('id,title')->select();
 
-                $teacher_list = get_user_list(25751);
+                    // 转为数组
+                    $data['teachers'] = !empty($data['teachers']) ? explode(',', $data['teachers']) : [];
 
-                $this->assign('teacher_list', $teacher_list);
-                $this->assign('list',$courseList);
-                $this->assign('data',$data);
-                return $this->fetch('console/curriculum_chapter/edit');
+                    $teacher_list = get_user_list(25751);
+
+                    $this->assign('teacher_list', $teacher_list);
+                    $this->assign('list',$courseList);
+                    $this->assign('data',$data);
+                    return $this->fetch('console/curriculum_chapter/edit');
+                }
+                $this->assign('msg','没有找到您要编辑的记录');
+                return $this->fetch('console/public/open_error_msg');
             }
-            $this->assign('msg','没有找到您要编辑的记录');
+            $this->assign('msg','缺少必要参数');
             return $this->fetch('console/public/open_error_msg');
         }
-        $this->assign('msg','缺少必要参数');
+        $this->assign('msg','错误的请求');
         return $this->fetch('console/public/open_error_msg');
     }
 
@@ -171,7 +176,7 @@ class CurriculumChapter extends Base {
             $data['teachers']  = input('teachers/a');
 
 
-            if (!empty($id) && !empty($data['title']) && !empty($data['cp_id']) && !empty($data['media_type']) &&!empty($data['test_type']) && !empty($data['teachers'])) {
+            if (!empty($id) && !empty($data['title']) && !empty($data['cp_id']) &&!empty($data['test_type']) && !empty($data['teachers'])) {
 
                 // 检查记录是否存在
                 $arr = db('curriculum_chapter')->where(['id'=>$id])->find();
