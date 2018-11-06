@@ -205,16 +205,6 @@ function get_ticket () {
  */
 function get_user_token ($code = '', $redirect_uri = '') {
 
-    $file = session('weikt_token');
-
-    $token = ($file && !is_array($file)) ? json_decode($file, true) : null;
-
-    if (!empty($token) && time() < ($token['created_at'] + $token['expires_in'])) {
-
-        return $token['access_token'];
-
-    }
-
     $url = config('llapi.formal_url').'/oauth/token';
 
     // 整理请求参数
@@ -232,9 +222,6 @@ function get_user_token ($code = '', $redirect_uri = '') {
 
     // 判断请求是否成功
     if (isset($data['access_token'])) {
-
-        session('weikt_token', $output);
-
         // 获取成功，返回 token 字符串
         return $data['access_token'];
     }
