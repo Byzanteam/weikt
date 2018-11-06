@@ -40,6 +40,8 @@ class Login extends Base
         // 拼接 回到地址 redirect_uri
         $url .= '&redirect_uri='.urlencode(config('llapi.console_redirect_uri'));
 
+        $url .= '&_ns_id=200';
+
         // 跳转 了了登录 扫码页面
         $this->redirect($url);
 
