@@ -103,4 +103,14 @@ class Login extends Base
         }
 
     }
+
+
+    public function out () {
+        cookie('USER-TOKEN', null);
+
+        $url = 'https://skylarkly.com/unbind?return_to=';
+        $url .=  SITE_URL . '/console/Index/index&_ns_id=200';
+
+        $this->redirect($url);
+    }
 }
