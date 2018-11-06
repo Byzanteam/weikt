@@ -15,7 +15,17 @@
                 <a href="javascript:;">
                     <img src="{if condition="$userinfo['headimgurl']"}{$userinfo['headimgurl']}{else}http://t.cn/RCzsdCq{/if}" class="layui-nav-img">
                     <cite>{$userinfo['name']}</cite>
+                    <span class="layui-nav-more"></span>
                 </a>
+                <dl class="layui-nav-child layui-anim layui-anim-upbit">
+                    <dd layadmin-event="logout" style="text-align: center;"><a herf="https://skylarkly.com/unbind?return_to=http://weikt.apps.skylarkly.com/console/Index/index&_ns_id=200">退出</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item" lay-unselect="">
+                <a href="javascript:;">
+                    <cite>贤心</cite>
+                    <span class="layui-nav-more"></span></a>
+
             </li>
         </ul>
     </div>
