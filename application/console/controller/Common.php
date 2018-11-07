@@ -19,7 +19,7 @@ class Common extends Base {
             return json(['code' => 200, 'msg' => '上传成功', 'data' => ['url' => $result['data']]]);
         }
 
-        return json(['code' => 0, 'msg' => '请求方式错误']);
+        return json(['code' => 0, 'msg' => $result['msg']]);
     }
 
 
