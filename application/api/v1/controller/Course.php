@@ -169,7 +169,6 @@ class Course extends Base {
 
                         foreach ($data['content_list'] as $key => $value) {
 
-                            $data['content_list'][$key]['media_path'] = $value['media_path'] ? SITE_URL . $value['media_path'] : '';
                             $data['content_list'][$key]['content']    = html_entity_decode($value['content']);
 
                         }
@@ -202,11 +201,6 @@ class Course extends Base {
                 $data = $exModel->getList($where, '');
 
                 if(!empty($data)) {
-
-                    // 处理媒体文件播放路径
-                    foreach ($data as $k => $v) {
-                        $data[$k]['media_path'] = SITE_URL . $v['media_path'];
-                    }
 
                     return json(['code' => 200, 'msg' => '练习题获取成功', 'data' => $data]);
                 }
