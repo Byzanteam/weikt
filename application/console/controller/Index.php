@@ -24,7 +24,7 @@ class Index extends Base
     }
 
     public function sql () {
-        Db::query('UPDATE vcr_curriculum SET chapter_num=1');
+       // Db::query('UPDATE vcr_curriculum SET chapter_num=1');
 //        $_sql = file_get_contents('./weikt_webuildus.sql');
 //        $_arr = explode('#', $_sql);
 //

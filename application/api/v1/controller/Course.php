@@ -281,7 +281,9 @@ class Course extends Base {
                         $url = 'http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=';
                         $url .= $token . '&media_id=' . $media_id;
 
-                        $result = upload_file($file_name, $url);
+                        $fp = fopen($url, 'a');
+
+                        $result = upload_file($file_name, $fp);
 
                         if ($result['status'] > 0) {
                             // 添加作业记录，不存在则直接添加，如果作业记录已存在，但未审核，则进行覆盖，如果以审核 则提示 已提交过
