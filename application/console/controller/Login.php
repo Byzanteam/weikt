@@ -109,7 +109,7 @@ class Login extends Base
         cookie('USER-TOKEN', null);
 
         $url  = 'https://skylarkly.com/unbind?return_to=';
-        $url .= 'https://skylarkly.com/namespaces/200/user/bind&_ns_id=200';
+        $url .=  SITE_URL . '/console/Index/index&_ns_id=200';
 
         $this->redirect($url);
     }

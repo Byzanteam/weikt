@@ -93,7 +93,7 @@ function upload_file ($object, $uploadFile) {
         //返回uploadId，它是分片上传事件的唯一标识，您可以根据这个ID来发起相关的操作，如取消分片上传、查询分片上传等。
         $uploadId = $ossClient->initiateMultipartUpload($bucket, $object);
 
-    } catch(OssException $e) {
+    } catch (OssException $e) {
         return [
             'status' => -1,
             'msg'    => $e->getMessage()
@@ -150,7 +150,7 @@ function upload_file ($object, $uploadFile) {
         // 在执行该操作时，需要提供所有有效的$uploadParts。OSS收到提交的$uploadParts后，会逐一验证每个分片的有效性。
         // 当所有的数据分片验证通过后，OSS将把这些分片组合成一个完整的文件。
 
-        $result = $ossClient->completeMultipartUpload($bucket, $object, $uploadId, $uploadParts);
+        $ossClient->completeMultipartUpload($bucket, $object, $uploadId, $uploadParts);
 
         return [
             'status' => 1,
