@@ -266,4 +266,10 @@ return [
         # 教师所在组织ID
         'teacher_organ' => [25751]
     ],
+    'ali_oss' => [
+        'endpoint'        => 'http://oss-cn-hangzhou.aliyuncs.com',
+        'accessKeyId'     => getenv('OSS_ACCESSKEYID'),
+        'accessKeySecret' => getenv('OSS_ACCESSKEYSECRET'),
+        'bucket'          => getenv('OSS_BUCKET')
+    ]
 ];

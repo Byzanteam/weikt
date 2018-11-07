@@ -76,6 +76,101 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
 
 }
 
+function upload_file ($object, $uploadFile) {
+
+    $endpoint        = config('ali_oss.endpoint');
+    $accessKeyId     = config('ali_oss.accessKeyId');
+    $accessKeySecret = config('ali_oss.accessKeySecret');
+    $bucket          = config('ali_oss.bucket');
+
+
+    /**
+     * 步骤1：初始化一个分片上传事件，获取uploadId。
+     */
+    try{
+        $ossClient = new \OSS\OssClient($accessKeyId, $accessKeySecret, $endpoint);
+
+        //返回uploadId，它是分片上传事件的唯一标识，您可以根据这个ID来发起相关的操作，如取消分片上传、查询分片上传等。
+        $uploadId = $ossClient->initiateMultipartUpload($bucket, $object);
+
+    } catch(OssException $e) {
+        return [
+            'status' => -1,
+            'msg'    => $e->getMessage()
+        ];
+    }
+    /**
+     * 步骤2：上传分片。
+     */
+    $partSize = 3 * 1024 * 1024;
+    $uploadFileSize = filesize($uploadFile);
+    $pieces = $ossClient->generateMultiuploadParts($uploadFileSize, $partSize);
+    $responseUploadPart = array();
+    $uploadPosition = 0;
+    $isCheckMd5 = true;
+    foreach ($pieces as $i => $piece) {
+        $fromPos = $uploadPosition + (integer)$piece[$ossClient::OSS_SEEK_TO];
+        $toPos = (integer)$piece[$ossClient::OSS_LENGTH] + $fromPos - 1;
+        $upOptions = array(
+            $ossClient::OSS_FILE_UPLOAD => $uploadFile,
+            $ossClient::OSS_PART_NUM    => ($i + 1),
+            $ossClient::OSS_SEEK_TO     => $fromPos,
+            $ossClient::OSS_LENGTH      => $toPos - $fromPos + 1,
+            $ossClient::OSS_CHECK_MD5   => $isCheckMd5,
+        );
+        // MD5校验。
+        if ($isCheckMd5) {
+            $contentMd5 = \OSS\Core\OssUtil::getMd5SumForFile($uploadFile, $fromPos, $toPos);
+            $upOptions[$ossClient::OSS_CONTENT_MD5] = $contentMd5;
+        }
+        try {
+            // 上传分片。
+            $responseUploadPart[] = $ossClient->uploadPart($bucket, $object, $uploadId, $upOptions);
+
+        } catch(OssException $e) {
+            return [
+                'status' => -1,
+                'msg'    => $e->getMessage()
+            ];
+        }
+    }
+
+    // $uploadParts是由每个分片的ETag和分片号（PartNumber）组成的数组。
+    $uploadParts = [];
+    foreach ($responseUploadPart as $i => $eTag) {
+        $uploadParts[] = [
+            'PartNumber' => ($i + 1),
+            'ETag'       => $eTag
+        ];
+    }
+    /**
+     * 步骤3：完成上传。
+     */
+    try {
+        // 在执行该操作时，需要提供所有有效的$uploadParts。OSS收到提交的$uploadParts后，会逐一验证每个分片的有效性。
+        // 当所有的数据分片验证通过后，OSS将把这些分片组合成一个完整的文件。
+
+        $result = $ossClient->completeMultipartUpload($bucket, $object, $uploadId, $uploadParts);
+
+        return [
+            'status' => 1,
+            'data'    => $result['info']['url']
+        ];
+    }  catch(OssException $e) {
+
+        return [
+            'status' => -1,
+            'msg'    => $e->getMessage()
+        ];
+    }
+
+}
+
+/**
+ * 根据组织ID获取会员列表
+ * @param $organization_id
+ * @return bool|mixed
+ */
 function get_user_list ($organization_id) {
     // 设置请求的header参数
     $headers = ['Authorization:'.config('llapi.v4_api_Authorization')];
