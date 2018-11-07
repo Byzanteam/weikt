@@ -102,7 +102,7 @@ function upload_file ($object, $uploadFile) {
     /**
      * 步骤2：上传分片。
      */
-    $partSize = 300 * 1024 * 1024;
+    $partSize = 3 * 1024 * 1024;
     $uploadFileSize = filesize($uploadFile);
     $pieces = $ossClient->generateMultiuploadParts($uploadFileSize, $partSize);
     $responseUploadPart = array();
