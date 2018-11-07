@@ -275,7 +275,7 @@ class Course extends Base {
             if (!empty($u_id) && !empty($cc_id)) {
 
                     // 设置文件名称 时间戳_用户ID_文章ID.文件原后缀
-                    $file_name = time() . '_' . $u_id . '_' . $cc_id . '.amr';
+                    $file_name = time() . '-' . $u_id . '-' . $cc_id . '.mp3';
 
                     // 设置文件保存路径
                     $path = $this->save_file_path.'work/';
