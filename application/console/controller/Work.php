@@ -95,7 +95,7 @@ class Work extends Base {
 
                     $arr = json_decode($data['content'], true);
 
-                    $work['work'] = '/'.$arr['url'];
+                    $work['work'] = $arr['url'];
 
                     $temp_path = 'console/work/read_view';
 //                    } else {
