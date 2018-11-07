@@ -154,7 +154,7 @@ function upload_file ($object, $uploadFile) {
 
         return [
             'status' => 1,
-            'data'    => $result['info']['url']
+            'data'   => config('ali_oss.bucket_host') . $object,
         ];
     }  catch(OssException $e) {
 

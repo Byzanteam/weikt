@@ -268,8 +268,9 @@ return [
     ],
     'ali_oss' => [
         'endpoint'        => 'http://oss-cn-hangzhou.aliyuncs.com',
+        'bucket_host'     => 'http://weikt.oss-cn-hangzhou.aliyuncs.com',
         'accessKeyId'     => getenv('OSS_ACCESSKEYID'),
         'accessKeySecret' => getenv('OSS_ACCESSKEYSECRET'),
-        'bucket'          => getenv('OSS_BUCKET')
+        'bucket'          => getenv('OSS_BUCKET'),
     ]
 ];
