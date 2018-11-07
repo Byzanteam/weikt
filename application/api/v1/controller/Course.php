@@ -277,75 +277,95 @@ class Course extends Base {
                     // 设置文件名称 时间戳_用户ID_文章ID.文件原后缀
                     $file_name = time() . '_' . $u_id . '_' . $cc_id . '.mp3';
 
+                    // 设置文件保存路径
+                    $path = $this->save_file_path.'work/';
+
+                    // 判断文件夹是否存在，不存在则创建，创建失败的话返回错误
+                    if(!is_dir($path)) {
+                        // 文件夹不存在，进行创建
+                        if(!mkdir ($path,0777,true)) {
+                            return json(['code' => 400, 'msg' => '文件夹创建失败，请联系管理员']);
+                        }
+                    }
+
                     if ($token = get_wechat_token()) {
                         $url = 'http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=';
                         $url .= $token . '&media_id=' . $media_id;
 
-                        $fp = fopen($url, 'a');
+                        if(copy($url, $path.$file_name)) {
 
-                        $result = upload_file($file_name, $fp);
+                            // 上传完成，判断下文件是否存在
+                            if(file_exists($path.$file_name)) {
 
-                        if ($result['status'] > 0) {
-                            // 添加作业记录，不存在则直接添加，如果作业记录已存在，但未审核，则进行覆盖，如果以审核 则提示 已提交过
-                            if(!db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id])->find()) {
-                                // 作业不存在，直接新增作业记录
-                                // 作业数据整理
-                                $workDate['chapter_id'] = $cc_id;
-                                $workDate['user_id']    = $u_id;
-                                $workDate['sub_time']   = time();
-                                $workDate['content']    = json_encode(['url' =>  $result['data']]);
-                                $workDate['state']      = 2;
+                                $result = upload_file($file_name, $path.$file_name);
 
-                                if(!db('user_task')->insert($workDate)) {
-                                    return json(['code' => 403, 'msg' => '抱歉！作业提交失败', 'data' => []]);
+                                if ($result['status'] < 0) {
+                                    return json(['code' => 0, 'msg' => $result['msg']]);
                                 }
 
-                            }else{
+                                unlink($path.$file_name);
 
-                                // 如果作业存在，判断是否已经 点评，没有点评则对上传时间，内容进行覆盖
-                                // 已点评则直接提示 作业以点评
-                                if(db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id, 'state' => 1])->find()) {
-                                    // 作业以被点评， 直接返回 作业以点评！
-                                    return json(['code' => 203, 'msg' => '作业已经点评，不需要再次提交', 'data' => []]);
+                                // 添加作业记录，不存在则直接添加，如果作业记录已存在，但未审核，则进行覆盖，如果以审核 则提示 已提交过
+                                if(!db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id])->find()) {
+                                    // 作业不存在，直接新增作业记录
+                                    // 作业数据整理
+                                    $workDate['chapter_id'] = $cc_id;
+                                    $workDate['user_id']    = $u_id;
+                                    $workDate['sub_time']   = time();
+                                    $workDate['content']    = json_encode(['url' => $result['data']]);
+                                    $workDate['state']      = 2;
+
+                                    if(!db('user_task')->insert($workDate)) {
+                                        return json(['code' => 403, 'msg' => '抱歉！作业提交失败', 'data' => []]);
+                                    }
+
+                                }else{
+
+                                    // 如果作业存在，判断是否已经 点评，没有点评则对上传时间，内容进行覆盖
+                                    // 已点评则直接提示 作业以点评
+                                    if(db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id, 'state' => 1])->find()) {
+                                         // 作业以被点评， 直接返回 作业以点评！
+                                        return json(['code' => 203, 'msg' => '作业已经点评，不需要再次提交', 'data' => []]);
+                                    }
+
+                                    // 作业没有点评 ，进行数据覆盖
+                                    $workDate['sub_time']   = time();
+                                    $workDate['content']    = json_encode(['url' => $result['data']]);
+
+                                    if(!db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id, 'state' => 2])->update($workDate)) {
+                                        return json(['code' => 403, 'msg' => '抱歉！作业提交失败', 'data' => []]);
+                                    }
+
                                 }
 
-                                // 作业没有点评 ，进行数据覆盖
-                                $workDate['sub_time']   = time();
-                                $workDate['content']    = json_encode(['url' => $path.$file_name]);
+                                /* 作业提交成功 */
 
-                                if(!db('user_task')->where(['chapter_id' => $cc_id, 'user_id' => $u_id, 'state' => 2])->update($workDate)) {
-                                    return json(['code' => 403, 'msg' => '抱歉！作业提交失败', 'data' => []]);
+                                // 判断 盖章节是否已经学习过，如果已经存在学习记录 并且学习完成 则不累计 学习章节
+                                if(!db('user_study')->where(['chapter_id' => $cc_id, 'user_id' => $u_id, 'state' => 2])->find()) {
+                                    // 学习完成章节数+1
+                                    db('user_basic')->where(['id'=>$u_id])->setInc('curriculum');
                                 }
 
+                                // 更新学习记录
+                                // 查询 学习 记录是否存在，存在则检查状态，修改学习中未 学习完成
+                                if(db('user_study')->where(['chapter_id' => $cc_id, 'user_id' => $u_id])->find()) {
+                                    // 修改状态为2 已学习完成
+                                    db('user_study')->where(['chapter_id' => $cc_id, 'user_id' => $u_id])->update(['state' => 2]);
+                                }else{
+                                    // 学习记录不存在，新添加一条，并直接设置状态为2 学习完成
+                                    $studyData['chapter_id']    = $cc_id;
+                                    $studyData['user_id']       = $u_id;
+                                    $studyData['study_date']    = time();
+                                    $studyData['study_time']    = 0;
+                                    $studyData['state']         = 2;
+                                    db('user_study')->insert($studyData);
+                                }
+
+                                return json(['code' => 200, 'msg' => '作业上传成功，请等候老师点评', 'data' => []]);
                             }
-
-                            /* 作业提交成功 */
-
-                            // 判断 盖章节是否已经学习过，如果已经存在学习记录 并且学习完成 则不累计 学习章节
-                            if(!db('user_study')->where(['chapter_id' => $cc_id, 'user_id' => $u_id, 'state' => 2])->find()) {
-                                // 学习完成章节数+1
-                                db('user_basic')->where(['id'=>$u_id])->setInc('curriculum');
-                            }
-
-                            // 更新学习记录
-                            // 查询 学习 记录是否存在，存在则检查状态，修改学习中未 学习完成
-                            if(db('user_study')->where(['chapter_id' => $cc_id, 'user_id' => $u_id])->find()) {
-                                // 修改状态为2 已学习完成
-                                db('user_study')->where(['chapter_id' => $cc_id, 'user_id' => $u_id])->update(['state' => 2]);
-                            }else{
-                                // 学习记录不存在，新添加一条，并直接设置状态为2 学习完成
-                                $studyData['chapter_id']    = $cc_id;
-                                $studyData['user_id']       = $u_id;
-                                $studyData['study_date']    = time();
-                                $studyData['study_time']    = 0;
-                                $studyData['state']         = 2;
-                                db('user_study')->insert($studyData);
-                            }
-
-                            return json(['code' => 200, 'msg' => '作业上传成功，请等候老师点评', 'data' => []]);
+                            return json(['code' => 403, 'msg' => '上传失败，文件在上传过程中丢失', 'data' => []]);
                         }
-
-                        return json(['code' => 0, 'msg' => $result['msg']]);
+                        return json(['code' => 403, 'msg' => '上传失败', 'data' => []]);
                     }
                     return json(['code' => 403, 'msg' => 'access_token获取失败', 'data' => []]);
                 }
