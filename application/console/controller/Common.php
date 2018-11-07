@@ -5,6 +5,7 @@ use app\console\Base;
 
 class Common extends Base {
 
+
     /**
      * 文件上传
      */
