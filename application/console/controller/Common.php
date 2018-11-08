@@ -88,8 +88,6 @@ class Common extends Base {
     }
 
     public function callback () {
-
-        file_put_contents('a.txt', 1111);
         // 1.获取OSS的签名header和公钥url header
         $authorizationBase64 = '';
         $pubKeyUrlBase64     = '';
