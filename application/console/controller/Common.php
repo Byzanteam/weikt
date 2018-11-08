@@ -37,18 +37,18 @@ class Common extends Base {
         $callbackUrl =  SITE_URL . '/console/Common/callback';
 
         // 用户上传文件时指定的前缀。
-        $dir = 'weikt';
+        $dir = '';
 
         $callback_param = [
             'callbackUrl'      => $callbackUrl,
-            'callbackBody'     => 'filename=${object}&size=${size}&mimeType=${mimeType}&height=${imageInfo.height}&width=${imageInfo.width}',
+            'callbackBody'     => 'filename=${object}&size=${size}&mimeType=${mimeType}',
             'callbackBodyType' => 'application/x-www-form-urlencoded'
         ];
         $callback_string = json_encode($callback_param);
 
         $base64_callback_body = base64_encode($callback_string);
         $now = time();
-        $expire = 30;  //设置该policy超时时间是10s. 即这个policy过了这个有效时间，将不能访问。
+        $expire = 300;  //设置该policy超时时间是10s. 即这个policy过了这个有效时间，将不能访问。
         $end = $now + $expire;
         $expiration = gmt_iso8601($end);
 
@@ -91,12 +91,7 @@ class Common extends Base {
         // 1.获取OSS的签名header和公钥url header
         $authorizationBase64 = '';
         $pubKeyUrlBase64     = '';
-        /*
-         * 注意：如果要使用HTTP_AUTHORIZATION头，你需要先在apache或者nginx中设置rewrite，以apache为例，修改
-         * 配置文件/etc/httpd/conf/httpd.conf(以你的apache安装路径为准)，在DirectoryIndex index.php这行下面增加以下两行
-            RewriteEngine On
-            RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization},last]
-         * */
+
         if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
             $authorizationBase64 = $_SERVER['HTTP_AUTHORIZATION'];
         }
@@ -130,13 +125,14 @@ class Common extends Base {
         $path = $_SERVER['REQUEST_URI'];
         $pos = strpos($path, '?');
         if ($pos === false) {
-            $authStr = urldecode($path).'\n'.$body;
+            $authStr = urldecode($path).PHP_EOL.$body;
         } else {
-            $authStr = urldecode(substr($path, 0, $pos)).substr($path, $pos, strlen($path) - $pos).'\n'.$body;
+            $authStr = urldecode(substr($path, 0, $pos)).substr($path, $pos, strlen($path) - $pos).PHP_EOL.$body;
         }
 
         // 6.验证签名
         $ok = openssl_verify($authStr, $authorization, $pubKey, OPENSSL_ALGO_MD5);
+
         if ($ok == 1) {
             header("Content-Type: application/json");
             echo json_encode(['Status' => 'Ok']);

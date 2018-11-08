@@ -28,7 +28,8 @@ class Base extends Controller
     protected $isLoginArr = [
         'console/login/index',
         'console/login/get_user_info',
-        'console/error/error_msg'
+        'console/error/error_msg',
+        'console/common/callback'
     ];
 
 
