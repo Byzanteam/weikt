@@ -120,6 +120,8 @@ class Common extends Base {
 
         // 4.获取回调body
         $body = file_get_contents('php://input');
+        echo 1111 . PHP_EOL;
+        echo $body;exit;
 
         // 5.拼接待签名字符串
         $path = $_SERVER['REQUEST_URI'];
@@ -130,14 +132,15 @@ class Common extends Base {
             $authStr = urldecode(substr($path, 0, $pos)).substr($path, $pos, strlen($path) - $pos).PHP_EOL.$body;
         }
 
+        file_put_contents('a.txt', $_SERVER['HTTP_AUTHORIZATION'].PHP_EOL, FILE_APPEND);
+        file_put_contents('a.txt', $_SERVER['HTTP_X_OSS_PUB_KEY_URL'].PHP_EOL, FILE_APPEND);
+        file_put_contents('a.txt', $body.PHP_EOL, FILE_APPEND);
+
         // 6.验证签名
         $ok = openssl_verify($authStr, $authorization, $pubKey, OPENSSL_ALGO_MD5);
 
         if ($ok == 1) {
-            header("Content-Type: application/json");
-            echo json_encode(['Status' => 'Ok']);
-        } else {
-            exit;
+            return json(['Status' => 'Ok']);
         }
     }
 

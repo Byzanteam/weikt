@@ -48,10 +48,11 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
         $child_where = ' WHERE study_date>=' .$start_time. ' AND study_date<=' .$end_time;
 
     }elseif($time == 2) {
+        $beginDate = date('Y-m-01', strtotime(date('Y-m-d')));
         // 本月1号
-        $start_time = strtotime(date('Y-m-d', strtotime(date('Y-m', time()) . '-01 00:00:00')));
+        $start_time = strtotime($beginDate);
         // 本月最后一天
-        $end_time   = strtotime(date('Y-m-d', strtotime(date('Y-m', time()) . '-' . date('t', time()) . ' 00:00:00')));
+        $end_time   = strtotime(date('Y-m-d', strtotime($beginDate . ' +1 month -1 day')));
 
         // 获取 当前月的开始时间和结束时间
         $child_where = ' WHERE study_date>=' .$start_time. ' AND study_date<=' .$end_time;
