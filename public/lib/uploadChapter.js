@@ -85,7 +85,7 @@ function calculate_object_name1(filename) {
         g_object_name += "${filename}"
     } else if (g_object_name_type == 'random_name') {
         suffix = get_suffix1(filename)
-        g_object_name = key + random_string1(10) + suffix
+        g_object_name = key + random_string1(15) + suffix
     }
     return ''
 }
@@ -167,7 +167,7 @@ var uploader = new plupload.Uploader({
         },
 
         BeforeUpload: function(up, file) {
-            g_object_name_type = 'local_name'
+            g_object_name_type = 'random_name'
             check_object_radio1();
             set_upload_param1(up, file.name, true);
         },
@@ -184,7 +184,7 @@ var uploader = new plupload.Uploader({
                 if (document.getElementById(file.id)) {
                     document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传成功';
                 }
-                document.getElementById('ossfile').setAttribute('data-url', host + file.name);
+                document.getElementById('ossfile').setAttribute('data-url', host + g_object_name);
             }
             // else if (info.status == 203)
             // {

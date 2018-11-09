@@ -181,7 +181,7 @@ $.each(ids, function(i, n) {
             },
 
             BeforeUpload: function(up, file) {
-                g_object_name_type = 'local_name'
+                g_object_name_type = 'random_name'
                 check_object_radio();
                 set_upload_param(up, file.name, true);
             },
@@ -198,7 +198,7 @@ $.each(ids, function(i, n) {
                     if (document.getElementById(file.id)) {
                         document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传成功';
                     }
-                    document.getElementById(btn_show).setAttribute('data-url', host + file.name);
+                    document.getElementById(btn_show).setAttribute('data-url', host + g_object_name);
                 }
                 // else if (info.status == 203)
                 // {

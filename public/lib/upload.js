@@ -85,7 +85,7 @@ function calculate_object_name(filename) {
         g_object_name += "${filename}"
     } else if (g_object_name_type == 'random_name') {
         suffix = get_suffix(filename)
-        g_object_name = key + random_string(10) + suffix
+        g_object_name = key + random_string(12) + suffix
     }
     return ''
 }
@@ -138,8 +138,7 @@ var uploader = new plupload.Uploader({
 
     filters: {
         mime_types: [ //只允许上传图片和zip文件
-            { title: "Image files", extensions: "jpg,gif,png,bmp" },
-            { title: "Zip files", extensions: "zip,rar" }
+            { title: "Image files", extensions: "jpg,gif,png,bmp" }
         ],
         max_file_size: '10mb', //最大只能上传10mb的文件
         prevent_duplicates: true //不允许选取重复文件
@@ -168,7 +167,7 @@ var uploader = new plupload.Uploader({
         },
 
         BeforeUpload: function(up, file) {
-            g_object_name_type = 'local_name'
+            g_object_name_type = 'random_name'
             check_object_radio();
             set_upload_param(up, file.name, true);
         },
@@ -185,7 +184,7 @@ var uploader = new plupload.Uploader({
                 if (document.getElementById(file.id)) {
                     document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '上传成功';
                 }
-                document.getElementById('ossfile').setAttribute('data-url', host + file.name);
+                document.getElementById('ossfile').setAttribute('data-url', host + g_object_name);
             }
             // else if (info.status == 203)
             // {
