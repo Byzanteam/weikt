@@ -25,7 +25,7 @@ class Index extends Base
 
     public function sql () {
 
-        print_r(Db::query('DELETE FROM vcr_user_study WHERE user_id=45'));
+        print_r(Db::query('DELETE FROM vcr_user_task WHERE user_id=45'));
 //
 //        foreach ($user as $k=>$v) {
 //
