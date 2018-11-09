@@ -75,7 +75,7 @@
 
   RongIMLib.RongIMVoice.init();
   document.getElementById("playId").onclick = function(){
-    RongIMLib.RongIMVoice.play("{:base64_encode($data['work'])}");
+    RongIMLib.RongIMVoice.play("{$data['work']}");
   };
   document.getElementById("stopId").onclick = function() {
     RongIMLib.RongIMVoice.stop();
