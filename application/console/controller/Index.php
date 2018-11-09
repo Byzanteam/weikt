@@ -25,20 +25,20 @@ class Index extends Base
 
     public function sql () {
 
-        $user = Db::query('SELECT * FROM vcr_user_basic');
-
-        foreach ($user as $k=>$v) {
-
-            if($v['nickname'] != base64_encode(base64_decode($v['nickname'])) || $v['nickname'] == 'What') {
-//                echo $v['nickname'].PHP_EOL;
-
-                $sql = 'UPDATE vcr_user_basic SET nickname=\'' . base64_encode($v['nickname']) . '\'';
-                $sql .= ' WHERE id=' . $v['id'];
-
-                DB::query($sql);
-
-            }
-        }
+//        $user = Db::query('SELECT * FROM vcr_user_basic');
+//
+//        foreach ($user as $k=>$v) {
+//
+//            if($v['nickname'] != base64_encode(base64_decode($v['nickname'])) || $v['nickname'] == 'What') {
+////                echo $v['nickname'].PHP_EOL;
+//
+//                $sql = 'UPDATE vcr_user_basic SET nickname=\'' . base64_encode($v['nickname']) . '\'';
+//                $sql .= ' WHERE id=' . $v['id'];
+//
+//                DB::query($sql);
+//
+//            }
+//        }
 
        // Db::query('UPDATE vcr_curriculum SET chapter_num=1');
 //        $_sql = file_get_contents('./weikt_webuildus.sql');

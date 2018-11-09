@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -13,34 +14,34 @@
     <![endif]-->
 
     <style>
-        .layui-form-select dl{
+        .layui-form-select dl {
             max-height: 200px;
         }
-
     </style>
 
 </head>
+
 <body class="layui-layout-body">
 
-<div class="layui-fluid">
+    <div class="layui-fluid" id="container">
 
-    <div class="tips_box">
-        带 <span style="color: red;">*</span> 为必填项
-    </div>
-
-    <form id="add_form" class="layui-form" action="" lay-filter="formDemo">
-        <div class="layui-form-item">
-            <label class="layui-form-label"><span class="form_important">*</span> 习题标题</label>
-            <div class="layui-input-block" style="width: 80%;">
-                <input type="text" name="title" maxlength="30" required  lay-verify="required" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
-            </div>
+        <div class="tips_box">
+            带 <span style="color: red;">*</span> 为必填项
         </div>
 
-        <!-- 三级联动，分类-课程-章节 -->
-        <div class="layui-form-item">
-            <label class="layui-form-label"><span class="form_important">*</span> 所属章节</label>
-            <div class="layui-input-inline">
-                <select id="classify_select" name="cl_id" lay-filter="classify_select" >
+        <form id="add_form" class="layui-form" action="" lay-filter="formDemo">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="form_important">*</span> 习题标题</label>
+                <div class="layui-input-block" style="width: 80%;">
+                    <input type="text" name="title" maxlength="30" required lay-verify="required" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <!-- 三级联动，分类-课程-章节 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="form_important">*</span> 所属章节</label>
+                <div class="layui-input-inline">
+                    <select id="classify_select" name="cl_id" lay-filter="classify_select">
                     <option value="0">请选择分类</option>
                     {notempty name='list'}
                         {volist name='list' id='vo'}
@@ -53,245 +54,226 @@
                         {/volist}
                     {/notempty}
                 </select>
-            </div>
-            <div class="layui-input-inline">
-                <select id="course_select" name="cp_id" lay-filter="course_select">
+                </div>
+                <div class="layui-input-inline">
+                    <select id="course_select" name="cp_id" lay-filter="course_select">
                     <option value="0">请先选择分类</option>
                 </select>
-            </div>
-            <div class="layui-input-inline">
-                <select id="chapter_select" name="cc_id" lay-filter="chapter_select">
+                </div>
+                <div class="layui-input-inline">
+                    <select id="chapter_select" name="cc_id" lay-filter="chapter_select">
                     <option value="0">请先选择课程</option>
                 </select>
+                </div>
             </div>
-        </div>
 
-        <div class="layui-form-item">
-            <label class="layui-form-label">多媒体</label>
-            <div class="layui-input-block" style="width: 80%;">
-                <button type="button" class="layui-btn" id="updata"><i class="layui-icon"></i>上传音频</button>
+            <div class="layui-form-item">
+                <label class="layui-form-label">多媒体</label>
+                <div class="layui-input-block" style="width: 80%;">
+                    <button type="button" class="layui-btn" id="selectfiles"><i class="layui-icon">&#xe654;</i>选择音频</button>
+                    <button type="button" class="layui-btn" id="postfiles"><i class="layui-icon"></i>上传音频</button>
+                </div>
             </div>
-        </div>
 
-        <div class="layui-form-item">
-            <label class="layui-form-label">上传结果</label>
-            <div class="layui-input-block">
-                <a id="updateResult" href="javascript:;" style="display: block;height: 36px;line-height: 36px;" target="_blank">等待上传</a>
+            <div class="layui-form-item">
+                <label class="layui-form-label">上传结果</label>
+                <div class="layui-input-block">
+                    <a id="ossfile" href="javascript:;" style="display: block;height: 36px;line-height: 36px;" target="_blank">等待上传</a>
+                </div>
             </div>
-        </div>
 
-        <div class="layui-form-item">
-            <label class="layui-form-label">练习内容</label>
-            <div class="layui-input-block" style="width: 80%;">
-                <textarea name="content" placeholder="请输入内容" class="layui-textarea"></textarea>
+            <div class="layui-form-item">
+                <label class="layui-form-label">练习内容</label>
+                <div class="layui-input-block" style="width: 80%;">
+                    <textarea name="content" placeholder="请输入内容" class="layui-textarea"></textarea>
+                </div>
             </div>
-        </div>
 
-        <div class="layui-form-item">
-            <label class="layui-form-label">排序</label>
-            <div class="layui-input-block" style="width: 80%;">
-                <input type="text" name="sort" maxlength="10" value="0" placeholder="输入排序的需要，数值越小越靠前" lay-verify="number" class="layui-input" autocomplete="off">
+            <div class="layui-form-item">
+                <label class="layui-form-label">排序</label>
+                <div class="layui-input-block" style="width: 80%;">
+                    <input type="text" name="sort" maxlength="10" value="0" placeholder="输入排序的需要，数值越小越靠前" lay-verify="number" class="layui-input" autocomplete="off">
+                </div>
             </div>
-        </div>
 
 
-        <input id="media_path" type="hidden" name="media_path" value="">
+            <input id="media_path" type="hidden" name="media_path" value="">
 
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
 
 
-</div>
-
-<div id="cover" style="width: 100%;height: 100%;position: absolute;top: 0;background-color: rgba(255, 255, 255, 0.84);display: none;z-index: 9999">
-    <div style="display: block;position: absolute;top: 40%;left: 8%;">
-        <span style="color: #a09b9b;font-size: 17px;">文件正在上传，请稍后，文件越大，需要的时间越多（上传成功后该遮盖层会自动消失）</span><br/>
-        <img  src="/static/images/loading_2.gif" width="45px;" style="position: absolute;left: 44%;" alt="">
     </div>
-</div>
+
+    <div id="cover" style="width: 100%;height: 100%;position: absolute;top: 0;background-color: rgba(255, 255, 255, 0.84);display: none;z-index: 9999">
+        <div style="display: block;position: absolute;top: 40%;left: 8%;">
+            <span style="color: #a09b9b;font-size: 17px;">文件正在上传，请稍后，文件越大，需要的时间越多（上传成功后该遮盖层会自动消失）</span><br/>
+            <img src="/static/images/loading_2.gif" width="45px;" style="position: absolute;left: 44%;" alt="">
+        </div>
+    </div>
 
 
-<script src="/static/jquery-3.3.1.min.js"></script>
-<script src="/static/layui/layui.js"></script>
+    <script src="/static/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="/lib/plupload-2.1.2/js/plupload.full.min.js"></script>
+    <script type="text/javascript" src="/lib/uploadExcersize.js"></script>
+    <script src="/static/layui/layui.js"></script>
 
-<script>
+    <script>
+        layui.use(['form', 'jquery'], function() {
+            var form = layui.form;
+            var $ = layui.jquery;
 
-    layui.use(['form','jquery', 'upload'], function(){
-        var form = layui.form;
-        var $ = layui.jquery;
-        var upload = layui.upload;
+            // 课程三级联动
+            // 分类下拉
+            form.on('select(classify_select)', function(data) {
+                // 获取选项ID
+                var id = data.value;
 
+                // 异步获取对应课程
+                $.ajax({
+                    url: '/console/Common/getSearchCourse',
+                    type: 'POST',
+                    data: {
+                        id: id
+                    },
+                    success: function(result) {
+                        if (result.code == 200) {
+                            $("#course_select").html('<option value="0">请选择课程</option>');
+                            // 获取成功  course_select
+                            $.each(result.data, function(index, item) {
+                                $("#course_select").append(new Option(item.title, item.id))
+                            });
 
-        var uploadInst;
-        var fileName = '';
+                            // 重置章节select
+                            $('#chapter_select').html('<option value="0">请先选择课程</option>');
 
-        // 多媒体上传
-        uploadInst = upload.render({
-            elem: '#updata', //绑定元素
-            url: '/console/Common/file_update/', //上传接口
-            accept: 'audio',
-            field: 'file',
-            data: {type:'exerciser'},
-            headers: {ContentType: 'text/html'},
-            choose: function(obj){
-                obj.preview(function(index, file, result){
-                    fileName = file.name;
+                            form.render('select');
+
+                        } else {
+                            console.log('cc');
+                            $("#course_select").html('<option value="0">请重新选择分类</option>');
+                            form.render('select');
+                            layer.msg(result.msg, {
+                                icon: 5
+                            });
+                        }
+                    },
+                    error: function() {
+                        layer.msg('网络错误！', {
+                            icon: 5
+                        });
+                    }
+
                 });
-            },
-            before: function(obj){
-                $("#cover").show();
-            },
-            done: function(res){
-                $("#cover").hide();
-                if(res.code == 200){
-                    // 上传成功
-                    $("#media_path").val(res.data['url']);
 
-                    // 设置上传结果
-                    $("#updateResult").attr('href',res.data['url']);
-                    $("#updateResult").html(fileName + " <span style='color: green'>上传成功</span>");
+            });
 
-                    layer.msg(res.msg, {icon: 6});
-                }else{
-                    $("#updateResult").html(fileName + " <span style='color: red'>上传失败</span>");
-                    layer.msg(res.msg, {icon: 5});
-                }
-            },
-            error: function(){
-                layer.msg('网络错误！', {icon: 5});
-            }
-        });
+            // 三级下拉
+            // 课程下拉
+            form.on('select(course_select)', function(data) {
+                // 获取课程ID
+                var id = data.value;
 
+                // 异步获取章节列表
+                $.ajax({
+                    url: '/console/Common/getSearchChapter',
+                    type: 'POST',
+                    data: {
+                        id: id
+                    },
+                    success: function(result) {
+                        if (result.code == 200) {
+                            $("#chapter_select").html('<option value="0">请选择章节</option>');
+                            // 获取成功  course_select
+                            $.each(result.data, function(index, item) {
+                                $("#chapter_select").append(new Option(item.title, item.id))
+                            });
 
-        // 课程三级联动
-        // 分类下拉
-        form.on('select(classify_select)', function(data){
-            // 获取选项ID
-            var id = data.value;
+                            form.render('select');
+                        } else {
+                            $("#chapter_select").html('<option value="0">请重新选择课程</option>');
+                            form.render('select');
+                            layer.msg(result.msg, {
+                                icon: 5
+                            });
+                        }
 
-            // 异步获取对应课程
-            $.ajax({
-                url: '/console/Common/getSearchCourse',
-                type: 'POST',
-                data: {id:id},
-                success: function(result){
-                    if(result.code == 200){
-                        $("#course_select").html('<option value="0">请选择课程</option>');
-                        // 获取成功  course_select
-                        $.each(result.data,function(index,item){
-                            $("#course_select").append(new Option(item.title,item.id))
+                    },
+                    error: function() {
+                        layer.msg('网络错误！', {
+                            icon: 5
                         });
-
-                        // 重置章节select
-                        $('#chapter_select').html('<option value="0">请先选择课程</option>');
-
-                        form.render('select');
-
-                    }else{
-                        console.log('cc');
-                        $("#course_select").html('<option value="0">请重新选择分类</option>');
-                        form.render('select');
-                        layer.msg(result.msg, {icon: 5});
                     }
-                },
-                error: function(){
-                    layer.msg('网络错误！', {icon: 5});
-                }
+                });
 
             });
 
-        });
 
-        // 三级下拉
-        // 课程下拉
-        form.on('select(course_select)',function(data){
-            // 获取课程ID
-            var id = data.value;
+            // 表单提交
+            form.on('submit(formDemo)', function(data) {
+                // 获取所有表单数据
+                var formData = data.field;
+                formData.media_path = document.getElementById('ossfile').getAttribute('data-url');
+                formData.file_name = document.getElementById('ossfile').getAttribute('data-name');
+                // 删除一个属性
+                delete formData.file;
 
-            // 异步获取章节列表
-            $.ajax({
-                url: '/console/Common/getSearchChapter',
-                type: 'POST',
-                data: {id:id},
-                success: function(result){
-                    if(result.code == 200){
-                        $("#chapter_select").html('<option value="0">请选择章节</option>');
-                        // 获取成功  course_select
-                        $.each(result.data,function(index,item){
-                            $("#chapter_select").append(new Option(item.title,item.id))
+                if ((formData.cl_id == 0 || formData.cl_id == '') || (formData.cp_id == 0 || formData.cp_id == '') || (formData.cc_id == 0 || formData.cc_id == '')) {
+                    layer.msg('请完整选择所属章节', {
+                        icon: 5
+                    });
+                    return false;
+                }
+
+                if (formData.media_path == '') {
+                    layer.msg('请上传音频文件', {
+                        icon: 5
+                    });
+                    return false;
+                }
+
+                console.log(formData);
+
+
+
+                // 数据提交
+                $.ajax({
+                    url: '/console/Exercise/addExercise',
+                    type: 'POST',
+                    data: formData,
+                    success: function(result) {
+                        if (result.code == 200) {
+                            layer.msg(result.msg, {
+                                icon: 6
+                            });
+                            // 添加成功，关闭弹窗
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                        } else {
+                            layer.msg(result.msg, {
+                                icon: 5
+                            });
+                        }
+                    },
+                    error: function() {
+                        layer.msg('网络错误！', {
+                            icon: 5
                         });
-
-                        form.render('select');
-                    }else{
-                        $("#chapter_select").html('<option value="0">请重新选择课程</option>');
-                        form.render('select');
-                        layer.msg(result.msg, {icon: 5});
                     }
+                });
 
-                },
-                error: function(){
-                    layer.msg('网络错误！', {icon: 5});
-                }
+                return false;
             });
 
+
         });
-
-
-        // 表单提交
-        form.on('submit(formDemo)', function(data){
-            // 获取所有表单数据
-            var formData = data.field;
-
-            // 删除一个属性
-            delete formData.file;
-
-            if((formData.cl_id == 0 || formData.cl_id == '') || (formData.cp_id == 0 || formData.cp_id == '') || (formData.cc_id == 0 || formData.cc_id == '')){
-                layer.msg('请完整选择所属章节', {icon: 5});
-                return false;
-            }
-
-            if(formData.media_path == ''){
-                layer.msg('请上传音频文件', {icon: 5});
-                return false;
-            }
-
-            console.log(formData);
-
-            formData.file_name = fileName;
-
-
-            // 数据提交
-            $.ajax({
-                url: '/console/Exercise/addExercise',
-                type: 'POST',
-                data: formData,
-                success: function (result) {
-                    if(result.code == 200){
-                        layer.msg(result.msg, {icon: 6});
-                        // 添加成功，关闭弹窗
-                        var index = parent.layer.getFrameIndex(window.name);
-                        parent.layer.close(index);
-                    }else{
-                        layer.msg(result.msg, {icon: 5});
-                    }
-                },
-                error: function () {
-                    layer.msg('网络错误！', {icon: 5});
-                }
-            });
-
-            return false;
-        });
-
-
-    });
-
-</script>
+    </script>
 
 </body>
+
 </html>
