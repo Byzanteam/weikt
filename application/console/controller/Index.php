@@ -29,7 +29,7 @@ class Index extends Base
 
         foreach ($user as $k=>$v) {
 
-            if($v['nickname'] != base64_encode(base64_decode($v['nickname']))) {
+            if($v['nickname'] != base64_encode(base64_decode($v['nickname'])) || $v['nickname'] == 'What') {
 //                echo $v['nickname'].PHP_EOL;
 
                 $sql = 'UPDATE vcr_user_basic SET nickname=\'' . base64_encode($v['nickname']) . '\'';
