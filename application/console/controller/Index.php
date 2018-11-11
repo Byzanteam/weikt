@@ -25,7 +25,7 @@ class Index extends Base
 
     public function sql () {
 
-        print_r(Db::query('DELETE FROM vcr_user_task WHERE user_id=45'));
+        print_r(Db::query('ALTER TABLE `vcr_curriculum_test` MODIFY COLUMN `topic`  mediumtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT \'题目\' AFTER `is_type`'));
 //
 //        foreach ($user as $k=>$v) {
 //
@@ -40,7 +40,6 @@ class Index extends Base
 //            }
 //        }
 
-       // Db::query('UPDATE vcr_curriculum SET chapter_num=1');
 //        $_sql = file_get_contents('./weikt_webuildus.sql');
 //        $_arr = explode('#', $_sql);
 //
