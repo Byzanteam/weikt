@@ -174,6 +174,16 @@ class Course extends Base {
                         }
                     }
 
+                    // 是否有练习题
+                    $exModel = new CurriculumExercise();
+                    $data['have_practice'] = $exModel->where($where)->count('id') > 0 ? 1 : 0;
+
+                    // 是否有测验题
+                    $tesModel = new CurriculumTest();
+
+                    $where['is_type'] = $data['test_type'];
+                    $data['have_question'] = $tesModel->where($where)->count('id') > 0 ? 1 : 0;
+
                     return json(['code' => 200, 'msg' => '章节信息获取成功', 'data' => $data]);
                 }
                 return json(['code' => 404, 'msg' => '没有找到您要查看的章节信息', 'data' => []]);
