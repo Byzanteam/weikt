@@ -27,11 +27,11 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
             return false;
         }
 
-        $where = 'WHERE user_id='.$id;
+        $where = ' WHERE user_id='.$id;
         $limit = '';
     }else{
         $where = '';
-        $limit = 'LIMIT '.$limit;
+        $limit = ' LIMIT '.$limit;
     }
 
 
@@ -63,9 +63,9 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
     // 对学习记录进行分组统计
     $GroupCountSql = 'SELECT user_id, COUNT(*) AS num FROM vcr_user_study' .$child_where. ' GROUP BY user_id ORDER BY num DESC';
 
+    $rankSql = 'SELECT user_id, num, @rank:=@rank+1 AS rank_no FROM ('.$GroupCountSql.') a, (SELECT @rank:=0) b';
 
-    $sql = 'SELECT basic.name, c_tmp.* FROM vcr_user_basic basic JOIN (SELECT user_id, num, @rank:=@rank+1 AS rank_no FROM ('.$GroupCountSql.') a, (SELECT @rank:=0) b '.$where.' '.$limit.') c_tmp ON basic.id=c_tmp.user_id';
-
+    $sql = 'SELECT basic.name, c_tmp.* FROM vcr_user_basic basic JOIN (' . $rankSql . ') c_tmp ON basic.id=c_tmp.user_id' . $where . $limit;
 
     $res = db('user_study')->query($sql);
 

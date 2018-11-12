@@ -73,15 +73,15 @@ class Login extends Base
             // 是否允许登录 默认false
             $is_log_in = false;
 
-//            foreach ($info['root_organization_ids'] as $k => $v){
-//                if(in_array($v,$teacher_organ)){
+            foreach ($info['root_organization_ids'] as $k => $v){
+                if(in_array($v,$teacher_organ)){
                     $model = new UserBasic();
 
                     $model->update_user_info($info);
 
                     $is_log_in = true;
-//                }
-//            }
+                }
+            }
 
             if ($is_log_in) {
                 // 允许登录
@@ -98,7 +98,7 @@ class Login extends Base
                 // 登录成功，跳转到后台首页
                 $this->redirect('/console/Index/index');
             } else {
-                echo '暂无权限';
+                echo '<div style="font-size: 16px; color: red; text-align: center; padding-top: 10%;">暂无权限</div>';
             }
         }
 
