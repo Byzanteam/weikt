@@ -66,7 +66,7 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
     $rankSql = 'SELECT user_id, num, @rank:=@rank+1 AS rank_no FROM ('.$GroupCountSql.') a, (SELECT @rank:=0) b';
 
     $sql  = 'SELECT basic.name, basic.id as user_id, IFNULL(num,0) as num, IFNULL(rank_no,10) as rank_no FROM vcr_user_basic basic';
-    $sql .= ' LEFT JOIN (' . $rankSql . ') c_tmp ON basic.id=c_tmp.user_id' . $where . ' ORDER BY num DESC ' . $limit;
+    $sql .= ' LEFT JOIN (' . $rankSql . ') c_tmp ON basic.id=c_tmp.user_id' . $where . ' ORDER BY rank_no DESC ' . $limit;
 
     $res = db('user_study')->query($sql);
 
