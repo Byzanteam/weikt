@@ -3,7 +3,9 @@ namespace app\api\v1\controller;
 
 use app\api\Base;
 use app\api\v1\model\UserCollection;
+use app\api\v1\model\UserStudy;
 use app\api\v1\model\UserTask;
+use app\console\model\UserBasic;
 
 class User extends Base {
 
@@ -23,23 +25,54 @@ class User extends Base {
             $id = $this->userinfo['id'];
             if (!empty($id)) {
 
+                $uModel = new UserBasic();
+                $tModel = new UserTask();
                 // 查询用户信息
-                $data['userinfo'] = db('user_basic')->where(['id'=>$id])->field('id,name,headimgurl,studytime,curriculum')->find();
+
+                $u_where = ['id' => $id];
+                $u_fields = 'id,name,headimgurl,studytime,curriculum,root_organization_ids';
+
+                $data['userinfo'] = $uModel->getOne($u_where, $u_fields);
                 if (!empty($data['userinfo'])) {
                     // 用户信息获取成功
 
                     // 获取 获得 作业已点评数量
-                    $data['userinfo']['review_num'] = db('user_task')->where(['user_id' => $data['userinfo']['id'], 'state' => 1])->count('*');
+                    $data['userinfo']['review_num'] = $tModel->where(['user_id' => $data['userinfo']['id'], 'state' => 1])->count('id');
 
                     // 获取用户排名
-                    $rank_no = 10;
-                    if($list = get_user_rank_no(2, $data['userinfo']['id'])) {
-                        $rank_no = $list[0]['rank_no'];
+                    $data['rank_no'] = 10;
+                    if($list = get_user_rank_no(2, $data['userinfo']['id'], 1)) {
+                        $data['rank_no'] = $list[0]['rank_no'];
                     }
-                    $data['rank_no'] = $rank_no;
 
-                    // 获取本月学习的日期 (暂时写死)
-                    $data['study_times'] = ['1537500949','1537445809','1537438969'];
+                    // 获取本月学习的日期
+                    $stuModel = new UserStudy();
+                    $beginDate = date('Y-m-01', strtotime(date('Y-m-d')));
+                    $where  = ' study_date >= ' . strtotime($beginDate);
+                    $where .= ' AND study_date <= ' . strtotime(date('Y-m-d', strtotime($beginDate . ' +1 month -1 day')));
+
+                    $s_list = $stuModel->getList($where, 'study_date');
+
+                    $data['study_times'] = [];
+
+                    if (!empty($s_list)) {
+                        foreach ($s_list as $k => $v) {
+                            $data['study_times'][] = date('Y/m/d', $v['study_date']);
+                        }
+
+                        $data['study_times'] = array_unique($data['study_times']);
+                    }
+
+                    $teacher_organ = config('llapi.teacher_organ');
+                    $data['is_teacher'] = 0;
+
+                    $data['userinfo']['root_organization_ids'] = explode(',', $data['userinfo']['root_organization_ids']);
+                    foreach ($data['userinfo']['root_organization_ids'] as $k => $v){
+                        if(in_array($v,$teacher_organ)){
+                            $data['is_teacher'] = 1;
+                        }
+                    }
+                    unset($data['userinfo']['root_organization_ids']);
 
                     return json(['code' => 200, 'msg' => '用户信息获取成功', 'data' => $data]);
                 }

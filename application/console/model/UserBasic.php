@@ -50,7 +50,7 @@ class UserBasic extends Model {
      * @throws \think\exception\DbException
      */
     public function getOne ($where = [], $fields = '*') {
-        return $this->field($fields)
+        return db('user_basic')->field($fields)
             ->where($where)
             ->find();
     }
