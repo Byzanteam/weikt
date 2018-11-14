@@ -103,7 +103,7 @@ class Curriculum extends Base
             $data['back_img'] = input('media_path','');
             $data['index_img'] = input('media_path1','');
 
-            if(!empty($data['title']) && !empty($data['cl_id']) && !empty($data['desc'])){
+            if(!empty($data['title']) && !empty($data['cl_id'])){
 
                 if(db('curriculum')->where(['cl_id'=>$data['cl_id'], 'title'=>$data['title']])->find()){
                     return json(['code' => 0, 'msg' => '课程名称重复，课程添加失败']);
@@ -169,7 +169,7 @@ class Curriculum extends Base
             $data['back_img'] = input('media_path','');
             $data['index_img'] = input('media_path1','');
 
-            if(!empty($id) && !empty($data['title']) && !empty($data['cl_id']) && !empty($data['desc'])){
+            if(!empty($id) && !empty($data['title']) && !empty($data['cl_id'])){
 
                 if(db('curriculum')->where(['id'=>['neq',$id],'cl_id'=>$data['cl_id'], 'title'=>$data['title']])->find()){
                     return json(['code' => 0, 'msg' => '课程名称重复，课程添加失败']);

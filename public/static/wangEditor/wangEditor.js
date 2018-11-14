@@ -548,7 +548,7 @@ var config = {
     // 默认菜单配置
     menus: ['head', 'bold', 'fontSize', 'fontName', 'italic', 'underline', 'strikeThrough', 'foreColor', 'backColor', 'link', 'list', 'justify', 'quote', 'emoticon', 'image', 'table', 'video', 'code', 'undo', 'redo'],
 
-    fontNames: ['宋体', '微软雅黑', 'Arial', 'Tahoma', 'Verdana'],
+    fontNames: ['宋体', '微软雅黑', 'Arial', 'Tahoma', 'Verdana', 'Times New Roman'],
 
     colors: ['#000000', '#eeece0', '#1c487f', '#4d80bf', '#c24f4a', '#8baa4a', '#7b5ba1', '#46acc8', '#f9963b', '#ffffff'],
 
