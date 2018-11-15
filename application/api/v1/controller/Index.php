@@ -50,8 +50,7 @@ class Index extends Base
 
             $curModel = new Curriculum();
 
-            $fields = 'any_value(cl.id) as classify_id,any_value(cl.name) as classify_name,c.id';
-            $fields .= ',any_value(c.title) as title,any_value(IF(SUM(study_num),SUM(study_num),0)) AS study_num';
+            $fields  = 'c.id,any_value(c.title) as title,any_value(IF(SUM(study_num),SUM(study_num),0)) AS study_num';
             $fields .= ',any_value(IF(st.state,st.state,0)) as is_study,any_value(index_img) as index_img';
             // 获取热门课程
             $curWhere = ['cl.label' => $lag];
