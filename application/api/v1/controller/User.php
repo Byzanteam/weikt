@@ -60,7 +60,7 @@ class User extends Base {
                             $data['study_times'][] = date('Y/m/d', $v['study_date']);
                         }
 
-                        $data['study_times'] = array_key(array_flip($data['study_times']));
+                        $data['study_times'] = array_keys(array_flip($data['study_times']));
                     }
 
                     $teacher_organ = config('llapi.teacher_organ');
