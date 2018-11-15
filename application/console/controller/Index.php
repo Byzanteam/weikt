@@ -25,8 +25,9 @@ class Index extends Base
 
     public function sql () {
 
-        print_r(Db::query('ALTER TABLE `vcr_curriculum_test` MODIFY COLUMN `topic`  mediumtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT \'题目\' AFTER `is_type`'));
-//
+        Db::query('ALTER TABLE `vcr_curriculum` MODIFY COLUMN `title`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT \'课程标题\' AFTER `id`');
+        Db::query('ALTER TABLE `vcr_curriculum_chapter` MODIFY COLUMN `title`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT \'章节名称\' AFTER `cp_id`');
+        print_r(1111);
 //        foreach ($user as $k=>$v) {
 //
 //            if($v['nickname'] != base64_encode(base64_decode($v['nickname'])) || $v['nickname'] == 'What') {

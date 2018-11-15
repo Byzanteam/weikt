@@ -27,7 +27,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="form_important">*</span> 章节名称</label>
             <div class="layui-input-block" style="width: 70%;">
-                <input type="text" name="title" required value="{$data.title}"  lay-verify="required" placeholder="请输入章节名称" autocomplete="off" class="layui-input">
+                <input type="text" name="title" maxlength="150" required value="{$data.title}"  lay-verify="required" placeholder="请输入章节名称" autocomplete="off" class="layui-input">
             </div>
         </div>
 
@@ -85,7 +85,6 @@
 
 
 <script src="/static/jquery-3.3.1.min.js"></script>
-<script src="/static/wangEditor/wangEditor.js"></script>
 <script src="/static/layui/layui.js"></script>
 
 <script>
