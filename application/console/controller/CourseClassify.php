@@ -50,7 +50,7 @@ class CourseClassify extends Base
                 $where['name'] = ['like','%'.$title.'%'];
             }
 
-            $data = $this->model->getTablePageList($where,$page,$limit);
+            $data = $this->model->getTablePageList($where, $page, $limit);
             if(!empty($data['data'])){
                 return json(['code' => 200, 'msg' => '列表获取成功', 'count' => $data['total'], 'data' => $data['data']]);
             }
@@ -80,7 +80,7 @@ class CourseClassify extends Base
     {
         if(\think\Request::instance()->isPost()){
 
-            $data['name']      = input('name','','strip_tags,trim');
+            $data['name']      = strip_tags(input('name','','trim'), '<br>');
             $data['label']     = input('label','');
             $data['parent_id'] = intval(input('parent_id'));
             $data['sort']      = intval(input('sort',0));
@@ -210,7 +210,7 @@ class CourseClassify extends Base
     {
         if(\think\Request::instance()->isPost()){
             $id = intval(input('id'));
-            $data['name']      = input('name','','strip_tags,trim');
+            $data['name']      = strip_tags(input('name','','trim'), '<br>');
             $data['label']     = input('label','');
             $data['parent_id'] = intval(input('parent_id'));
             $data['sort']      = intval(input('sort',0));
