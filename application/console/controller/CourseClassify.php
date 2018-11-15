@@ -38,7 +38,7 @@ class CourseClassify extends Base
 
             // 筛选参数接受
             $id = intval(input('id',0));
-            $title = input('title','','strip_tags,trim');
+            $title = strip_tags(input('title','','trim'), '<br>');
 
             $where = [];
 
@@ -47,7 +47,7 @@ class CourseClassify extends Base
             }
 
             if(!empty($title)){
-                $where['name'] = ['like','%'.$title.'%'];
+                $where['name'] = ['like', '%'.$title.'%'];
             }
 
             $data = $this->model->getTablePageList($where, $page, $limit);

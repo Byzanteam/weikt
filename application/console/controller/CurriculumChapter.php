@@ -36,7 +36,7 @@ class CurriculumChapter extends Base {
 
             // 筛选参数接受
             $id = intval(input('id',0));
-            $title = input('title','','strip_tags,trim');
+            $title = strip_tags(input('title','','trim'), '<br>');
 
             $where = [];
 
@@ -82,7 +82,7 @@ class CurriculumChapter extends Base {
     public function addChapter () {
         if (\think\Request::instance()->isPost()) {
 
-            $data['title'] = input('title','','strip_tags,trim');
+            $data['title'] = strip_tags(input('title','','trim'), '<br>');
             $data['cp_id'] = intval(input('cp_id',0));
             $data['sort'] = intval(input('sort',0));
             $data['test_type'] = intval(input('test_type',0));
@@ -157,7 +157,7 @@ class CurriculumChapter extends Base {
     public function editChapter () {
         if (\think\Request::instance()->isPost()) {
             $id = intval(input('id'));
-            $data['title'] = input('title','','strip_tags,trim');
+            $data['title'] = strip_tags(input('title','','trim'), '<br>');
             $data['cp_id'] = intval(input('cp_id',0));
             $data['sort']  = intval(input('sort',0));
             $data['test_type'] = intval(input('test_type',0));

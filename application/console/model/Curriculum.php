@@ -28,6 +28,8 @@ class Curriculum extends Model {
                 $typeName = db('curriculum_classification')->where(['id'=>$item->cl_id])->field('id,name')->find();
                 $item->cl_name = '[ '.$typeName['id'].' ] - '.$typeName['name'];
 
+                $item->title = htmlspecialchars($item->title);
+
             })
             ->toArray();
 

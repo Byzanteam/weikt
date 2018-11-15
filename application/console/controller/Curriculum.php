@@ -51,7 +51,7 @@ class Curriculum extends Base
             $limit = intval(input('limit',10));
             // 筛选参数接受
             $cl_id = intval(input('cl_id',0));
-            $title = input('title','','strip_tags,trim');
+            $title = strip_tags(input('title','','trim'), '<br>');
 
             $where = [];
 
@@ -96,7 +96,7 @@ class Curriculum extends Base
     {
         if(\think\Request::instance()->isPost()){
 
-            $data['title'] = input('title','','strip_tags,trim');
+            $data['title'] = strip_tags(input('title','','trim'), '<br>');
             $data['cl_id'] = intval(input('cl_id',0));
             $data['desc'] = input('desc','','strip_tags,trim');
             $data['sort'] = intval(input('sort',0));
@@ -162,7 +162,7 @@ class Curriculum extends Base
     public function editCurriculum () {
         if(\think\Request::instance()->isPost()){
             $id = intval(input('id'));
-            $data['title'] = input('title','','strip_tags,trim');
+            $data['title'] = strip_tags(input('title','','trim'), '<br>');
             $data['cl_id'] = intval(input('cl_id',0));
             $data['desc'] = input('desc','','strip_tags,trim');
             $data['sort'] = intval(input('sort',0));
