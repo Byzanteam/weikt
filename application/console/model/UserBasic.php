@@ -85,7 +85,7 @@ class UserBasic extends Model {
         $data['name']       = $userinfo['name'];
         $data['nickname']   = base64_encode($userinfo['nickname']);
         $data['phone']      = $userinfo['phone'];
-        $data['openid']     = $userinfo['openid'];
+        $data['openid']     = empty($userinfo['openid']) ? 'null' : $userinfo['openid'];
         $data['headimgurl'] = $userinfo['headimgurl'];
         $data['root_organization_ids']  = implode(',', $userinfo['root_organization_ids']);
         $data['last_time']  = date('Y-m-d H:i:s');

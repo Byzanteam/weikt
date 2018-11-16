@@ -328,6 +328,7 @@ function get_user_token ($code = '', $redirect_uri = '') {
 
     // 判断请求是否成功
     if (isset($data['access_token'])) {
+
         // 获取成功，返回 token 字符串
         return $data['access_token'];
     }

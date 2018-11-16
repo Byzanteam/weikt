@@ -28,6 +28,7 @@ class Login extends Base
 
             // 获取用户token
             if ($token = get_user_token($code, config('llapi.api_redirect_uri'))) {
+
                 // 获取用户信息
                 if ($user_info = get_user_info($token)) {
 
@@ -41,10 +42,12 @@ class Login extends Base
                     }
                 }
 
-                echo '用户登录失败';exit;
+                echo '<div style="font-size: 20px; color: red; text-align: center; padding-top: 10%;">用户登录失败</div>';
+                exit;
             }
 
-            echo '授权认证失败';exit;
+            echo '<div style="font-size: 20px; color: red; text-align: center; padding-top: 10%;">授权认证失败</div>';
+            exit;
         } else {
             // 拼接 获取授权码 api 地址
             $url = config('llapi.formal_url') . '/oauth/authorize/?';
