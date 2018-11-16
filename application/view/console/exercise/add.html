@@ -33,7 +33,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label"><span class="form_important">*</span> 习题标题</label>
                 <div class="layui-input-block" style="width: 80%;">
-                    <input type="text" name="title" maxlength="150" required lay-verify="required" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
+                    <input type="text" name="title" maxlength="255" required lay-verify="required" placeholder="请输入分类名称" autocomplete="off" class="layui-input">
                 </div>
             </div>
 
@@ -92,7 +92,7 @@
             <div class="layui-form-item">
                 <label class="layui-form-label">排序</label>
                 <div class="layui-input-block" style="width: 80%;">
-                    <input type="text" name="sort" maxlength="10" value="0" placeholder="输入排序的需要，数值越小越靠前" lay-verify="number" class="layui-input" autocomplete="off">
+                    <input type="text" name="sort" max="255" value="0" placeholder="输入排序的需要，数值越小越靠前" lay-verify="number" class="layui-input" autocomplete="off">
                 </div>
             </div>
 
