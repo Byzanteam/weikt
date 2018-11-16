@@ -321,7 +321,7 @@ function get_user_token ($code = '', $redirect_uri = '') {
         'grant_type'    => 'authorization_code',
         'redirect_uri'  => $redirect_uri,
         '_ns_id'        => 200,
-        'limit_wechat_user' => true
+        'limit_wechat_user' => 'true'
     ];
 
     $output = curlRequest($url, 'POST', [], $param);
