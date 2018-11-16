@@ -58,7 +58,7 @@ class Login extends Base
             // 拼接 回到地址 redirect_uri
             $url .= '&redirect_uri=' . config('llapi.api_redirect_uri');
 
-            $url .= '&_ns_id=200';
+            $url .= '&_ns_id=200&limit_wechat_user=true';
 
             $this->redirect($url);
         }

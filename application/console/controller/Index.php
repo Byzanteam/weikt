@@ -25,8 +25,8 @@ class Index extends Base
 
     public function sql () {
 
-        Db::query('ALTER TABLE `vcr_curriculum` MODIFY COLUMN `title`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT \'课程标题\' AFTER `id`');
-        Db::query('ALTER TABLE `vcr_curriculum_chapter` MODIFY COLUMN `title`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT \'章节名称\' AFTER `cp_id`');
+        DB::query('DELETE FROM vcr_user_basic WHERE nickname=\'4oqZX+KKmQ==\' AND `name`=\'⊙_⊙\'');
+//        Db::query('ALTER TABLE `vcr_curriculum` MODIFY COLUMN `title`  varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT \'课程标题\' AFTER `id`');
         print_r(1111);
 //        foreach ($user as $k=>$v) {
 //

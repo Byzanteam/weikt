@@ -319,9 +319,7 @@ function get_user_token ($code = '', $redirect_uri = '') {
         'client_secret' => config('llapi.client_secret'),
         'code'          => $code,
         'grant_type'    => 'authorization_code',
-        'redirect_uri'  => $redirect_uri,
-        '_ns_id'        => 200,
-        'limit_wechat_user' => 'true'
+        'redirect_uri'  => $redirect_uri
     ];
 
     $output = curlRequest($url, 'POST', [], $param);
