@@ -22,6 +22,8 @@ class Login extends Base
     /*  用户登录   */
     public function user_login () {
 
+        $default_url = SITE_URL . '/view/index.html#/';
+
         $code = input('code','','strip_tags,trim'); // 用户授权码
 
         if (!empty($code)) {
@@ -35,7 +37,9 @@ class Login extends Base
                     $userModel = new UserBasic();
 
                     if ($login_token = $userModel->update_user_info($user_info, false)) {
-                        $url = SITE_URL . '/view/index.html#/?login_token=' . $login_token;
+
+                        $url  = session('return_to') ? : $default_url;
+                        $url .= '?login_token=' . $login_token;
 
                         // 用户登录成功
                         $this->redirect($url);
@@ -49,6 +53,10 @@ class Login extends Base
             echo '<div style="font-size: 20px; color: red; text-align: center; padding-top: 10%;">授权认证失败</div>';
             exit;
         } else {
+
+            $return_url = input('return_url', $default_url); // 用户授权码
+            session('return_to', $return_url);
+
             // 拼接 获取授权码 api 地址
             $url = config('llapi.formal_url') . '/oauth/authorize/?';
 
