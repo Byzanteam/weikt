@@ -41,6 +41,8 @@ class Login extends Base
                         $url  = session('return_to') ? : $default_url;
                         $url .= '?login_token=' . $login_token;
 
+                        echo $url;exit;
+
                         // 用户登录成功
                         $this->redirect($url);
                     }
