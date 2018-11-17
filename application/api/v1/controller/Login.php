@@ -41,8 +41,6 @@ class Login extends Base
                         $url  = session('return_to') ? : $default_url;
                         $url .= '?login_token=' . $login_token;
 
-                        echo $url;exit;
-
                         // 用户登录成功
                         $this->redirect($url);
                     }
@@ -56,7 +54,7 @@ class Login extends Base
             exit;
         } else {
 
-            $return_url = input('return_url', $default_url); // 用户授权码
+            $return_url = input('return_url', $default_url, 'base64_decode'); // 用户授权码
             session('return_to', $return_url);
 
             // 拼接 获取授权码 api 地址
