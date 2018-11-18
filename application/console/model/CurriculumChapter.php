@@ -28,7 +28,7 @@ class CurriculumChapter extends Model {
 
                 // 获取所属课程的名称
                 $typeName = db('curriculum')->where(['id'=>$item->cp_id])->field('id,title')->find();
-                $item->cl_name = '[ '.$typeName['id'].' ] - '.$typeName['title'];
+                $item->cl_name = '[ '.$typeName['id'].' ] - '.htmlspecialchars($typeName['title']);
 
                 if($item->test_type == 1){
                     $item->test_type_str = '阅读题';

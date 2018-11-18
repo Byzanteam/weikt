@@ -33,7 +33,7 @@ class CurriculumClassification extends Model
                     $item->parent_name = '';
                 } else {
                     $parentData = $this->where(['id'=>$item->parent_id])->field('id,name')->find();
-                    $item->parent_name = '[ '.$parentData['id'].' ] - '.$parentData['name'];
+                    $item->parent_name = '[ '.$parentData['id'].' ] - '.htmlspecialchars($parentData['name']);
                 }
 
 

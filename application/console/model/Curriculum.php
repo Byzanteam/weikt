@@ -26,7 +26,7 @@ class Curriculum extends Model {
 
                 // 获取所属分类的名称
                 $typeName = db('curriculum_classification')->where(['id'=>$item->cl_id])->field('id,name')->find();
-                $item->cl_name = '[ '.$typeName['id'].' ] - '.$typeName['name'];
+                $item->cl_name = '[ '.$typeName['id'].' ] - '.htmlspecialchars($typeName['name']);
 
                 $item->title = htmlspecialchars($item->title);
 
