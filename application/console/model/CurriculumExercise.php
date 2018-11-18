@@ -24,6 +24,8 @@ class CurriculumExercise extends Model {
             ])
             ->each(function($item,$key){
 
+                $item->title = htmlspecialchars($item->title);
+
                 // 获取所属章节名称
                 $data = db('curriculum_chapter')->where(['id'=>$item->cc_id])->field('id,title')->find();
                 $item->chapter_name = '[ '.$data['id'].' ] '.$data['title'];
