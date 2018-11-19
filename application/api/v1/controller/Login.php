@@ -39,7 +39,14 @@ class Login extends Base
                     if ($login_token = $userModel->update_user_info($user_info, false)) {
 
                         $url  = session('return_to') ? : $default_url;
-                        $url .= '?login_token=' . $login_token;
+
+                        if (strpos($url, '?') === false) {
+                            $url .= '?';
+                        } else {
+                            $url .= '&';
+                        }
+
+                        $url .= 'login_token=' . $login_token;
 
                         // 用户登录成功
                         $this->redirect($url);
