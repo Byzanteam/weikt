@@ -40,10 +40,23 @@ class Login extends Base
 
                         $url  = session('return_to') ? : $default_url;
 
-                        if (strpos($url, '?') === false) {
-                            $url .= '?';
-                        } else {
-                            $url .= '&';
+                        $arr = explode('?', $url);
+
+                        $url = $arr[0] . '?';
+
+                        if (isset($arr[1]) && !empty($arr[1])) {
+                            $queryParts = explode('&', $arr[1]);
+
+                            foreach ($queryParts as $key => $param) {
+                                $item = explode('=', $param);
+                                if ($item[0] == 'm') {
+                                    unset($queryParts[$key]);
+                                }
+                            }
+
+                            if (!empty($queryParts)) {
+                                $url .= implode('&', $queryParts) . '&';
+                            }
                         }
 
                         $url .= 'login_token=' . $login_token;

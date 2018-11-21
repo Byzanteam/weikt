@@ -184,7 +184,10 @@ class User extends Base {
                 'ut.id' => $id,
                 'ut.user_id' => $uid
             ];
-            $fields = 'ut.fraction,ut.id,ut.chapter_id,from_unixtime(ut.sub_time, \'%Y-%m-%d\') as sub_time,ut.state,ut.comment,u.name,u.headimgurl as img,cc.title';
+
+            $fields  = 'ut.fraction,ut.id,ut.chapter_id,from_unixtime(ut.sub_time, \'%Y-%m-%d\') as sub_time,ut.state,ut.comment,u.name';
+            $fields .= ',u.headimgurl as img,cc.title,c.title as c_title';
+
             $data = $utModel->getDetail($where, $fields);
             // 检查作业是否点评
             if (!empty($data)) {

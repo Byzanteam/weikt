@@ -371,7 +371,7 @@ class Course extends Base {
                                     db('user_study')->insert($studyData);
                                 }
 
-                                return json(['code' => 200, 'msg' => '作业上传成功，请等候老师点评', 'data' => []]);
+                                return json(['code' => 200, 'msg' => '作业上传成功', 'data' => []]);
                             }
                             return json(['code' => 403, 'msg' => '上传失败，文件在上传过程中丢失', 'data' => []]);
                         }
