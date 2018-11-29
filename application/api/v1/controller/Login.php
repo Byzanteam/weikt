@@ -49,7 +49,7 @@ class Login extends Base
 
                             foreach ($queryParts as $key => $param) {
                                 $item = explode('=', $param);
-                                if ($item[0] == 'm') {
+                                if ($item[0] == 'login_token') {
                                     unset($queryParts[$key]);
                                 }
                             }
