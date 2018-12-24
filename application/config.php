@@ -264,6 +264,13 @@ return [
         'v4_api_Authorization' => getenv('API_AUTHORIZATION'),
 
         # 教师所在组织ID
-        'teacher_organ' => [25751]
+        'teacher_organ' => [25749,25751]
     ],
+    'ali_oss' => [
+        'endpoint'        => 'http://oss-cn-hangzhou.aliyuncs.com',
+        'bucket_host'     => 'http://weikt.oss-cn-hangzhou.aliyuncs.com/',
+        'accessKeyId'     => getenv('OSS_ACCESSKEYID'),
+        'accessKeySecret' => getenv('OSS_ACCESSKEYSECRET'),
+        'bucket'          => getenv('OSS_BUCKET'),
+    ]
 ];

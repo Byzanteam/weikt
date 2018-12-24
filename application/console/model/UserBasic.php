@@ -22,6 +22,10 @@ class UserBasic extends Model {
             ->paginate($limit,false,[
                 'page' => $page,
             ])
+            ->each(function($item, $key) {
+
+                $item->nickname = base64_decode($item->nickname);
+            })
             ->toArray();
 
         return $res;
@@ -46,7 +50,7 @@ class UserBasic extends Model {
      * @throws \think\exception\DbException
      */
     public function getOne ($where = [], $fields = '*') {
-        return $this->field($fields)
+        return db('user_basic')->field($fields)
             ->where($where)
             ->find();
     }
@@ -79,9 +83,9 @@ class UserBasic extends Model {
         // 整理用户数据
         $data['ll_id']      = $userinfo['id'];
         $data['name']       = $userinfo['name'];
-        $data['nickname']   = $userinfo['nickname'];
+        $data['nickname']   = base64_encode($userinfo['nickname']);
         $data['phone']      = $userinfo['phone'];
-        $data['openid']     = $userinfo['openid'];
+        $data['openid']     = empty($userinfo['openid']) ? 'null' : $userinfo['openid'];
         $data['headimgurl'] = $userinfo['headimgurl'];
         $data['root_organization_ids']  = implode(',', $userinfo['root_organization_ids']);
         $data['last_time']  = date('Y-m-d H:i:s');

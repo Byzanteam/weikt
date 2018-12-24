@@ -51,7 +51,7 @@ class Curriculum extends Base
             $limit = intval(input('limit',10));
             // 筛选参数接受
             $cl_id = intval(input('cl_id',0));
-            $title = input('title','','strip_tags,trim');
+            $title = strip_tags(input('title','','trim'), '<br>');
 
             $where = [];
 
@@ -96,14 +96,14 @@ class Curriculum extends Base
     {
         if(\think\Request::instance()->isPost()){
 
-            $data['title'] = input('title','','strip_tags,trim');
+            $data['title'] = strip_tags(input('title','','trim'), '<br>');
             $data['cl_id'] = intval(input('cl_id',0));
             $data['desc'] = input('desc','','strip_tags,trim');
             $data['sort'] = intval(input('sort',0));
             $data['back_img'] = input('media_path','');
             $data['index_img'] = input('media_path1','');
 
-            if(!empty($data['title']) && !empty($data['cl_id']) && !empty($data['desc'])){
+            if(!empty($data['title']) && !empty($data['cl_id'])){
 
                 if(db('curriculum')->where(['cl_id'=>$data['cl_id'], 'title'=>$data['title']])->find()){
                     return json(['code' => 0, 'msg' => '课程名称重复，课程添加失败']);
@@ -162,14 +162,14 @@ class Curriculum extends Base
     public function editCurriculum () {
         if(\think\Request::instance()->isPost()){
             $id = intval(input('id'));
-            $data['title'] = input('title','','strip_tags,trim');
+            $data['title'] = strip_tags(input('title','','trim'), '<br>');
             $data['cl_id'] = intval(input('cl_id',0));
             $data['desc'] = input('desc','','strip_tags,trim');
             $data['sort'] = intval(input('sort',0));
             $data['back_img'] = input('media_path','');
             $data['index_img'] = input('media_path1','');
 
-            if(!empty($id) && !empty($data['title']) && !empty($data['cl_id']) && !empty($data['desc'])){
+            if(!empty($id) && !empty($data['title']) && !empty($data['cl_id'])){
 
                 if(db('curriculum')->where(['id'=>['neq',$id],'cl_id'=>$data['cl_id'], 'title'=>$data['title']])->find()){
                     return json(['code' => 0, 'msg' => '课程名称重复，课程添加失败']);

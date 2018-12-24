@@ -38,7 +38,7 @@ class CourseClassify extends Base
 
             // 筛选参数接受
             $id = intval(input('id',0));
-            $title = input('title','','strip_tags,trim');
+            $title = strip_tags(input('title','','trim'), '<br>');
 
             $where = [];
 
@@ -47,10 +47,10 @@ class CourseClassify extends Base
             }
 
             if(!empty($title)){
-                $where['name'] = ['like','%'.$title.'%'];
+                $where['name'] = ['like', '%'.$title.'%'];
             }
 
-            $data = $this->model->getTablePageList($where,$page,$limit);
+            $data = $this->model->getTablePageList($where, $page, $limit);
             if(!empty($data['data'])){
                 return json(['code' => 200, 'msg' => '列表获取成功', 'count' => $data['total'], 'data' => $data['data']]);
             }
@@ -80,7 +80,7 @@ class CourseClassify extends Base
     {
         if(\think\Request::instance()->isPost()){
 
-            $data['name']      = input('name','','strip_tags,trim');
+            $data['name']      = strip_tags(input('name','','trim'), '<br>');
             $data['label']     = input('label','');
             $data['parent_id'] = intval(input('parent_id'));
             $data['sort']      = intval(input('sort',0));
@@ -210,7 +210,7 @@ class CourseClassify extends Base
     {
         if(\think\Request::instance()->isPost()){
             $id = intval(input('id'));
-            $data['name']      = input('name','','strip_tags,trim');
+            $data['name']      = strip_tags(input('name','','trim'), '<br>');
             $data['label']     = input('label','');
             $data['parent_id'] = intval(input('parent_id'));
             $data['sort']      = intval(input('sort',0));
@@ -225,8 +225,10 @@ class CourseClassify extends Base
                     return json(['code' => 0, 'msg' => '分类名称重复！添加失败！']);
                 }
 
-                $res = db('curriculum_classification')->where(['id'=>$id])->update($data);
+                $res = db('curriculum_classification')->where(['id' => $id])->update($data);
                 if($res){
+                    db('curriculum_classification')->where(['parent_id' => $id])->update(['label' => $data['label']]);
+
                     return json(['code' => 200, 'msg' => '分类编辑成功']);
                 }
                 return json(['code' => 0, 'msg' => '分类编辑失败，请重新操作']);

@@ -57,7 +57,8 @@ class Student extends Base
                 $where['phone'] = ['like','%'.$phone.'%'];
             }
 
-            $data = $this->model->getTablePageList($where,$page,$limit);
+            $data = $this->model->getTablePageList($where, $page, $limit);
+
             if(!empty($data['data'])){
                 return json(['code' => 200, 'msg' => '列表获取成功', 'count' => $data['total'], 'data' => $data['data']]);
             }

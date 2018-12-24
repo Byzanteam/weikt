@@ -2,6 +2,7 @@
 namespace app\console\controller;
 
 use app\console\Base;
+use think\Db;
 
 class Index extends Base
 {
@@ -10,8 +11,7 @@ class Index extends Base
     /**
      * 登录后台整理框架
      */
-    public function index()
-    {
+    public function index () {
         $this->assign('userinfo', $this->userinfo);
         return $this->fetch('/console/index/index');
     }
@@ -19,10 +19,8 @@ class Index extends Base
     /**
      * 首页页面
      */
-    public function main()
-    {
+    public function main () {
         return $this->fetch('/console/index/main');
     }
-
 
 }

@@ -25,7 +25,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="form_important">*</span> 章节名称</label>
             <div class="layui-input-block" style="width: 70%;">
-                <input type="text" name="title" maxlength="30" required  lay-verify="required" placeholder="请输入章节名称" autocomplete="off" class="layui-input">
+                <input type="text" name="title" maxlength="255" required  lay-verify="required" placeholder="请输入章节名称" autocomplete="off" class="layui-input">
             </div>
         </div>
 
@@ -52,36 +52,6 @@
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label"><span class="form_important">*</span> 媒体类型</label>
-            <div class="layui-input-block" style="width: 70%;">
-                <input type="radio" name="media_type" lay-filter="mediaType" value="audio" title="音频" checked>
-                <input type="radio" name="media_type" lay-filter="mediaType" value="video" title="视频">
-                <input type="radio" name="media_type" lay-filter="mediaType" value="text" title="纯文本">
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">多媒体</label>
-            <div class="layui-input-block" style="width: 70%;">
-                <button type="button" class="layui-btn" id="updata"><i class="layui-icon"></i>上传</button>
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">上传结果</label>
-            <div class="layui-input-block">
-                <a id="updateResult" href="javascript:;" style="display: block;height: 36px;line-height: 36px;" target="_blank">等待上传</a>
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">文本内容</label>
-            <div class="layui-input-block" style="">
-                <div id="editor" style="width: 92%"></div>
-            </div>
-        </div>
-
-        <div class="layui-form-item">
             <label class="layui-form-label"><span class="form_important">*</span>点评老师</label>
             <div class="layui-input-block">
                 {notempty name='teacher_list'}
@@ -95,12 +65,9 @@
         <div class="layui-form-item">
             <label class="layui-form-label">排序</label>
             <div class="layui-input-block" style="width: 70%;">
-                <input type="text" name="sort" maxlength="10" value="0" placeholder="输入排序的需要，数值越小越靠前" lay-verify="number" class="layui-input" autocomplete="off">
+                <input type="text" name="sort" max="255" value="0" placeholder="输入排序的需要，数值越小越靠前" lay-verify="number" class="layui-input" autocomplete="off">
             </div>
         </div>
-
-
-        <input id="media_path" type="hidden" name="media_path" value="">
 
         <div class="layui-form-item">
             <div class="layui-input-block">
@@ -122,155 +89,23 @@
 
 
 <script src="/static/jquery-3.3.1.min.js"></script>
-<script src="/static/wangEditor/wangEditor.js"></script>
 <script src="/static/layui/layui.js"></script>
 
 <script>
 
-    layui.use(['form','jquery', 'upload'], function(){
+    layui.use(['form','jquery'], function(){
         var form = layui.form;
         var $ = layui.jquery;
-        var upload = layui.upload;
-
-
-        // wangEditor富文本编辑器
-        var E = window.wangEditor;
-        var editor = new E('#editor');
-        // 自定义菜单配置
-        editor.customConfig.menus = [
-            'head',  // 标题
-            'bold',  // 粗体
-            'fontSize',  // 字号
-            'fontName',  // 字体
-            'italic',  // 斜体
-            'underline',  // 下划线
-            'strikeThrough',  // 删除线
-            'foreColor',  // 文字颜色
-            'backColor',  // 背景颜色
-            'link',  // 插入链接
-            'list',  // 列表
-            'justify',  // 对齐方式
-            'quote',  // 引用
-            'image',  // 插入图片
-            'table',  // 表格
-            'undo',  // 撤销
-            'redo'  // 重复
-        ];
-        // 隐藏“网络图片”tab
-        editor.customConfig.showLinkImg = false;
-        // 配置服务器端地址
-        editor.customConfig.uploadImgMaxLength = 1
-        editor.customConfig.uploadFileName = 'file';
-        editor.customConfig.uploadImgServer = '/console/Common/file_update'
-        editor.customConfig.uploadImgParams = {
-            type: 'images'
-        }
-        editor.customConfig.uploadImgHooks = {
-            customInsert: function (insertImg, result, editor) {
-                // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
-                // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
-
-                if(result.code == 200){
-                    var url = result.data.url;
-                    insertImg(url);
-                }else{
-                    layer.msg(result.msg, {icon: 5});
-                }
-
-                // 举例：假如上传图片成功后，服务器端返回的是 {url:'....'} 这种格式，即可这样插入图片：
-                // var url = result.url
-                // insertImg(url)
-
-                // result 必须是一个 JSON 格式字符串！！！否则报错
-            }
-        }
-
-        // 将图片大小限制为 3M
-        editor.customConfig.uploadImgMaxSize = 30 * 1024 * 1024;
-        editor.create();
-        var editorId = editor.textElemId;
-        $("#"+editorId).parent().css('height',"200px");
-        $("#"+editorId).parent().css('z-index',"9");
-
-        var toolId = editor.toolbarElemId;
-        $("#"+toolId+" > div").css('z-index','10');
-
-
-        var uploadInst;
-        var fileName = '';
-
-        // 多媒体上传
-        uploadInst = upload.render({
-            elem: '#updata', //绑定元素
-            url: '/console/Common/file_update/', //上传接口
-            accept: 'audio',
-            field: 'file',
-            data: {type:'course'},
-            headers: {ContentType: 'text/html'},
-            choose: function(obj){
-                obj.preview(function(index, file, result){
-                    fileName = file.name;
-                });
-            },
-            before: function(obj){
-                $("#cover").show();
-            },
-            done: function(res){
-                $("#cover").hide();
-                if(res.code == 200){
-                    // 上传成功
-                    $("#media_path").val(res.data['url']);
-
-                    // 设置上传结果
-                    $("#updateResult").attr('href',res.data['url']);
-                    $("#updateResult").html(fileName + " <span style='color: green'>上传成功</span>");
-
-                    layer.msg(res.msg, {icon: 6});
-                }else{
-                    $("#updateResult").html(fileName + " <span style='color: red'>上传失败</span>");
-                    layer.msg(res.msg, {icon: 5});
-                }
-            },
-            error: function(){
-                layer.msg('网络错误！', {icon: 5});
-            }
-        });
-
-        // 媒体类型选择
-        form.on('radio(mediaType)', function(data){
-            if(data.value != 'text'){
-                uploadInst.config.accept = data.value;
-            }
-        });
-
 
         // 表单提交
         form.on('submit(formDemo)', function(data){
             // 获取所有表单数据
             var formData = data.field;
 
-            // 删除一个属性
-            delete formData.file;
-
-            if(formData.media_type != 'text'){
-                console.log(formData.media_path);
-                if(formData.media_path == ''){
-                    layer.msg('请根据所选择的多媒体类型上传文件', {icon: 5});
-                    return false;
-                }
-            }
-
             if(formData.cl_id == 0){
                 layer.msg('请选择课程所属的分类', {icon: 5});
                 return false;
             }
-
-            // 获取富文本框的内容
-            formData.content = editor.txt.html();
-
-            formData.file_name = fileName;
-
-
 
             // 数据提交
             $.ajax({

@@ -16,7 +16,8 @@ class UserTask extends Model {
     public function getDetail ($where = [], $fields = '*') {
         return $this->alias('ut')
                     ->join('vcr_curriculum_chapter cc', 'cc.id = ut.chapter_id')
-                    ->join('vcr_user_basic u', 'ut.ll_id = u.ll_id', 'left')
+                    ->join('vcr_curriculum c', 'cc.cp_id = c.id')
+                    ->join('vcr_user_basic u', 'ut.ll_id = u.ll_id')
                     ->field($fields)
                     ->where($where)
                     ->find();

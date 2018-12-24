@@ -69,7 +69,7 @@
 
     <!-- 表格工具条 -->
     <script type="text/html" id="barDemo">
-
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="content">内容列表</a>
         <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 
@@ -96,8 +96,6 @@
                     {field: 'id', title: 'ID', width:'5%', sort: true, fixed: 'left'}
                     ,{field: 'cl_name', title: '所属课程', width:'15%'}
                     ,{field: 'title', title: '章节名称', width:'20%'}
-                    ,{field: 'media_type_name', title: '媒体类型', width:'6%', align: 'center'}
-                    ,{field: 'media_path', title: '媒体查看', width: '10%', align: 'center', templet: '#mediaBox'}
                     ,{field: 'sort', title: '排序', width: '4%', sort: true}
                     ,{field: 'is_time', title: '添加时间', width: '10%', sort: true}
                     ,{field: 'study_num', title: '学习人数', width: '6%'}
@@ -121,10 +119,15 @@
                 // 获取点击表格tr行对象
                 var tr = obj.tr;
 
+                  // 编辑
+                if(obj.event == 'content'){
+                   location.href='/console/CurriculumChapter/contentList?cc_id=' + id
+                }
+
                 // 编辑
                 if(obj.event == 'edit'){
 
-                    var index = layer.open({
+                    layer.open({
                         title : '记录编辑',
                         type : 2,
                         area: ['80%', '830px'],
@@ -179,7 +182,7 @@
 
 
             $(".add_but").on('click',function(){
-                var index = layer.open({
+                layer.open({
                     title : '添加章节',
                     type : 2,
                     area: ['80%', '830px'],
@@ -212,9 +215,6 @@
                     layer.msg('编号请输入数字！', {icon: 5});
                     return false;
                 }
-
-                // console.log(tableOjb.config.url);return false; // url
-                // console.log(tableOjb.config.page.curr);return false; // 当前页数
 
                 table.reload('tableList',{
                     page: {

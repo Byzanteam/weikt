@@ -8,31 +8,34 @@ class CurriculumClassification extends Model
 
     /**
      * 分页获取数据列表
-     * @param where 查询条件
-     * @param page  分页页码
-     * @param limit 每页显示数量
-     * @param order 排序方式
+     * @param array where 查询条件
+     * @param int page  分页页码
+     * @param int limit 每页显示数量
+     * @param string order 排序方式
+     * @return array
+     * @throws \think\exception\DbException
      */
     public function getTablePageList($where = [], $page = 1, $limit = 10, $order = 'id desc')
     {
 
         // tp5 分页调用方式
-        $res = $this->where($where)
+        $res = $this->field('*,name as c_name')
+            ->where($where)
             ->order($order)
             ->paginate($limit,false,[
                 'page' => $page,
             ])
-            ->each(function($item,$key){
+            ->each(function ($item) {
 
-//                if ($item->state == 0) $item->state_str = '置顶';
-//                if ($item->state == 1) $item->state_str = '未置顶';
+                $item->c_name = htmlspecialchars($item->c_name);
 
-                if($item->parent_id == 0){
+                if ($item->parent_id == 0) {
                     $item->parent_name = '';
-                }else{
+                } else {
                     $parentData = $this->where(['id'=>$item->parent_id])->field('id,name')->find();
-                    $item->parent_name = "[ ".$parentData['id']." ] - ".$parentData['name'];
+                    $item->parent_name = '[ '.$parentData['id'].' ] - '.htmlspecialchars($parentData['name']);
                 }
+
 
             })
             ->toArray();

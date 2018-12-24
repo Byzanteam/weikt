@@ -27,11 +27,11 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
             return false;
         }
 
-        $where = 'WHERE user_id='.$id;
+        $where = ' WHERE id='.$id;
         $limit = '';
     }else{
         $where = '';
-        $limit = 'LIMIT '.$limit;
+        $limit = ' LIMIT '.$limit;
     }
 
 
@@ -48,10 +48,11 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
         $child_where = ' WHERE study_date>=' .$start_time. ' AND study_date<=' .$end_time;
 
     }elseif($time == 2) {
+        $beginDate = date('Y-m-01', strtotime(date('Y-m-d')));
         // 本月1号
-        $start_time = strtotime(date('Y-m-d', strtotime(date('Y-m', time()) . '-01 00:00:00')));
+        $start_time = strtotime($beginDate);
         // 本月最后一天
-        $end_time   = strtotime(date('Y-m-d', strtotime(date('Y-m', time()) . '-' . date('t', time()) . ' 00:00:00')));
+        $end_time   = strtotime(date('Y-m-d', strtotime($beginDate . ' +1 month -1 day')));
 
         // 获取 当前月的开始时间和结束时间
         $child_where = ' WHERE study_date>=' .$start_time. ' AND study_date<=' .$end_time;
@@ -60,11 +61,12 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
 
 
     // 对学习记录进行分组统计
-    $GroupCountSql = 'SELECT user_id, COUNT(*) AS num FROM vcr_user_study' .$child_where. ' GROUP BY user_id ORDER BY num DESC';
+    $GroupCountSql = 'SELECT user_id,count(id) as num FROM vcr_user_study' .$child_where. ' GROUP BY user_id ORDER BY num DESC';
 
+    $rankSql = 'SELECT user_id, num, @rank:=@rank+1 AS rank_no FROM ('.$GroupCountSql.') a, (SELECT @rank:=0) b';
 
-    $sql = 'SELECT basic.name, c_tmp.* FROM vcr_user_basic basic JOIN (SELECT user_id, num, @rank:=@rank+1 AS rank_no FROM ('.$GroupCountSql.') a, (SELECT @rank:=0) b '.$where.' '.$limit.') c_tmp ON basic.id=c_tmp.user_id';
-
+    $sql  = 'SELECT basic.name, basic.id as user_id, IFNULL(num,0) as num, IFNULL(rank_no,10) as rank_no FROM vcr_user_basic basic';
+    $sql .= ' LEFT JOIN (' . $rankSql . ') c_tmp ON basic.id=c_tmp.user_id' . $where . ' ORDER BY num desc,rank_no,user_id' . $limit;
 
     $res = db('user_study')->query($sql);
 
@@ -76,7 +78,135 @@ function get_user_rank_no ($type=1, $id=0, $time=0, $limit=10) {
 
 }
 
+function upload_file ($object, $uploadFile) {
 
+    $endpoint        = config('ali_oss.endpoint');
+    $accessKeyId     = config('ali_oss.accessKeyId');
+    $accessKeySecret = config('ali_oss.accessKeySecret');
+    $bucket          = config('ali_oss.bucket');
+
+
+    /**
+     * 步骤1：初始化一个分片上传事件，获取uploadId。
+     */
+    try{
+        $ossClient = new \OSS\OssClient($accessKeyId, $accessKeySecret, $endpoint);
+
+        //返回uploadId，它是分片上传事件的唯一标识，您可以根据这个ID来发起相关的操作，如取消分片上传、查询分片上传等。
+        $uploadId = $ossClient->initiateMultipartUpload($bucket, $object);
+
+    } catch (OssException $e) {
+        return [
+            'status' => -1,
+            'msg'    => $e->getMessage()
+        ];
+    }
+    /**
+     * 步骤2：上传分片。
+     */
+    $partSize = 3 * 1024 * 1024;
+    $uploadFileSize = filesize($uploadFile);
+    $pieces = $ossClient->generateMultiuploadParts($uploadFileSize, $partSize);
+    $responseUploadPart = array();
+    $uploadPosition = 0;
+    $isCheckMd5 = true;
+    foreach ($pieces as $i => $piece) {
+        $fromPos = $uploadPosition + (integer)$piece[$ossClient::OSS_SEEK_TO];
+        $toPos = (integer)$piece[$ossClient::OSS_LENGTH] + $fromPos - 1;
+        $upOptions = array(
+            $ossClient::OSS_FILE_UPLOAD => $uploadFile,
+            $ossClient::OSS_PART_NUM    => ($i + 1),
+            $ossClient::OSS_SEEK_TO     => $fromPos,
+            $ossClient::OSS_LENGTH      => $toPos - $fromPos + 1,
+            $ossClient::OSS_CHECK_MD5   => $isCheckMd5,
+        );
+        // MD5校验。
+        if ($isCheckMd5) {
+            $contentMd5 = \OSS\Core\OssUtil::getMd5SumForFile($uploadFile, $fromPos, $toPos);
+            $upOptions[$ossClient::OSS_CONTENT_MD5] = $contentMd5;
+        }
+        try {
+            // 上传分片。
+            $responseUploadPart[] = $ossClient->uploadPart($bucket, $object, $uploadId, $upOptions);
+
+        } catch(OssException $e) {
+            return [
+                'status' => -1,
+                'msg'    => $e->getMessage()
+            ];
+        }
+    }
+
+    // $uploadParts是由每个分片的ETag和分片号（PartNumber）组成的数组。
+    $uploadParts = [];
+    foreach ($responseUploadPart as $i => $eTag) {
+        $uploadParts[] = [
+            'PartNumber' => ($i + 1),
+            'ETag'       => $eTag
+        ];
+    }
+    /**
+     * 步骤3：完成上传。
+     */
+    try {
+        // 在执行该操作时，需要提供所有有效的$uploadParts。OSS收到提交的$uploadParts后，会逐一验证每个分片的有效性。
+        // 当所有的数据分片验证通过后，OSS将把这些分片组合成一个完整的文件。
+
+        $ossClient->completeMultipartUpload($bucket, $object, $uploadId, $uploadParts);
+
+        return [
+            'status' => 1,
+            'data'   => config('ali_oss.bucket_host') . $object,
+        ];
+    }  catch(OssException $e) {
+
+        return [
+            'status' => -1,
+            'msg'    => $e->getMessage()
+        ];
+    }
+
+}
+
+function gmt_iso8601($time) {
+    $dtStr = date("c", $time);
+    $mydatetime = new DateTime($dtStr);
+    $expiration = $mydatetime->format(DateTime::ISO8601);
+    $pos = strpos($expiration, '+');
+    $expiration = substr($expiration, 0, $pos);
+    return $expiration."Z";
+}
+
+/**
+ * 根据组织ID获取会员列表
+ * @param $organization_id
+ * @return bool|mixed
+ */
+function get_user_list ($organization_id) {
+    // 设置请求的header参数
+    $headers = ['Authorization:'.config('llapi.v4_api_Authorization')];
+
+    // 设置请求URL
+    $url = config('llapi.formal_url').'/api/v4/organizations/' . $organization_id . '/members';
+
+    $result = curlRequest($url, '', $headers);
+
+    $data = json_decode($result, true);
+
+    // 判断请求是否成功
+    if($result != false && $data != false && is_array($data) && !array_key_exists('error',$data)){
+
+        return $data;
+    }
+    return false;
+}
+
+/**
+ * 发送模板消息
+ * @param $data
+ * @param $template_id
+ * @return object
+ */
 function weixin_tempalte ($data, $template_id) {
 
     $template = (object)[
@@ -103,10 +233,40 @@ function send_weixin_msg ($openid, $data, $template_id = 'XcVL1dSyOdOKfEQBxLN8Qk
     $params['openids'] = $openid;
     $params['template_entity'] = weixin_tempalte($data, $template_id);
 
-    $result = curlRequest($url, 'POST', $headers, $params);
-
-    print_r($result);
+    curlRequest($url, 'POST', $headers, $params);
 }
+
+function get_wechat_token () {
+
+    $file = getcwd().'/wechat_token.json';
+
+    $wechat_token = file_exists($file) ? json_decode(file_get_contents($file), true) : false;
+
+    if($wechat_token && time() < $wechat_token['expired_at']){
+
+        return $wechat_token['access_token'];
+    }
+
+    // 设置请求的header参数
+    $headers = ['Authorization:'.config('llapi.v4_api_Authorization')];
+
+    // 设置请求URL
+    $url = config('llapi.formal_url').'/api/v4/wechat_clients/access_token';
+
+    $result = curlRequest($url, '', $headers);
+
+    $data = json_decode($result, true);
+
+    // 判断请求是否成功
+    if($result != false && $data != false && is_array($data) && !array_key_exists('error',$data)){
+
+        file_put_contents($file, $result);
+
+        return $data['access_token'];
+    }
+    return false;
+}
+
 
 /**
  * 获取 jsapi_ticket
@@ -114,14 +274,13 @@ function send_weixin_msg ($openid, $data, $template_id = 'XcVL1dSyOdOKfEQBxLN8Qk
  */
 function get_ticket () {
 
-    // 当前时间-60秒
-    $new_time = time() - 60;
+    $file = getcwd().'/weikt_jssdk.json';
 
-    if(session('weikt_jssdk')){
-        // 如果session 存在，则判断是否过去，如果没有过过期
-        if($new_time < session('weikt_jssdk.expired_at')){
-            return session('weikt_jssdk.ticket');
-        }
+    $weikt_jssdk = file_exists($file) ? json_decode(file_get_contents($file), true) : false;
+
+    if($weikt_jssdk && time() < $weikt_jssdk['expired_at']){
+
+        return $weikt_jssdk['ticket'];
     }
 
     // 设置请求的header参数
@@ -137,8 +296,7 @@ function get_ticket () {
     // 判断请求是否成功
     if($result != false && $data != false && is_array($data) && !array_key_exists('error',$data)){
 
-        // 请求成功，将结存储到session中
-        session('weikt_jssdk',$data);
+        file_put_contents($file, $result);
 
         return $data['ticket'];
     }
@@ -152,16 +310,6 @@ function get_ticket () {
  * @return bool|mixed
  */
 function get_user_token ($code = '', $redirect_uri = '') {
-
-    $file = session('weikt_token');
-
-    $token = ($file && !is_array($file)) ? json_decode($file, true) : null;
-
-    if (!empty($token) && time() < ($token['created_at'] + $token['expires_in'])) {
-
-        return $token['access_token'];
-
-    }
 
     $url = config('llapi.formal_url').'/oauth/token';
 
@@ -179,9 +327,7 @@ function get_user_token ($code = '', $redirect_uri = '') {
     $data = json_decode($output,true);
 
     // 判断请求是否成功
-    if ($data['access_token']) {
-
-        session('weikt_token', $output);
+    if (isset($data['access_token'])) {
 
         // 获取成功，返回 token 字符串
         return $data['access_token'];

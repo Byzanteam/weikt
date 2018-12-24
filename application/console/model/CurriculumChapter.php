@@ -24,17 +24,11 @@ class CurriculumChapter extends Model {
             ])
             ->each(function($item,$key){
 
+                $item->title = htmlspecialchars($item->title);
+
                 // 获取所属课程的名称
                 $typeName = db('curriculum')->where(['id'=>$item->cp_id])->field('id,title')->find();
-                $item->cl_name = '[ '.$typeName['id'].' ] - '.$typeName['title'];
-
-                if($item->media_type == 'audio'){
-                    $item->media_type_name = '音频';
-                }elseif ($item->media_type == 'video'){
-                    $item->media_type_name = '视频';
-                }else{
-                    $item->media_type_name = '文本';
-                }
+                $item->cl_name = '[ '.$typeName['id'].' ] - '.htmlspecialchars($typeName['title']);
 
                 if($item->test_type == 1){
                     $item->test_type_str = '阅读题';

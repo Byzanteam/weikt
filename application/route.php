@@ -91,12 +91,12 @@ Route::group('api',function(){
             // 非豁免请求，进行权限验证，获取头部 x-auth-info
             $auth = $request->header('x-auth-info');
             if(empty($auth)){
-                return json(['code' => -1, 'msg' => '请求错误，无访问权限']);
+                return json(['code' => -100, 'msg' => '请求错误，无访问权限']);
             }
 
             // 判断 login_token 是否正确
             if(!session($auth)){
-                return json(['code' => -1, 'msg' => '请求错误，无访问权限']);
+                return json(['code' => -100, 'msg' => '请求错误，无访问权限']);
             }
 
             // 获取用户ID
@@ -104,20 +104,20 @@ Route::group('api',function(){
 
             $model = new \app\console\model\UserBasic();
             // 获取用户信息
-            $userinfo = $model->getOne(['ll_id' => $user_id]);
+            $user_info = $model->getOne(['ll_id' => $user_id]);
 
-            if(empty($userinfo)){
+            if (empty($user_info)) {
                 return json(['code' => -1, 'msg' => '请求错误，用户不存在']);
             }
 
-            $controller_obj->userinfo = $userinfo;
+            $user_info['nickname'] = base64_decode($user_info['nickname']);
+
+            $controller_obj->userinfo = $user_info;
 
         }
 
         // 检测完毕，执行请求
         return $controller_obj->$method();
-
-
 
     });
 

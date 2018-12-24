@@ -28,7 +28,8 @@ class Base extends Controller
     protected $isLoginArr = [
         'console/login/index',
         'console/login/get_user_info',
-        'console/error/error_msg'
+        'console/error/error_msg',
+        'console/common/callback'
     ];
 
 
@@ -53,14 +54,14 @@ class Base extends Controller
 
         if(!in_array($path,$this->isLoginArr)) {
             // 判断用户是否登录
-//            if($this->is_login()) {
-//
-//                // 用户登录，执行请求
-//                return $this->$method();
-//
-//            }else{
-//                $this->redirect('console/Login/index');
-//            }
+            if($this->is_login()) {
+
+                // 用户登录，执行请求
+                return $this->$method();
+
+            }else{
+                $this->redirect('console/Login/index');
+            }
         }
 
 

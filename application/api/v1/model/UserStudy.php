@@ -20,4 +20,10 @@ class UserStudy extends Model {
                     ->where($where)
                     ->find();
     }
+
+    public function getList ($where = [], $fields = '*') {
+        return db('user_study')->field($fields)
+                ->where($where)
+                ->select();
+    }
 }

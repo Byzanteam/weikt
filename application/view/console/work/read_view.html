@@ -25,39 +25,56 @@
     <div class="tips_box">
 
     </div>
-    <form class="layui-form" action="">
-        <div class="layui-form-item">
-            <label class="layui-form-label">题目</label>
-            <div class="layui-input-block" style="width: 90%;">
-                {$data['topic']}
-            </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">题目</label>
+        <div class="layui-input-block" style="width: 90%;">
+            {$data['topic']}
         </div>
+    </div>
 
-        {if condition='$data.state eq 1'}
-        <div class="layui-form-item">
-            <label class="layui-form-label">点评内容</label>
-            <div class="layui-input-block" style="width: 90%;">
-                {$data.comment}
-            </div>
+    {if condition='$data.state eq 1'}
+    <div class="layui-form-item">
+        <label class="layui-form-label">点评内容</label>
+        <div class="layui-input-block" style="width: 90%;">
+            {$data.comment}
         </div>
+    </div>
 
-        <div class="layui-form-item">
-            <label class="layui-form-label">点评分数</label>
-            <div class="layui-input-block" style="width: 50%;">
-                {$data.fraction} <b> 分</b>
-            </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">点评分数</label>
+        <div class="layui-input-block" style="width: 50%;">
+            {$data.fraction} <b> 分</b>
         </div>
-        {/if}
+    </div>
+    {/if}
 
 
-        <div class="layui-form-item layui-form-text">
-            <label class="layui-form-label"><span class="form_important">*</span> 音频查看</label>
-            <div class="layui-input-block" style="width: 70%;">
-                <a href="{$data['work']}" class="layui-btn" target="_blank">查看</a>
-            </div>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label"><span class="form_important">*</span> 音频查看</label>
+        <div class="layui-input-block" style="width: 70%;">
+            <button class="layui-btn layui-btn-warm layui-btn-sm" id="playId">播放</button>
+            <button class="layui-btn layui-btn-danger layui-btn-sm" id="stopId">暂停</button>
         </div>
-    </form>
+    </div>
 </div>
 
 </body>
+<script src="/static/audio.min.js"></script>
+<script src="/static/voice-2.0.js"></script>
+<script>
+  audiojs.events.ready(function() {
+    var as = audiojs.createAll();
+  });
+
+
+  RongIMLib.RongIMVoice.init();
+  document.getElementById("playId").onclick = function(){
+    RongIMLib.RongIMVoice.play("{$data['work']}");
+  };
+  document.getElementById("stopId").onclick = function() {
+    RongIMLib.RongIMVoice.stop();
+  }
+</script>
+
+
 </html>

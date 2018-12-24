@@ -26,5 +26,4 @@ class Index {
 
         $this->redirect($url);
     }
-
 }

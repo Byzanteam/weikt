@@ -84,7 +84,7 @@ class Exercise extends Base
     {
         if(\think\Request::instance()->isPost()){
 
-            $data['title'] = input('title','','strip_tags,trim');
+            $data['title'] = strip_tags(input('title','','trim'), '<br>');
             $data['cl_id'] = intval(input('cl_id',0));
             $data['cp_id'] = intval(input('cp_id',0));
             $data['cc_id'] = intval(input('cc_id',0));
@@ -159,7 +159,7 @@ class Exercise extends Base
     public function editExercise () {
         if (\think\Request::instance()->isPost()) {
             $id = intval(input('id'));
-            $data['title'] = input('title','','strip_tags,trim');
+            $data['title'] = strip_tags(input('title','','trim'), '<br>');
             $data['cl_id'] = intval(input('cl_id',0));
             $data['cp_id'] = intval(input('cp_id',0));
             $data['cc_id'] = intval(input('cc_id',0));

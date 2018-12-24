@@ -40,6 +40,8 @@ class Login extends Base
         // 拼接 回到地址 redirect_uri
         $url .= '&redirect_uri='.urlencode(config('llapi.console_redirect_uri'));
 
+        $url .= '&_ns_id=200&limit_wechat_user=true';
+
         // 跳转 了了登录 扫码页面
         $this->redirect($url);
 
@@ -96,9 +98,19 @@ class Login extends Base
                 // 登录成功，跳转到后台首页
                 $this->redirect('/console/Index/index');
             } else {
-                echo '暂无权限';
+                echo '<div style="font-size: 16px; color: red; text-align: center; padding-top: 10%;">暂无权限</div>';
             }
         }
 
+    }
+
+
+    public function out () {
+        cookie('USER-TOKEN', null);
+
+        $url  = 'https://skylarkly.com/unbind?return_to=';
+        $url .=  SITE_URL . '/console/Index/index&_ns_id=200';
+
+        $this->redirect($url);
     }
 }

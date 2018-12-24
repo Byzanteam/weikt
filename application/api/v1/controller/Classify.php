@@ -23,7 +23,7 @@ class Classify extends Base
 
             $ccModel = new CurriculumClassification();
 
-            $data = $ccModel->getChildList($c_id);
+            $data = $ccModel->getChildList($c_id, 0);
 
             if (!empty($data)) {
                 // 查询成功，返回课程列表

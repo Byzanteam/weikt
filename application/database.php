@@ -11,17 +11,17 @@
 
 return [
     // 数据库类型
-    'type'            => getenv('DB_CONNECTION'),
+    'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => getenv('DATABASE_URL'),
+    'hostname'        => getenv('DOKKU_MYSQL_WEIKT_DB_PORT_3306_TCP_ADDR'),
     // 数据库名
-    'database'        => getenv('DB_DATABASE'),
+    'database'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_DATABASE'),
     // 用户名
-    'username'        => getenv('DB_USERNAME'),
+    'username'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_USER'),
     // 密码
-    'password'        => getenv('DB_PASSWORD'),
+    'password'        => getenv('DOKKU_MYSQL_WEIKT_DB_ENV_MYSQL_PASSWORD'),
     // 端口
-    'hostport'        => getenv('DB_PORT'),
+    'hostport'        => getenv('DOKKU_MYSQL_WEIKT_DB_PORT_3306_TCP_PORT'),
     // 连接dsn
     'dsn'             => '',
     // 数据库连接参数

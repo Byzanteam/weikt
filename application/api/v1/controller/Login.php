@@ -22,30 +22,61 @@ class Login extends Base
     /*  用户登录   */
     public function user_login () {
 
+        $default_url = SITE_URL . '/view/index.html#/';
+
         $code = input('code','','strip_tags,trim'); // 用户授权码
 
         if (!empty($code)) {
 
             // 获取用户token
             if ($token = get_user_token($code, config('llapi.api_redirect_uri'))) {
+
                 // 获取用户信息
                 if ($user_info = get_user_info($token)) {
 
                     $userModel = new UserBasic();
 
                     if ($login_token = $userModel->update_user_info($user_info, false)) {
-                        $url = SITE_URL . '/view/index.html#/?login_token=' . $login_token;
+
+                        $url  = session('return_to') ? : $default_url;
+
+                        $arr = explode('?', $url);
+
+                        $url = $arr[0] . '?';
+
+                        if (isset($arr[1]) && !empty($arr[1])) {
+                            $queryParts = explode('&', $arr[1]);
+
+                            foreach ($queryParts as $key => $param) {
+                                $item = explode('=', $param);
+                                if ($item[0] == 'login_token') {
+                                    unset($queryParts[$key]);
+                                }
+                            }
+
+                            if (!empty($queryParts)) {
+                                $url .= implode('&', $queryParts) . '&';
+                            }
+                        }
+
+                        $url .= 'login_token=' . $login_token;
 
                         // 用户登录成功
                         $this->redirect($url);
                     }
                 }
 
-                echo '用户登录失败';exit;
+                echo '<div style="font-size: 20px; color: red; text-align: center; padding-top: 10%;">用户登录失败</div>';
+                exit;
             }
 
-            echo '授权认证失败';exit;
+            echo '<div style="font-size: 20px; color: red; text-align: center; padding-top: 10%;">授权认证失败</div>';
+            exit;
         } else {
+
+            $return_url = input('return_url', $default_url, 'base64_decode'); // 用户授权码
+            session('return_to', $return_url);
+
             // 拼接 获取授权码 api 地址
             $url = config('llapi.formal_url') . '/oauth/authorize/?';
 
@@ -57,6 +88,8 @@ class Login extends Base
 
             // 拼接 回到地址 redirect_uri
             $url .= '&redirect_uri=' . config('llapi.api_redirect_uri');
+
+            $url .= '&_ns_id=200&limit_wechat_user=true';
 
             $this->redirect($url);
         }
