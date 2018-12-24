@@ -22,7 +22,6 @@ if($_SERVER['REQUEST_METHOD'] == 'OPTIONS'){
 }
 
 define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST']);
-
 // 设置时区
 date_default_timezone_set('Asia/Shanghai');
 
