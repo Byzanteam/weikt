@@ -69,6 +69,7 @@ class CurriculumChapter extends Model {
     public function getChapterList ($uid, $where = [], $fields = '*', $order = ['sort', 'id'=>'desc']) {
         return $this->alias('ch')
             ->join('vcr_user_study st', 'ch.id = st.chapter_id AND user_id = ' . $uid, 'LEFT')
+            ->join('vcr_user_study us', 'ch.id = us.chapter_id AND us.state = 2)', 'LEFT')
             ->where($where)
             ->field($fields)
             ->order($order)
