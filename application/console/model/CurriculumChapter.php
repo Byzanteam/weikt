@@ -23,7 +23,7 @@ class CurriculumChapter extends Model {
             ->field('cc.*,c.id AS c_id,c.title AS c_title,count(us.id) AS study_n')
             ->where($where)
             ->order($order)
-            ->group('c.id')
+            ->group('cc.id')
             ->paginate($limit,false,[
                 'page' => $page,
             ])
