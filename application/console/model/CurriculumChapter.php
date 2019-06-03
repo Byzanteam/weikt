@@ -73,6 +73,7 @@ class CurriculumChapter extends Model {
             ->where($where)
             ->field($fields)
             ->order($order)
+            ->group('ch.id')
             ->select();
     }
 
