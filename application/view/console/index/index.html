@@ -71,6 +71,13 @@
 </div>
 <script src="/static/layui/layui.js"></script>
 <script>
+    if (window.parent !== window.self) {
+        document.write              = '';
+        window.parent.location.href = window.self.location.href;
+        setTimeout(function () {
+            document.body.innerHTML = '';
+        }, 0);
+    }
   //JavaScript代码区域
   layui.use(['element', 'layer', 'jquery'], function(){
     var element = layui.element;

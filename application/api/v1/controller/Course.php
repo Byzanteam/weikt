@@ -78,7 +78,7 @@ class Course extends Base {
 
                     $chaModel = new CurriculumChapter();
 
-                    $chaFields = 'ch.id,ch.title,date_format(ch.is_time, \'%Y-%m-%d\') as is_time,ch.study_num,IF(st.state, st.state, 0) AS state';
+                    $chaFields = 'ch.id,ch.title,date_format(ch.is_time, \'%Y-%m-%d\') as is_time,count(us.id) AS study_num,IF(st.state, st.state, 0) AS state';
                     $chaWhere = [
                         'cp_id' => $id
                     ];

@@ -17,8 +17,13 @@ class CurriculumChapter extends Model {
     public function getTablePageList ($where = [], $page = 1, $limit = 10, $order = 'id desc') {
 
         // tp5 分页调用方式
-        $res = $this->where($where)
+        $res = $this->alias('cc')
+            ->join('curriculum c', 'c.id = cc.cp_id')
+            ->join('user_study us', 'us.chapter_id = cc.id AND us.state = 2', 'left')
+            ->field('cc.*,c.id AS c_id,c.title AS c_title,count(us.id) AS study_n')
+            ->where($where)
             ->order($order)
+            ->group('cc.id')
             ->paginate($limit,false,[
                 'page' => $page,
             ])
@@ -27,8 +32,7 @@ class CurriculumChapter extends Model {
                 $item->title = htmlspecialchars($item->title);
 
                 // 获取所属课程的名称
-                $typeName = db('curriculum')->where(['id'=>$item->cp_id])->field('id,title')->find();
-                $item->cl_name = '[ '.$typeName['id'].' ] - '.htmlspecialchars($typeName['title']);
+                $item->cl_name = '[ '.$item->c_id.' ] - '.htmlspecialchars($item->c_title);
 
                 if($item->test_type == 1){
                     $item->test_type_str = '阅读题';
@@ -65,6 +69,7 @@ class CurriculumChapter extends Model {
     public function getChapterList ($uid, $where = [], $fields = '*', $order = ['sort', 'id'=>'desc']) {
         return $this->alias('ch')
             ->join('vcr_user_study st', 'ch.id = st.chapter_id AND user_id = ' . $uid, 'LEFT')
+            ->join('vcr_user_study us', 'ch.id = us.chapter_id AND us.state = 2)', 'LEFT')
             ->where($where)
             ->field($fields)
             ->order($order)
