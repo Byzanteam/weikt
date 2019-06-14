@@ -52,7 +52,7 @@ class Index extends Base
 
             $fields  = 'any_value(cl.name) as classify_name,c.id';
             $fields .= ',any_value(c.title) as title,any_value(count(us.id)) AS study_num';
-            $fields .= ',any_value(IF(st.state,st.state,0)) as is_study,any_value(index_img) as index_img';
+            $fields .= ',any_value(IFNULL(st.state,0)) as is_study,any_value(index_img) as index_img';
             // 获取热门课程
             $curWhere = ['cl.label' => $lag];
             $result['popular_course'] = $curModel->getList($this->userinfo['id'], $curWhere, 'study_num desc', 3, $fields);
