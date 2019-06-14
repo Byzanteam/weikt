@@ -72,12 +72,16 @@
 <script src="/static/layui/layui.js"></script>
 <script>
     if (window.parent !== window.self) {
-        document.write              = '';
+        document.write;
         window.parent.location.href = window.self.location.href;
         setTimeout(function () {
             document.body.innerHTML = '';
         }, 0);
     }
+
+    var src = getCookie('url');
+    $('#iframe').attr('src', src ? src : '');
+
   //JavaScript代码区域
   layui.use(['element', 'layer', 'jquery'], function(){
     var element = layui.element;
@@ -92,6 +96,7 @@
         // 获取跳转地址
         var url = $(this).attr('data-href');
         $("#iframe").attr('src',url);
+          setCookie('url', url);
 
         $("#loading").show();
 
@@ -106,6 +111,52 @@
 
 
   });
+    /**
+     * 读取cookie
+     * @param name
+     * @returns
+     */
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    /**
+     * 设置cookie
+     */
+    function setCookie(name, value, options) {
+        options = options || {};
+        if (value === null) {
+            value           = '';
+            options.expires = -1;
+        }
+        var expires = '';
+        if (options.expires && (typeof options.expires == 'number' || options.expires.toUTCString)) {
+            var date;
+            if (typeof options.expires == 'number') {
+                date = new Date();
+                date.setTime(date.getTime() + (options.expires * 24 * 60 * 60 * 1000));
+            } else {
+                date = options.expires;
+            }
+            expires = '; expires=' + date.toUTCString(); // use expires attribute, max-age is not supported by IE
+        }
+        var path        = options.path ? '; path=' + options.path : '';
+        var domain      = options.domain ? '; domain=' + options.domain : '';
+        var secure      = options.secure ? '; secure' : '';
+        document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
+    }
 </script>
 </body>
 </html>
